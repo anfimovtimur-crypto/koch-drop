@@ -1,0 +1,649 @@
+.withdraw-page {
+  width: 100%;
+  min-height: calc(100vh - 120px);
+
+  box-sizing: border-box;
+  padding: 60px 30px 100px;
+
+  background: #070707;
+}
+
+.withdraw-container {
+  width: min(1050px, 100%);
+  margin: 0 auto;
+}
+
+.withdraw-header {
+  text-align: center;
+  margin-bottom: 34px;
+}
+
+.withdraw-kicker {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  height: 27px;
+  padding: 0 12px;
+
+  border: 1px solid #2a2a2a;
+  border-radius: 999px;
+
+  background: #0c0c0c;
+
+  color: #f5c400;
+
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: 2px;
+}
+
+.withdraw-header h1 {
+  margin: 15px 0 9px;
+
+  color: #f5c400;
+
+  font-size: clamp(36px, 4vw, 50px);
+  font-weight: 900;
+  line-height: 1;
+
+  letter-spacing: -1.8px;
+}
+
+.withdraw-header p {
+  margin: 0;
+
+  color: #626262;
+
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.withdraw-balance {
+  min-height: 90px;
+
+  margin-bottom: 32px;
+  padding: 19px 22px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  box-sizing: border-box;
+
+  border: 1px solid #1d1d1d;
+  border-radius: 16px;
+
+  background: #0a0a0a;
+}
+
+.withdraw-balance > div:first-child {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.withdraw-balance span {
+  color: #595959;
+
+  font-size: 8px;
+  font-weight: 900;
+  letter-spacing: 1.7px;
+}
+
+.withdraw-balance strong {
+  color: #f5c400;
+
+  font-size: 27px;
+  font-weight: 900;
+}
+
+.withdraw-balance-mark {
+  width: 52px;
+  height: 52px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 1px solid #242424;
+  border-radius: 13px;
+
+  background: #101010;
+
+  color: #f5c400;
+
+  font-size: 22px;
+  font-weight: 900;
+}
+
+.withdraw-section-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  margin-bottom: 13px;
+}
+
+.withdraw-section-title > span {
+  color: #f5c400;
+
+  font-size: 9px;
+  font-weight: 900;
+
+  letter-spacing: 1px;
+}
+
+.withdraw-section-title h2 {
+  margin: 0;
+
+  color: #fff;
+
+  font-size: 15px;
+  font-weight: 850;
+}
+
+/* =========================
+   METHODS
+========================= */
+
+.withdraw-methods {
+  display: grid;
+
+  grid-template-columns:
+    repeat(3, minmax(0, 1fr));
+
+  gap: 12px;
+
+  margin-bottom: 34px;
+}
+
+.withdraw-method {
+  min-height: 130px;
+
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+
+  padding: 17px 14px;
+
+  box-sizing: border-box;
+
+  border: 1px solid #1e1e1e !important;
+  border-radius: 15px;
+
+  background: #0a0a0a !important;
+
+  color: #fff;
+
+  text-align: center;
+
+  cursor: pointer;
+
+  outline: none !important;
+
+  box-shadow: none !important;
+
+  transition:
+    border-color 0.16s ease,
+    background 0.16s ease;
+}
+
+/* Убираем глобальный синий hover */
+.withdraw-method:hover {
+  border-color: #292929 !important;
+  background: #0c0c0c !important;
+
+  color: #fff !important;
+
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+/* Никакого синего focus */
+.withdraw-method:focus {
+  border-color: #292929 !important;
+  background: #0c0c0c !important;
+
+  color: #fff !important;
+
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* При нажатии тоже ничего синего */
+.withdraw-method:active {
+  border-color: #292929 !important;
+  background: #0c0c0c !important;
+
+  color: #fff !important;
+
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Выбранная карточка тоже без свечения */
+.withdraw-method.active {
+  border-color: #292929 !important;
+  background: #0c0c0c !important;
+
+  color: #fff !important;
+
+  box-shadow: none !important;
+}
+
+/* Чтобы global button:hover вообще не мог
+   нарисовать синий */
+.withdraw-method:hover,
+.withdraw-method:focus-visible,
+.withdraw-method:active {
+  border-color: #292929 !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+/* =========================
+   METHOD IMAGE
+========================= */
+
+.withdraw-method-image {
+  width: 58px;
+  height: 58px;
+
+  margin-bottom: 10px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 1px solid #242424;
+  border-radius: 13px;
+
+  background: #090909;
+
+  overflow: hidden;
+}
+
+.withdraw-method-image img {
+  width: 100%;
+  height: 100%;
+
+  display: block;
+
+  object-fit: contain;
+}
+
+.withdraw-method-info {
+  display: flex;
+  flex-direction: column;
+
+  gap: 4px;
+}
+
+.withdraw-method-info strong {
+  color: #fff;
+
+  font-size: 12px;
+  font-weight: 850;
+}
+
+.withdraw-method-info span {
+  color: #555;
+
+  font-size: 8px;
+  line-height: 1.4;
+}
+
+.withdraw-method-arrow {
+  display: none;
+}
+
+/* =========================
+   FORM
+========================= */
+
+.withdraw-form {
+  padding: 22px;
+
+  border: 1px solid #1e1e1e;
+  border-radius: 16px;
+
+  background: #090909;
+}
+
+.withdraw-form-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  gap: 12px;
+}
+
+.withdraw-input-block {
+  display: flex;
+  flex-direction: column;
+
+  gap: 7px;
+}
+
+.withdraw-input-block label {
+  color: #5a5a5a;
+
+  font-size: 8px;
+  font-weight: 900;
+  letter-spacing: 1.4px;
+}
+
+.withdraw-input-wrap {
+  position: relative;
+}
+
+.withdraw-input-block input {
+  width: 100%;
+  height: 50px;
+
+  box-sizing: border-box;
+
+  padding: 0 15px;
+
+  border: 1px solid #232323 !important;
+  border-radius: 10px;
+
+  outline: none !important;
+
+  background: #070707 !important;
+
+  color: #fff !important;
+
+  font-size: 12px;
+  font-weight: 700;
+
+  box-shadow: none !important;
+}
+
+.withdraw-input-wrap input {
+  padding-right: 42px;
+}
+
+.withdraw-input-wrap span {
+  position: absolute;
+
+  right: 15px;
+  top: 50%;
+
+  transform: translateY(-50%);
+
+  color: #f5c400;
+
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.withdraw-input-block input::placeholder {
+  color: #424242;
+}
+
+.withdraw-input-block input:hover {
+  border-color: #2b2b2b !important;
+  box-shadow: none !important;
+}
+
+.withdraw-input-block input:focus {
+  border-color: #2b2b2b !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+.withdraw-input-block input:active {
+  border-color: #2b2b2b !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+.withdraw-input-block input:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* =========================
+   MAIN BUTTON
+========================= */
+
+.withdraw-submit {
+  width: 100%;
+  height: 52px;
+
+  margin-top: 14px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 0 17px;
+
+  border: 1px solid #f5c400 !important;
+  border-radius: 10px;
+
+  background: #f5c400 !important;
+
+  color: #080808 !important;
+
+  font-size: 12px;
+  font-weight: 900;
+
+  cursor: pointer;
+
+  outline: none !important;
+
+  box-shadow: none !important;
+
+  transition:
+    background 0.16s ease,
+    border-color 0.16s ease;
+}
+
+.withdraw-submit:hover {
+  border-color: #ffd51a !important;
+
+  background: #ffd51a !important;
+
+  color: #080808 !important;
+
+  box-shadow: none !important;
+
+  outline: none !important;
+}
+
+.withdraw-submit:focus {
+  border-color: #f5c400 !important;
+
+  background: #f5c400 !important;
+
+  color: #080808 !important;
+
+  box-shadow: none !important;
+
+  outline: none !important;
+}
+
+.withdraw-submit:focus-visible {
+  border-color: #f5c400 !important;
+
+  background: #f5c400 !important;
+
+  color: #080808 !important;
+
+  box-shadow: none !important;
+
+  outline: none !important;
+}
+
+.withdraw-submit:active {
+  border-color: #e6b900 !important;
+
+  background: #e6b900 !important;
+
+  color: #080808 !important;
+
+  box-shadow: none !important;
+
+  outline: none !important;
+}
+
+.withdraw-submit strong {
+  font-size: 18px;
+}
+
+/* =========================
+   MESSAGE
+========================= */
+
+.withdraw-message {
+  margin-top: 12px;
+
+  padding: 11px 13px;
+
+  border: 1px solid #292929;
+  border-radius: 9px;
+
+  background: #0d0d0d;
+
+  color: #f5c400;
+
+  font-size: 11px;
+  font-weight: 700;
+}
+
+/* =========================
+   GLOBAL OVERRIDE
+========================= */
+
+/*
+  Если в App.css есть:
+
+  button:hover {
+    border-color: #646cff;
+  }
+
+  эти правила дополнительно не дают
+  синим стилям попасть на страницу.
+*/
+
+.withdraw-page button:hover {
+  box-shadow: none !important;
+}
+
+.withdraw-page button:focus {
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+.withdraw-page button:focus-visible {
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+@media (max-width: 800px) {
+  .withdraw-page {
+    padding: 45px 18px 70px;
+  }
+
+  .withdraw-methods {
+    grid-template-columns: 1fr;
+  }
+
+  .withdraw-form-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 500px) {
+  .withdraw-page {
+    padding: 35px 12px 60px;
+  }
+
+  .withdraw-form {
+    padding: 16px;
+  }
+
+  .withdraw-balance {
+    padding: 16px;
+  }
+} 
+/* =================================
+   УБИРАЕМ БЕЛУЮ ПОДСВЕТКУ ВЫВОДОВ
+================================= */
+
+.withdraw-page,
+.withdraw-page * {
+  text-shadow: none !important;
+}
+
+.withdraw-page {
+  filter: none !important;
+}
+
+/* Заголовок */
+.withdraw-header h1 {
+  color: #f5c400 !important;
+  text-shadow: none !important;
+  filter: none !important;
+}
+
+/* Карточки USDT / GRAM / Steam */
+.withdraw-method,
+.withdraw-method:hover,
+.withdraw-method:focus,
+.withdraw-method:focus-visible,
+.withdraw-method:active,
+.withdraw-method.active {
+  background: #0a0a0a !important;
+  border-color: #1e1e1e !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+  filter: none !important;
+  outline: none !important;
+}
+
+/* Иконки */
+.withdraw-method-image {
+  box-shadow: none !important;
+  filter: none !important;
+}
+
+/* Баланс */
+.withdraw-balance {
+  box-shadow: none !important;
+  text-shadow: none !important;
+  filter: none !important;
+}
+
+/* Форма */
+.withdraw-form {
+  box-shadow: none !important;
+  text-shadow: none !important;
+  filter: none !important;
+}
+
+/* Поля */
+.withdraw-input-block input,
+.withdraw-input-block input:hover,
+.withdraw-input-block input:focus,
+.withdraw-input-block input:focus-visible,
+.withdraw-input-block input:active {
+  box-shadow: none !important;
+  text-shadow: none !important;
+  outline: none !important;
+}
+
+/* Основная кнопка */
+.withdraw-submit,
+.withdraw-submit:hover,
+.withdraw-submit:focus,
+.withdraw-submit:focus-visible,
+.withdraw-submit:active {
+  box-shadow: none !important;
+  text-shadow: none !important;
+  outline: none !important;
+}

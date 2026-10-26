@@ -1,0 +1,424 @@
+.bonuses-page {
+  width: 100%;
+  min-height: 100vh;
+
+  padding: 45px 25px 80px;
+  box-sizing: border-box;
+
+  background: #070707;
+}
+
+.bonuses-container {
+  width: min(1050px, 100%);
+  margin: 0 auto;
+}
+
+.bonuses-header {
+  text-align: center;
+  margin-bottom: 35px;
+}
+
+.bonuses-logo {
+  width: 85px;
+  height: auto;
+  display: block;
+  margin: 0 auto 22px;
+}
+
+.bonuses-header h1 {
+  margin: 0 0 9px;
+
+  color: #f5c400 !important;
+
+  font-size: 38px;
+  font-weight: 900;
+
+  text-shadow: none !important;
+  filter: none !important;
+}
+
+.bonuses-header p {
+  margin: 0;
+
+  color: #5f5f5f;
+
+  font-size: 12px;
+}
+
+
+/* =========================
+   BONUS CARDS
+========================= */
+
+.bonuses-main {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.bonus-card {
+  overflow: hidden;
+
+  border: 1px solid #202020;
+  border-radius: 17px;
+
+  background: #0b0b0b;
+
+  box-shadow: none !important;
+  filter: none !important;
+}
+
+.bonus-card:hover {
+  border-color: #202020;
+  background: #0b0b0b;
+
+  box-shadow: none !important;
+  filter: none !important;
+  transform: none !important;
+}
+
+.bonus-image {
+  width: 100%;
+  height: 190px;
+
+  background: #101010;
+
+  overflow: hidden;
+}
+
+.bonus-image img {
+  width: 100%;
+  height: 100%;
+
+  display: block;
+
+  object-fit: cover;
+
+  filter: none !important;
+}
+
+.bonus-card-body {
+  padding: 20px;
+}
+
+.bonus-status {
+  display: inline-flex;
+
+  padding: 6px 9px;
+
+  border-radius: 999px;
+
+  background: #141414;
+  border: 1px solid #282828;
+
+  color: #f5c400;
+
+  font-size: 8px;
+  font-weight: 900;
+  letter-spacing: 1.4px;
+}
+
+.bonus-card h2 {
+  margin: 15px 0 8px;
+
+  color: #fff;
+
+  font-size: 20px;
+  font-weight: 850;
+}
+
+.bonus-card p {
+  min-height: 42px;
+
+  margin: 0;
+
+  color: #656565;
+
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+
+/* =========================
+   BONUS BUTTON
+========================= */
+
+.bonus-button {
+  width: 100%;
+  height: 48px;
+
+  margin-top: 20px;
+  padding: 0 15px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  box-sizing: border-box;
+
+  border: 1px solid #f5c400 !important;
+  border-radius: 10px;
+
+  background: #f5c400 !important;
+
+  color: #080808 !important;
+
+  text-decoration: none;
+
+  font-size: 11px;
+  font-weight: 900;
+
+  cursor: pointer;
+
+  outline: none !important;
+
+  box-shadow: none !important;
+  text-shadow: none !important;
+
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease;
+}
+
+/* Убираем синий глобальный hover */
+.bonus-button:hover {
+  background: #ffd51a !important;
+  border-color: #ffd51a !important;
+
+  color: #080808 !important;
+
+  box-shadow: none !important;
+  outline: none !important;
+  text-shadow: none !important;
+
+  transform: none !important;
+}
+
+/* Убираем синий focus */
+.bonus-button:focus,
+.bonus-button:focus-visible,
+.bonus-button:active {
+  background: #f5c400 !important;
+  border-color: #f5c400 !important;
+
+  color: #080808 !important;
+
+  outline: none !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+}
+
+.bonus-button.claimed {
+  background: #111 !important;
+  border-color: #252525 !important;
+
+  color: #555 !important;
+
+  cursor: default;
+}
+
+.bonus-button.claimed:hover {
+  background: #111 !important;
+  border-color: #252525 !important;
+
+  color: #555 !important;
+}
+
+
+/* =========================
+   PROMO
+========================= */
+
+.promo-section {
+  margin-top: 16px;
+
+  padding: 22px;
+
+  border: 1px solid #202020;
+  border-radius: 17px;
+
+  background: #0b0b0b;
+
+  box-shadow: none !important;
+  filter: none !important;
+}
+
+.promo-title span {
+  color: #f5c400;
+
+  font-size: 8px;
+  font-weight: 900;
+  letter-spacing: 2px;
+}
+
+.promo-title h2 {
+  margin: 7px 0;
+
+  color: #fff;
+
+  font-size: 21px;
+}
+
+.promo-title p {
+  margin: 0;
+
+  color: #606060;
+
+  font-size: 11px;
+}
+
+.promo-form {
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1fr) 170px;
+
+  gap: 10px;
+
+  margin-top: 18px;
+}
+
+.promo-form input {
+  width: 100%;
+  height: 48px;
+
+  box-sizing: border-box;
+
+  padding: 0 14px;
+
+  border: 1px solid #242424 !important;
+  border-radius: 9px;
+
+  outline: none !important;
+
+  background: #070707 !important;
+
+  color: #fff !important;
+
+  font-size: 11px;
+
+  box-shadow: none !important;
+}
+
+.promo-form input::placeholder {
+  color: #444;
+}
+
+.promo-form input:hover {
+  border-color: #303030 !important;
+}
+
+.promo-form input:focus,
+.promo-form input:focus-visible {
+  border-color: #303030 !important;
+
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+
+/* PROMO BUTTON */
+
+.promo-form button {
+  height: 48px;
+
+  border: 1px solid #f5c400 !important;
+  border-radius: 9px;
+
+  background: #f5c400 !important;
+
+  color: #080808 !important;
+
+  font-size: 11px;
+  font-weight: 900;
+
+  cursor: pointer;
+
+  outline: none !important;
+
+  box-shadow: none !important;
+  text-shadow: none !important;
+}
+
+.promo-form button:hover {
+  background: #ffd51a !important;
+  border-color: #ffd51a !important;
+
+  color: #080808 !important;
+
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+.promo-form button:focus,
+.promo-form button:focus-visible,
+.promo-form button:active {
+  background: #f5c400 !important;
+  border-color: #f5c400 !important;
+
+  color: #080808 !important;
+
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.promo-form button span {
+  margin-left: 12px;
+}
+
+.promo-message {
+  margin-top: 10px;
+
+  padding: 10px 12px;
+
+  border: 1px solid #252525;
+  border-radius: 8px;
+
+  background: #101010;
+
+  color: #f5c400;
+
+  font-size: 10px;
+  font-weight: 700;
+
+  box-shadow: none !important;
+}
+
+
+/* =========================
+   GLOBAL BLUE FIX
+========================= */
+
+.bonuses-page button:hover {
+  border-color: #ffd51a !important;
+}
+
+.bonuses-page button:focus,
+.bonuses-page button:focus-visible,
+.bonuses-page button:active {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 750px) {
+  .bonuses-page {
+    padding: 35px 15px 60px;
+  }
+
+  .bonuses-main {
+    grid-template-columns: 1fr;
+  }
+
+  .bonus-image {
+    height: 180px;
+  }
+
+  .promo-form {
+    grid-template-columns: 1fr;
+  }
+}

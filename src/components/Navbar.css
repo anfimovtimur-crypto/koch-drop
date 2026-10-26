@@ -1,0 +1,570 @@
+.kd-navbar {
+  width: 100%;
+  height: 62px;
+
+  margin-top: 105px;
+
+  box-sizing: border-box;
+
+  background: #050505;
+
+  border-top: 1px solid rgba(255, 255, 255, 0.035);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.075);
+
+  position: relative;
+  z-index: 100;
+}
+
+.kd-navbar-inner {
+  width: 100%;
+  height: 62px;
+
+  padding: 0 34px;
+
+  display: flex;
+  align-items: center;
+
+  box-sizing: border-box;
+}
+
+
+/* ЛОГО */
+
+.kd-logo {
+  width: 172px;
+  height: 52px;
+
+  object-fit: contain;
+
+  display: block;
+
+  flex-shrink: 0;
+
+  user-select: none;
+
+  transition: opacity 0.2s ease;
+}
+
+.kd-logo:hover {
+  opacity: 0.88;
+}
+
+
+/* МЕНЮ */
+
+.kd-links {
+  height: 62px;
+
+  margin-left: 58px;
+
+  display: flex;
+  align-items: center;
+
+  gap: 3px;
+}
+
+.kd-link {
+  position: relative;
+
+  height: 62px;
+
+  padding: 0 21px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: none !important;
+  border-radius: 0 !important;
+  outline: none !important;
+
+  background: transparent !important;
+
+  color: #777777 !important;
+
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  appearance: none;
+  -webkit-appearance: none;
+
+  transition: color 0.18s ease;
+}
+
+.kd-link:hover {
+  color: #ffffff !important;
+}
+
+.kd-link.active {
+  color: #ffffff !important;
+}
+
+.kd-link::after {
+  content: "";
+
+  position: absolute;
+
+  left: 50%;
+  bottom: 0;
+
+  width: 0;
+  height: 2px;
+
+  background: #f5c400;
+
+  border-radius: 0;
+
+  transform: translateX(-50%);
+
+  transition:
+    width 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.kd-link:hover::after,
+.kd-link.active::after {
+  width: 46px;
+
+  box-shadow: 0 0 9px rgba(245, 196, 0, 0.45);
+}
+
+
+/* ПРОФИЛЬ */
+
+.kd-profile {
+  height: 46px;
+  min-width: 158px;
+
+  margin-left: auto;
+
+  padding: 4px 12px 4px 5px;
+
+  display: flex;
+  align-items: center;
+
+  gap: 10px;
+
+  border: 1px solid rgba(245, 196, 0, 0.22) !important;
+  border-radius: 8px !important;
+
+  background:
+    linear-gradient(
+      90deg,
+      rgba(245, 196, 0, 0.10),
+      rgba(245, 196, 0, 0.025)
+    ) !important;
+
+  color: #ffffff !important;
+
+  font-family: inherit;
+
+  cursor: pointer;
+
+  outline: none !important;
+
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.018),
+    0 4px 18px rgba(0, 0, 0, 0.28);
+
+  appearance: none;
+  -webkit-appearance: none;
+
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+
+.kd-profile:hover {
+  background:
+    linear-gradient(
+      90deg,
+      rgba(245, 196, 0, 0.16),
+      rgba(245, 196, 0, 0.045)
+    ) !important;
+
+  border-color: rgba(245, 196, 0, 0.48) !important;
+
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.025),
+    0 5px 22px rgba(245, 196, 0, 0.07);
+
+  transform: translateY(-1px);
+}
+
+.kd-profile:focus,
+.kd-profile:focus-visible,
+.kd-profile:active {
+  outline: none !important;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.018),
+    0 4px 18px rgba(0, 0, 0, 0.28);
+}
+
+
+/* АВАТАР */
+
+.kd-avatar-wrap {
+  width: 36px;
+  height: 36px;
+
+  padding: 1px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  box-sizing: border-box;
+
+  border: 1px solid rgba(245, 196, 0, 0.25);
+  border-radius: 7px;
+
+  background: #171717;
+
+  flex-shrink: 0;
+}
+
+.kd-avatar {
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
+
+  display: block;
+
+  border-radius: 5px;
+}
+
+
+/* НИК + БАЛАНС */
+
+.kd-profile-info {
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+
+  line-height: 1;
+}
+
+.kd-name {
+  max-width: 88px;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  color: #ffffff;
+
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.kd-balance {
+  margin-top: 5px;
+
+  color: #f5c400;
+
+  font-size: 11px;
+  font-weight: 700;
+
+  white-space: nowrap;
+}
+
+
+/* СТРЕЛКА */
+
+.kd-arrow {
+  margin-left: auto;
+
+  color: #777777;
+
+  font-size: 16px;
+  line-height: 1;
+
+  transition:
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.kd-profile:hover .kd-arrow {
+  color: #f5c400;
+  transform: translateX(3px);
+}
+
+
+/* УБИРАЕМ СИНИЙ */
+
+.kd-navbar button {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.kd-navbar button,
+.kd-navbar button:hover,
+.kd-navbar button:focus,
+.kd-navbar button:focus-visible,
+.kd-navbar button:active {
+  outline: none !important;
+}
+
+.kd-link:hover,
+.kd-link:focus,
+.kd-link:focus-visible,
+.kd-link:active {
+  background: transparent !important;
+  border-color: transparent !important;
+}
+
+
+/* АДАПТИВ */
+
+@media (max-width: 900px) {
+  .kd-navbar {
+    margin-top: 90px;
+  }
+
+  .kd-navbar-inner {
+    padding: 0 20px;
+  }
+
+  .kd-logo {
+    width: 140px;
+  }
+
+  .kd-links {
+    margin-left: 28px;
+  }
+
+  .kd-link {
+    padding: 0 12px;
+  }
+
+  .kd-profile {
+    min-width: 130px;
+  }
+} 
+.kd-navbar {
+  height: 70px;
+}
+
+.kd-navbar-inner {
+  height: 70px;
+}
+
+.kd-links {
+  height: 70px;
+}
+
+.kd-link {
+  height: 70px;
+}
+
+.kd-profile {
+  height: 50px;
+} 
+.kd-link::after {
+  bottom: 3px;
+} 
+.navbar-link,
+.steam-login-button,
+.navbar-profile-button,
+.navbar-logout {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.navbar-link:hover,
+.navbar-link:focus,
+.navbar-link:focus-visible,
+.navbar-link:active,
+.steam-login-button:hover,
+.steam-login-button:focus,
+.steam-login-button:focus-visible,
+.steam-login-button:active,
+.navbar-profile-button:hover,
+.navbar-profile-button:focus,
+.navbar-profile-button:focus-visible,
+.navbar-profile-button:active,
+.navbar-logout:hover,
+.navbar-logout:focus,
+.navbar-logout:focus-visible,
+.navbar-logout:active {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.steam-login-button {
+  height: 40px;
+  padding: 0 15px;
+
+  border: 1px solid #f5c400 !important;
+  border-radius: 9px;
+
+  background: #f5c400 !important;
+  color: #080808 !important;
+
+  font-size: 11px;
+  font-weight: 900;
+
+  cursor: pointer;
+}
+
+.steam-login-button:hover {
+  background: #ffd51a !important;
+  border-color: #ffd51a !important;
+}
+
+.navbar-profile {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.navbar-profile-button {
+  height: 40px;
+
+  display: flex;
+  align-items: center;
+  gap: 9px;
+
+  padding: 0 11px;
+
+  border: 1px solid #242424 !important;
+  border-radius: 10px;
+
+  background: #0b0b0b !important;
+  color: #fff !important;
+
+  cursor: pointer;
+}
+
+.navbar-profile-button:hover {
+  border-color: #303030 !important;
+  background: #0b0b0b !important;
+}
+
+.navbar-avatar {
+  width: 27px;
+  height: 27px;
+
+  overflow: hidden;
+  border-radius: 7px;
+
+  background: #151515;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.navbar-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.navbar-avatar span {
+  color: #f5c400;
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.navbar-profile-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.navbar-profile-info strong {
+  max-width: 110px;
+
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+
+  color: #fff;
+
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.navbar-profile-info span {
+  color: #555;
+
+  font-size: 7px;
+  font-weight: 900;
+
+  letter-spacing: 1px;
+}
+
+.navbar-logout {
+  width: 30px;
+  height: 30px;
+
+  border: 1px solid #242424 !important;
+  border-radius: 8px;
+
+  background: #0b0b0b !important;
+
+  color: #555 !important;
+
+  cursor: pointer;
+}
+
+.navbar-logout:hover {
+  border-color: #333 !important;
+  color: #888 !important;
+  background: #0b0b0b !important;
+} 
+.kd-steam-login {
+  margin-left: auto !important;
+
+  height: 40px !important;
+  padding: 0 16px !important;
+
+  border: 1px solid #f5c400 !important;
+  border-radius: 9px !important;
+
+  background: #f5c400 !important;
+  color: #080808 !important;
+
+  font-size: 11px !important;
+  font-weight: 900 !important;
+
+  cursor: pointer !important;
+
+  outline: none !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+}
+
+.kd-steam-login:hover {
+  background: #f5c400 !important;
+  border-color: #f5c400 !important;
+  color: #080808 !important;
+
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.kd-steam-login:focus,
+.kd-steam-login:focus-visible,
+.kd-steam-login:active {
+  background: #f5c400 !important;
+  border-color: #f5c400 !important;
+  color: #080808 !important;
+
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Убираем глобальный синий стиль button:hover */
+.kd-navbar .kd-steam-login:hover {
+  border-color: #f5c400 !important;
+  background: #f5c400 !important;
+}

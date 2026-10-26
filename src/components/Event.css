@@ -1,0 +1,1084 @@
+.event-page {
+  position: relative;
+  min-height: calc(100vh - 80px);
+  overflow: hidden;
+  background: #050b13;
+  color: #ffffff;
+}
+
+.event-bg {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.event-glow {
+  position: absolute;
+  width: 550px;
+  height: 550px;
+  border-radius: 50%;
+  background: #008cff;
+  filter: blur(180px);
+  opacity: 0.08;
+}
+
+.event-glow-1 {
+  top: -350px;
+  left: 5%;
+}
+
+.event-glow-2 {
+  right: -350px;
+  bottom: -350px;
+}
+
+.event-content {
+  position: relative;
+  z-index: 2;
+  max-width: 1450px;
+  margin: 0 auto;
+  padding: 40px 28px 80px;
+}
+
+/* =========================
+   HEADER
+========================= */
+
+.pass-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 22px;
+}
+
+.pass-label {
+  display: block;
+  margin-bottom: 7px;
+  color: #008cff;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 4px;
+}
+
+.pass-header h1 {
+  margin: 0;
+  color: #ffffff;
+  font-size: 40px;
+  line-height: 1;
+  font-weight: 900;
+  letter-spacing: -1px;
+}
+
+.pass-header-left > span {
+  display: block;
+  margin-top: 9px;
+  color: #60748a;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 2px;
+}
+
+/* =========================
+   LEVEL / XP
+========================= */
+
+.pass-level-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.pass-level {
+  min-width: 90px;
+  padding: 11px 15px;
+  box-sizing: border-box;
+
+  border: 1px solid #173754;
+  border-radius: 11px;
+
+  background: #081522;
+
+  color: #62768b;
+  font-size: 10px;
+  font-weight: 800;
+  text-align: center;
+}
+
+.pass-level strong {
+  display: block;
+  margin-top: 4px;
+  color: #008cff;
+  font-size: 28px;
+  line-height: 1;
+}
+
+.pass-xp {
+  min-width: 125px;
+  padding: 15px 18px;
+  box-sizing: border-box;
+
+  border: 1px solid #1a4b76;
+  border-radius: 11px;
+
+  background: #0a1b2b;
+
+  color: #e9f5ff;
+  font-size: 15px;
+  font-weight: 900;
+  text-align: center;
+}
+
+/* =========================
+   PROGRESS
+========================= */
+
+.pass-progress {
+  padding: 18px 22px 16px;
+  margin-bottom: 18px;
+
+  border: 1px solid #142f49;
+  border-radius: 14px;
+
+  background: #07111d;
+}
+
+.pass-progress-text {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 9px;
+}
+
+.pass-progress-text span {
+  color: #61758a;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 2px;
+}
+
+.pass-progress-text strong {
+  color: #dcecff;
+  font-size: 12px;
+}
+
+.pass-progress-bar {
+  width: 100%;
+  height: 9px;
+  overflow: hidden;
+
+  border-radius: 20px;
+
+  background: #111d29;
+}
+
+.pass-progress-fill {
+  height: 100%;
+  min-width: 0;
+
+  border-radius: 20px;
+
+  background: #008cff;
+
+  box-shadow: 0 0 14px rgba(0, 140, 255, 0.35);
+
+  transition: width 0.4s ease;
+}
+
+.pass-progress-levels {
+  display: flex;
+  justify-content: space-between;
+
+  margin-top: 8px;
+
+  color: #53677b;
+  font-size: 10px;
+}
+
+/* =========================
+   PASS
+========================= */
+
+.pass-container {
+  position: relative;
+
+  padding: 18px 55px 22px;
+
+  border: 1px solid #142f49;
+  border-radius: 17px;
+
+  background: #06101a;
+
+  box-shadow: 0 15px 45px rgba(0, 0, 0, 0.25);
+}
+
+.pass-track {
+  width: 100%;
+
+  overflow-x: auto;
+  overflow-y: hidden;
+
+  scroll-behavior: smooth;
+
+  scrollbar-width: none;
+}
+
+.pass-track::-webkit-scrollbar {
+  display: none;
+}
+
+.pass-row {
+  width: max-content;
+  min-width: 100%;
+}
+
+.pass-row-title {
+  display: flex;
+  align-items: center;
+
+  height: 27px;
+
+  margin-bottom: 7px;
+
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 2px;
+}
+
+.free-title {
+  color: #008cff;
+}
+
+.premium-title {
+  margin-top: 20px;
+  color: #a5b3c2;
+}
+
+.pass-rewards {
+  display: flex;
+  gap: 8px;
+}
+
+/* =========================
+   REWARD CARDS
+========================= */
+
+.pass-reward {
+  position: relative;
+
+  width: 120px;
+  height: 139px;
+
+  flex: 0 0 120px;
+
+  box-sizing: border-box;
+
+  padding: 9px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  border: 1px solid #172d42;
+  border-radius: 11px;
+
+  background: #0a1622;
+
+  opacity: 0.48;
+
+  transition:
+    border-color 0.2s ease,
+    opacity 0.2s ease,
+    background 0.2s ease;
+}
+
+.pass-reward:hover {
+  opacity: 0.9;
+}
+
+.pass-reward-big {
+  width: 137px;
+  height: 150px;
+  flex-basis: 137px;
+
+  border-color: #244b70;
+  background: #0b1927;
+}
+
+.pass-unlocked {
+  opacity: 1;
+
+  border-color: #008cff;
+
+  background: #0b1928;
+
+  box-shadow:
+    inset 0 0 20px rgba(0, 140, 255, 0.04);
+}
+
+.pass-claimed {
+  border-color: #20704d;
+}
+
+/* =========================
+   LEVEL NUMBER
+========================= */
+
+.reward-level {
+  width: 100%;
+
+  color: #53677b;
+
+  font-size: 10px;
+  font-weight: 900;
+
+  text-align: left;
+}
+
+/* =========================
+   ICON
+========================= */
+
+.reward-icon {
+  height: 57px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: #008cff;
+
+  font-size: 34px;
+  font-weight: 900;
+}
+
+.pass-reward-big .reward-icon {
+  height: 64px;
+  font-size: 41px;
+}
+
+/* =========================
+   REWARD NAME
+========================= */
+
+.reward-name {
+  width: 100%;
+  min-height: 18px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: #dbe7f3;
+
+  font-size: 11px;
+  font-weight: 800;
+
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* =========================
+   LOCK
+========================= */
+
+.reward-lock,
+.premium-lock {
+  margin-top: 8px;
+
+  color: #465a6e;
+
+  font-size: 12px;
+}
+
+/* =========================
+   PREMIUM
+========================= */
+
+.premium-row {
+  margin-top: 0;
+}
+
+.premium-reward {
+  background: #0a111b;
+  border-color: #222f3d;
+}
+
+.premium-reward .reward-icon {
+  color: #aebaca;
+}
+
+.premium-reward.pass-unlocked {
+  border-color: #62778d;
+  background: #101b27;
+}
+
+.premium-reward.pass-unlocked .reward-icon {
+  color: #d7e3ef;
+}
+
+/* =========================
+   CLAIM BUTTON
+========================= */
+
+.reward-claim {
+  width: 88px;
+
+  margin-top: 7px;
+  padding: 6px 8px;
+
+  border: 0;
+  border-radius: 7px;
+
+  background: #008cff;
+  color: #ffffff;
+
+  font-size: 10px;
+  font-weight: 800;
+
+  cursor: pointer;
+
+  transition: background 0.2s ease;
+}
+
+.reward-claim:hover {
+  background: #008cff !important;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+.claimed-status {
+  margin-top: 7px;
+
+  color: #35c981;
+
+  font-size: 17px;
+  font-weight: 900;
+}
+
+/* =========================
+   ARROWS
+========================= */
+
+.pass-arrow {
+  position: absolute;
+  top: 50%;
+  z-index: 10;
+
+  width: 38px;
+  height: 65px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  transform: translateY(-50%);
+
+  padding: 0;
+
+  border: 1px solid #173754;
+  border-radius: 9px;
+
+  background: #091724;
+  color: #008cff;
+
+  font-size: 32px;
+  font-weight: 300;
+
+  cursor: pointer;
+}
+
+.pass-arrow:hover {
+  background: #091724 !important;
+  color: #008cff !important;
+  transform: translateY(-50%) !important;
+  box-shadow: none !important;
+}
+
+.pass-arrow-left {
+  left: 9px;
+}
+
+.pass-arrow-right {
+  right: 9px;
+}
+
+/* =========================
+   BOTTOM INFO
+========================= */
+
+.pass-info {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+
+  margin-top: 16px;
+}
+
+.pass-info-item {
+  padding: 14px 18px;
+
+  border: 1px solid #142c43;
+  border-radius: 11px;
+
+  background: #07111d;
+}
+
+.pass-info-item strong {
+  display: block;
+
+  color: #008cff;
+
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.pass-info-item span {
+  display: block;
+
+  margin-top: 4px;
+
+  color: #5a6e82;
+
+  font-size: 10px;
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 800px) {
+  .event-content {
+    padding: 30px 15px 60px;
+  }
+
+  .pass-header {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  .pass-header h1 {
+    font-size: 30px;
+  }
+
+  .pass-level-info {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .pass-container {
+    padding-left: 46px;
+    padding-right: 46px;
+  }
+
+  .pass-info {
+    grid-template-columns: 1fr;
+  }
+} 
+.reward-icon {
+  width: 100%;
+  height: 55px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: #008cff;
+
+  font-size: 30px;
+  font-weight: 900;
+}
+
+.reward-icon img {
+  width: 70px;
+  height: 52px;
+
+  object-fit: contain;
+
+  display: block;
+}
+
+.pass-reward-big .reward-icon img {
+  width: 82px;
+  height: 60px;
+}
+
+.reward-type {
+  margin-top: 2px;
+
+  color: #4e83b3;
+
+  font-size: 7px;
+  font-weight: 900;
+
+  text-align: center;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+.reward-name {
+  width: 100%;
+
+  margin-top: 2px;
+
+  color: #dbe7f3;
+
+  font-size: 9px;
+  font-weight: 800;
+
+  line-height: 12px;
+  text-align: center;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.reward-price {
+  margin-top: 2px;
+
+  color: #627a91;
+
+  font-size: 8px;
+  font-weight: 700;
+} 
+.pass-header h1 {
+  margin: 0;
+  color: #ffffff;
+  font-size: 32px;
+  font-weight: 900;
+  text-shadow: none;
+  filter: none;
+  animation: none;
+} 
+.pass-reward {
+  position: relative;
+  width: 120px;
+  height: 155px;
+  flex: 0 0 120px;
+  box-sizing: border-box;
+  padding: 9px 8px 8px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  border: 1px solid #172d42;
+  border-radius: 11px;
+  background: #0a1622;
+
+  opacity: 0.48;
+
+  overflow: hidden;
+
+  transition:
+    border-color 0.2s ease,
+    opacity 0.2s ease,
+    background 0.2s ease;
+}
+
+.pass-reward:hover {
+  opacity: 0.9;
+}
+
+.pass-reward-big {
+  width: 137px;
+  height: 165px;
+  flex-basis: 137px;
+}
+
+.reward-level {
+  width: 100%;
+  height: 13px;
+  flex-shrink: 0;
+
+  color: #53677b;
+  font-size: 10px;
+  font-weight: 900;
+  text-align: left;
+}
+
+.reward-icon {
+  width: 100%;
+  height: 57px;
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: #008cff;
+  font-size: 30px;
+  font-weight: 900;
+}
+
+.reward-icon img {
+  width: 70px;
+  height: 52px;
+
+  object-fit: contain;
+  display: block;
+}
+
+.pass-reward-big .reward-icon {
+  height: 62px;
+}
+
+.pass-reward-big .reward-icon img {
+  width: 82px;
+  height: 58px;
+}
+
+.reward-type {
+  width: 100%;
+  height: 12px;
+  flex-shrink: 0;
+
+  margin-top: 2px;
+
+  color: #4e83b3;
+  font-size: 7px;
+  font-weight: 900;
+  text-align: center;
+  letter-spacing: 0.5px;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.reward-name {
+  width: 100%;
+  height: 24px;
+  flex-shrink: 0;
+
+  margin-top: 2px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: #dbe7f3;
+
+  font-size: 9px;
+  font-weight: 800;
+  line-height: 12px;
+
+  text-align: center;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.reward-claim {
+  width: 88px;
+  height: 26px;
+  flex-shrink: 0;
+
+  margin-top: 5px;
+  padding: 0 8px;
+
+  border: 0;
+  border-radius: 7px;
+
+  background: #008cff;
+  color: #ffffff;
+
+  font-size: 10px;
+  font-weight: 800;
+
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  box-sizing: border-box;
+}
+
+.reward-claim:hover {
+  background: #008cff !important;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+.reward-lock {
+  height: 26px;
+  margin-top: 5px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: #465a6e;
+  font-size: 12px;
+}
+
+.claimed-status {
+  height: 26px;
+  margin-top: 5px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: #35c981;
+  font-size: 17px;
+  font-weight: 900;
+} 
+.event-page {
+  position: relative;
+  min-height: calc(100vh - 80px);
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 15% 20%, rgba(0, 140, 255, 0.09), transparent 28%),
+    radial-gradient(circle at 85% 70%, rgba(0, 110, 255, 0.07), transparent 30%),
+    #050b13;
+  color: #fff;
+}
+
+/* Фоновые линии */
+.event-page::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.18;
+  background-image:
+    linear-gradient(rgba(0, 140, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 140, 255, 0.035) 1px, transparent 1px);
+  background-size: 45px 45px;
+}
+
+/* Дополнительные световые пятна */
+.event-glow {
+  position: absolute;
+  width: 550px;
+  height: 550px;
+  border-radius: 50%;
+  background: #008cff;
+  filter: blur(180px);
+  opacity: 0.11;
+}
+
+.event-glow-1 {
+  top: -350px;
+  left: 5%;
+}
+
+.event-glow-2 {
+  right: -350px;
+  bottom: -350px;
+}
+
+/* Заголовок */
+.pass-header h1 {
+  margin: 0;
+  color: #ffffff;
+  font-size: 32px;
+  font-weight: 900;
+  text-shadow: none;
+  filter: none;
+  animation: none;
+}
+
+.pass-label {
+  color: #008cff;
+  text-shadow: 0 0 12px rgba(0, 140, 255, 0.35);
+}
+
+/* Прогресс */
+.pass-progress {
+  background:
+    linear-gradient(
+      110deg,
+      rgba(0, 140, 255, 0.055),
+      transparent 45%
+    ),
+    #07111d;
+}
+
+.pass-progress-bar {
+  background: #0c1b2a;
+  box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.5);
+}
+
+.pass-progress-fill {
+  background: linear-gradient(
+    90deg,
+    #006dcc,
+    #008cff,
+    #39aaff
+  );
+  box-shadow:
+    0 0 12px rgba(0, 140, 255, 0.45),
+    0 0 25px rgba(0, 140, 255, 0.18);
+}
+
+/* Сам PASS */
+.pass-container {
+  background:
+    linear-gradient(
+      135deg,
+      rgba(0, 140, 255, 0.045),
+      transparent 35%,
+      rgba(0, 100, 200, 0.025)
+    ),
+    #06101a;
+
+  border-color: #173956;
+
+  box-shadow:
+    0 15px 45px rgba(0, 0, 0, 0.3),
+    inset 0 0 40px rgba(0, 120, 255, 0.025);
+}
+
+/* Карточки */
+.pass-reward {
+  background:
+    linear-gradient(
+      145deg,
+      rgba(0, 140, 255, 0.045),
+      transparent 55%
+    ),
+    #0a1622;
+
+  border-color: #1a344c;
+}
+
+.pass-reward:hover {
+  border-color: #24618e;
+  background:
+    linear-gradient(
+      145deg,
+      rgba(0, 140, 255, 0.09),
+      transparent 60%
+    ),
+    #0b1927;
+}
+
+/* Открытые награды */
+.pass-unlocked {
+  border-color: #008cff;
+  background:
+    linear-gradient(
+      145deg,
+      rgba(0, 140, 255, 0.10),
+      transparent 60%
+    ),
+    #0b1928;
+
+  box-shadow:
+    inset 0 0 22px rgba(0, 140, 255, 0.045),
+    0 0 12px rgba(0, 140, 255, 0.06);
+}
+
+/* Названия типов награды */
+.reward-type {
+  width: 100%;
+  height: 12px;
+  flex-shrink: 0;
+
+  margin-top: 2px;
+
+  color: #579bd0;
+  font-size: 8px;
+  font-weight: 900;
+  text-align: center;
+  letter-spacing: 1px;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Чтобы АПГРЕЙД / КОНТРАКТ было видно */
+.pass-unlocked .reward-type {
+  color: #70baff;
+  text-shadow: 0 0 8px rgba(0, 140, 255, 0.22);
+}
+
+/* Иконки */
+.reward-icon {
+  color: #1598ff;
+  text-shadow: 0 0 15px rgba(0, 140, 255, 0.25);
+}
+
+.pass-unlocked .reward-icon {
+  text-shadow: 0 0 18px rgba(0, 140, 255, 0.4);
+}
+
+/* Кнопка */
+.reward-claim {
+  background: linear-gradient(
+    135deg,
+    #0078dc,
+    #008cff
+  );
+
+  box-shadow:
+    0 0 12px rgba(0, 140, 255, 0.18);
+}
+
+.reward-claim:hover {
+  background: linear-gradient(
+    135deg,
+    #0078dc,
+    #008cff
+  ) !important;
+
+  box-shadow:
+    0 0 16px rgba(0, 140, 255, 0.25) !important;
+}
+
+/* FREE / PREMIUM */
+.free-title {
+  color: #008cff;
+  text-shadow: 0 0 10px rgba(0, 140, 255, 0.2);
+}
+
+.premium-title {
+  color: #9eb2c6;
+}
+
+/* Нижние блоки */
+.pass-info-item {
+  background:
+    linear-gradient(
+      135deg,
+      rgba(0, 140, 255, 0.04),
+      transparent 60%
+    ),
+    #07111d;
+
+  border-color: #17334d;
+}
+
+.pass-info-item strong {
+  text-shadow: 0 0 8px rgba(0, 140, 255, 0.18);
+}
+
+/* Стрелки */
+.pass-arrow {
+  background:
+    linear-gradient(
+      180deg,
+      rgba(0, 140, 255, 0.08),
+      rgba(0, 80, 150, 0.04)
+    ),
+    #091724;
+
+  border-color: #1b4567;
+
+  box-shadow:
+    0 0 12px rgba(0, 140, 255, 0.04);
+}
+
+.pass-arrow:hover {
+  border-color: #2877aa !important;
+  background: #0b1c2b !important;
+}

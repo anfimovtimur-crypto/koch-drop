@@ -1,1377 +1,1662 @@
+/* =========================================================
+   KOCH DROP — UPGRADE PAGE
+   Premium black & gold design
+   Все стили ограничены страницей апгрейда
+========================================================= */
+
 .upgrade-page {
   --yellow: #f5c400;
   --gold: #ffdf50;
+
   position: relative;
   isolation: isolate;
   min-height: 100vh;
   overflow: hidden;
   padding: 26px 28px 76px;
   color: #f3f3f3;
-  background: radial-gradient(ellipse at 50% 12%, rgba(245,196,0,.065), transparent 40%), linear-gradient(180deg,#0b0b0b,#070707 75%);
   color-scheme: dark;
+  background:
+    radial-gradient(ellipse at 50% 12%, rgba(245, 196, 0, 0.065), transparent 40%),
+    linear-gradient(180deg, #0b0b0b, #070707 75%);
 }
-.upgrade-page, .upgrade-page * {
+
+.upgrade-page,
+.upgrade-page * {
   box-sizing: border-box;
   accent-color: var(--yellow);
   -webkit-tap-highlight-color: transparent;
 }
-.upgrade-page button, .upgrade-page input, .upgrade-page select {
+
+.upgrade-page button,
+.upgrade-page input,
+.upgrade-page select {
   font: inherit;
   caret-color: var(--yellow);
 }
+
 .upgrade-page button {
   cursor: pointer;
 }
-.upgrade-page button:focus, .upgrade-page button:focus-visible, .upgrade-page input:focus, .upgrade-page select:focus {
-  outline: none !important;
-  box-shadow: none;
+
+.upgrade-page button:focus,
+.upgrade-page button:focus-visible,
+.upgrade-page input:focus,
+.upgrade-page select:focus {
+  outline: none;
 }
+
 .upgrade-page button:focus-visible {
-  outline: 1px solid rgba(245,196,0,.65) !important;
+  outline: 1px solid rgba(245, 196, 0, 0.65);
   outline-offset: 2px;
 }
+
 .upgrade-page ::selection {
   color: #111;
   background: var(--yellow);
 }
+
 .upgrade-page button:disabled {
   cursor: not-allowed;
 }
+
+/* =========================
+   Заголовок и логотип
+========================= */
+
 .upgrade-page .upgrade-heading {
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  min-height:76px;
-  margin:0 auto 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 76px;
+  margin: 0 auto 30px;
 }
+
 .upgrade-page .upgrade-logo {
-  display:block;
-  width:180px;
-  max-width:65%;
-  height:76px;
-  object-fit:contain;
+  display: block;
+  width: 180px;
+  max-width: 65%;
+  height: 76px;
+  object-fit: contain;
 }
+
+/* =========================
+   Основная зона апгрейда
+========================= */
+
 .upgrade-page .upgrade-stage {
-  display:grid;
-  grid-template-columns:minmax(0,260px) minmax(300px,1fr) minmax(0,260px);
-  align-items:center;
-  gap:clamp(18px,3vw,42px);
-  width:min(1260px,100%);
-  margin:0 auto;
+  display: grid;
+  grid-template-columns: minmax(0, 260px) minmax(300px, 1fr) minmax(0, 260px);
+  align-items: center;
+  gap: clamp(18px, 3vw, 42px);
+  width: min(1260px, 100%);
+  margin: 0 auto;
 }
+
 .upgrade-page .selected-side {
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  min-width:0;
-  width:100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 0;
+  width: 100%;
 }
+
 .upgrade-page .selected-title {
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:9px;
-  margin-bottom:15px;
-  color:#999;
-  font-size:10px;
-  font-weight:850;
-  letter-spacing:2px;
-}
-.upgrade-page .selected-title::before,.upgrade-page .selected-title::after {
-  content:"";
-  width:19px;
-  height:1px;
-  background:rgba(245,196,0,.42);
-}
-.upgrade-page .selected-card {
-  position:relative;
-  isolation:isolate;
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-  align-items:center;
-  overflow:hidden;
-  width:100%;
-  max-width:260px;
-  min-height:292px;
-  padding:20px 15px;
-  border:1px solid rgba(255,255,255,.08);
-  border-radius:14px;
-  background:radial-gradient(ellipse at 50% 35%,rgba(245,196,0,.07),transparent 58%),linear-gradient(145deg,#151515,#0b0b0b 78%);
-  color:#eee;
-  text-align:center;
-  box-shadow:0 18px 45px rgba(0,0,0,.3);
-  transition:border-color .2s,transform .2s,background .2s;
-}
-.upgrade-page .selected-card::before {
-  content:"";
-  position:absolute;
-  z-index:-1;
-  top:25%;
-  left:50%;
-  width:170px;
-  height:170px;
-  transform:translateX(-50%);
-  border-radius:50%;
-  background:rgba(245,196,0,.08);
-  filter:blur(48px);
-  pointer-events:none;
-}
-.upgrade-page .selected-card:hover {
-  border-color:rgba(245,196,0,.38);
-}
-.upgrade-page .selected-card.selected {
-  border-color:rgba(245,196,0,.55);
-}
-.upgrade-page .selected-card.empty {
-  border-style:dashed;
-  border-color:rgba(255,255,255,.14);
-  background:linear-gradient(145deg,#111,#090909);
-  box-shadow:none;
-}
-.upgrade-page .selected-card img {
-  display:block;
-  width:100%;
-  max-width:205px;
-  height:150px;
-  object-fit:contain;
-  filter:drop-shadow(0 12px 18px rgba(0,0,0,.48));
-}
-.upgrade-page .selected-name {
-  max-width:100%;
-  margin-top:17px;
-  color:#ededed;
-  font-size:13px;
-  font-weight:750;
-  overflow-wrap:anywhere;
-}
-.upgrade-page .selected-price {
-  margin-top:9px;
-  color:var(--gold);
-  font-size:15px;
-  font-weight:900;
-  font-variant-numeric:tabular-nums;
-}
-.upgrade-page .selected-hint {
-  margin-top:9px;
-  color:#777;
-  font-size:9px;
-}
-.upgrade-page .empty-symbol {
-  display:grid;
-  place-items:center;
-  width:46px;
-  height:46px;
-  margin-bottom:17px;
-  border:1px solid rgba(245,196,0,.28);
-  border-radius:50%;
-  background:rgba(245,196,0,.055);
-  color:var(--yellow);
-  font-size:25px;
-}
-.upgrade-page .selected-card.empty span {
-  max-width:190px;
-  color:#777;
-  font-size:12px;
-  line-height:1.7;
-}
-.upgrade-page .upgrade-wheel-area {
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  min-width:0;
-}
-.upgrade-page .upgrade-wheel {
-  position:relative;
-  isolation:isolate;
-  display:grid;
-  place-items:center;
-  flex:0 0 auto;
-  width:min(360px,100%);
-  aspect-ratio:1;
-  filter:drop-shadow(0 22px 35px rgba(0,0,0,.65));
-}
-.upgrade-page .upgrade-wheel::before {
-  content:"";
-  position:absolute;
-  z-index:-1;
-  inset:3%;
-  border-radius:50%;
-  background:rgba(245,196,0,.075);
-  filter:blur(38px);
-}
-.upgrade-page .upgrade-wheel::after {
-  content:"";
-  position:absolute;
-  z-index:6;
-  inset:-5px;
-  border:1px solid rgba(245,196,0,.22);
-  border-radius:50%;
-  box-shadow:0 0 0 4px rgba(255,255,255,.012),0 0 22px rgba(245,196,0,.035);
-  pointer-events:none;
-}
-.upgrade-page .upgrade-wheel-rim {
-  position:absolute;
-  z-index:0;
-  inset:0;
-  border:9px solid #1b1b1b;
-  border-radius:50%;
-  background:linear-gradient(135deg,#393939,#111 35%,#292929 65%,#080808);
-  box-shadow:inset 0 0 0 1px rgba(255,255,255,.17),inset 0 0 0 4px #111,0 0 0 1px rgba(245,196,0,.4);
-}
-.upgrade-page .upgrade-wheel-track {
-  position:absolute;
-  z-index:1;
-  inset:10px;
-  overflow:hidden;
-  border:1px solid rgba(255,255,255,.09);
-  border-radius:50%;
-  background:#0c0c0c;
-}
-.upgrade-page .upgrade-wheel-spin {
-  position:absolute;
-  inset:0;
-  overflow:hidden;
-  border-radius:50%;
-}
-.upgrade-page .upgrade-wheel-ring {
-  position:absolute;
-  inset:0;
-  border-radius:50%;
-  box-shadow:inset 0 0 0 1px rgba(255,255,255,.08),inset 0 0 35px rgba(0,0,0,.3);
-}
-.upgrade-page .upgrade-wheel-separators {
-  position:absolute;
-  inset:0;
-  border:1px solid rgba(255,255,255,.08);
-  border-radius:50%;
-  background:repeating-conic-gradient(from 0deg,transparent 0deg 29.65deg,rgba(255,255,255,.14) 29.65deg 30deg);
-  pointer-events:none;
-}
-.upgrade-page .upgrade-wheel-inner-arrow {
-  position:absolute;
-  z-index:2;
-  top:19%;
-  left:50%;
-  width:17px;
-  height:31%;
-  transform-origin:50% 100%;
-  border:0;
-  border-radius:0;
-  background:linear-gradient(90deg,#8e6800 0%,#e8b900 24%,#fff0a0 50%,#f5c400 76%,#8e6800 100%);
-  clip-path:polygon(50% 0%,100% 28%,62% 23%,62% 100%,38% 100%,38% 23%,0% 28%);
-  filter:drop-shadow(0 0 4px rgba(245,196,0,.45)) drop-shadow(0 2px 3px rgba(0,0,0,.8));
-  will-change:transform;
-}
-.upgrade-page .upgrade-wheel-center {
-  position:absolute;
-  z-index:4;
-  top:50%;
-  left:50%;
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-  align-items:center;
-  width:41%;
-  height:41%;
-  transform:translate(-50%,-50%);
-  border:1px solid rgba(245,196,0,.55);
-  border-radius:50%;
-  background:radial-gradient(circle at 35% 25%,#303030,#151515 54%,#090909);
-  box-shadow:inset 0 0 0 4px #101010,inset 0 0 0 5px rgba(255,255,255,.045),0 0 0 4px #171717,0 0 0 5px rgba(245,196,0,.12);
-  pointer-events:none;
-}
-.upgrade-page .upgrade-wheel-center::before {
-  content:"";
-  position:absolute;
-  inset:7px;
-  border:1px solid rgba(255,255,255,.07);
-  border-radius:50%;
-}
-.upgrade-page .upgrade-wheel-center-mark {
-  margin-bottom:5px;
-  color:rgba(245,196,0,.72);
-  font-size:10px;
-  font-weight:950;
-  letter-spacing:3px;
-}
-.upgrade-page .upgrade-wheel-chance {
-  color:#ffe16a;
-  font-size:clamp(25px,3vw,33px);
-  font-weight:950;
-  letter-spacing:-1px;
-  line-height:1;
-  font-variant-numeric:tabular-nums;
-  text-shadow:0 0 14px rgba(245,196,0,.12);
-}
-.upgrade-page .upgrade-wheel-label {
-  margin-top:7px;
-  color:#999;
-  font-size:9px;
-  font-weight:850;
-  letter-spacing:2px;
-}
-.upgrade-page .upgrade-chances {
-  display:flex;
-  justify-content:center;
-  flex-wrap:wrap;
-  gap:7px;
-  margin-top:24px;
-}
-.upgrade-page .upgrade-chance-button {
-  min-width:47px;
-  height:34px;
-  padding:0 13px;
-  border:1px solid #303030;
-  border-radius:7px;
-  background:#101010;
-  color:#999;
-  font-size:11px;
-  font-weight:850;
-  transition:color .18s,border-color .18s,background .18s;
-}
-.upgrade-page .upgrade-chance-button:hover:not(:disabled) {
-  color:#fff;
-  border-color:rgba(245,196,0,.5);
-  background:#19170d;
-}
-.upgrade-page .upgrade-chance-button.active {
-  color:#ffdf50;
-  border-color:rgba(245,196,0,.75);
-  background:rgba(245,196,0,.1);
-}
-.upgrade-page .upgrade-chance-button:disabled {
-  opacity:.4;
-}
-.upgrade-page .upgrade-chance-note {
-  min-height:16px;
-  margin-top:12px;
-  color:#999;
-  font-size:10px;
-  text-align:center;
-}
-.upgrade-page .upgrade-button {
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  position:relative;
-  z-index:8;
-  width:min(260px,100%);
-  min-height:54px;
-  margin-top:17px;
-  padding:0 18px;
-  border:1px solid #ffe77b;
-  border-radius:10px;
-  background:linear-gradient(180deg,#ffdf45 0%,#f5c400 55%,#dfaa00 100%);
-  color:#151100;
-  font-size:12px;
-  font-weight:950;
-  letter-spacing:1.7px;
-  box-shadow:0 8px 24px rgba(245,196,0,.18),inset 0 1px 0 rgba(255,255,255,.45);
-  transition:transform .18s,filter .18s,box-shadow .18s;
-}
-.upgrade-page .upgrade-button:hover:not(:disabled) {
-  transform:translateY(-2px);
-  filter:brightness(1.07);
-  box-shadow:0 12px 30px rgba(245,196,0,.25),inset 0 1px 0 rgba(255,255,255,.5);
-}
-.upgrade-page .upgrade-button:disabled {
-  border-color:#6e5b16;
-  background:linear-gradient(180deg,#625318,#39300f);
-  color:#c5b46b;
-  box-shadow:none;
-  filter:none;
-}
-.upgrade-page .upgrade-fair-note {
-  margin-top:10px;
-  color:#686868;
-  font-size:8px;
-  letter-spacing:.5px;
-  text-align:center;
-}
-.upgrade-page .upgrade-bet-panel {
-  width:100%;
-  max-width:260px;
-  margin-top:13px;
-  padding:13px;
-  border:1px solid rgba(255,255,255,.075);
-  border-radius:10px;
-  background:linear-gradient(145deg,#121212,#090909);
-}
-.upgrade-page .upgrade-bet-panel>label {
-  display:block;
-  margin-bottom:9px;
-  color:#c8a92b;
-  font-size:9px;
-  font-weight:900;
-  letter-spacing:1.7px;
-}
-.upgrade-page .upgrade-bet-input-wrap {
-  display:flex;
-  align-items:center;
-  gap:8px;
-  padding:0 10px;
-  border:1px solid #303030;
-  border-radius:8px;
-  background:#090909;
-}
-.upgrade-page .upgrade-bet-input-wrap:focus-within {
-  border-color:rgba(245,196,0,.55);
-}
-.upgrade-page .upgrade-bet-input-wrap input {
-  width:100%;
-  min-width:0;
-  height:39px;
-  border:0;
-  outline:none;
-  background:transparent;
-  color:#f4d64c;
-  font-size:13px;
-  font-weight:800;
-}
-.upgrade-page .upgrade-bet-input-wrap input:focus {
-  box-shadow:none;
-}
-.upgrade-page .upgrade-bet-input-wrap>span {
-  color:#b6a04b;
-  font-size:11px;
-  font-weight:800;
-}
-.upgrade-page .upgrade-bet-presets {
-  display:grid;
-  grid-template-columns:repeat(3,minmax(0,1fr));
-  gap:5px;
-  margin-top:8px;
-}
-.upgrade-page .upgrade-bet-presets button {
-  min-height:28px;
-  padding:0 4px;
-  border:1px solid #2d2d2d;
-  border-radius:6px;
-  background:#151515;
-  color:#aaa;
-  font-size:9px;
-  font-weight:800;
-}
-.upgrade-page .upgrade-bet-presets button:hover:not(:disabled) {
-  border-color:rgba(245,196,0,.45);
-  color:#ffdf50;
-  background:#19170d;
-}
-.upgrade-page .upgrade-bet-panel p {
-  margin:9px 0 0;
-  color:#696969;
-  font-size:8px;
-  line-height:1.5;
-}
-.upgrade-page .upgrade-settings-toggle {
-  display:flex;
-  align-items:center;
-  gap:10px;
-  width:100%;
-  max-width:260px;
-  min-height:42px;
-  margin-bottom:12px;
-  padding:0 13px;
-  border:1px solid #292929;
-  border-radius:9px;
-  background:linear-gradient(135deg,#171717,#0d0d0d);
-  color:#c7c7c7;
-  font-size:10px;
-  font-weight:850;
-  letter-spacing:1.2px;
-  text-align:left;
-  transition:border-color .2s,background .2s,color .2s;
-}
-.upgrade-page .upgrade-settings-toggle:hover,.upgrade-page .upgrade-settings-toggle.active {
-  border-color:rgba(245,196,0,.55);
-  background:linear-gradient(135deg,#201d10,#10100c);
-  color:#ffdf50;
-}
-.upgrade-page .settings-toggle-icon {
-  display:grid;
-  place-items:center;
-  width:25px;
-  height:25px;
-  border:1px solid rgba(245,196,0,.25);
-  border-radius:7px;
-  background:rgba(245,196,0,.08);
-  color:#f5c400;
-  font-size:15px;
-}
-.upgrade-page .settings-toggle-arrow {
-  margin-left:auto;
-  color:#f5c400;
-  font-size:16px;
-}
-.upgrade-page .upgrade-settings-panel {
-  width:100%;
-  max-width:260px;
-  margin-bottom:18px;
-  padding:14px;
-  border:1px solid rgba(245,196,0,.2);
-  border-radius:11px;
-  background:radial-gradient(ellipse at top right,rgba(245,196,0,.055),transparent 55%),linear-gradient(145deg,#151515,#0a0a0a);
-  box-shadow:0 12px 30px rgba(0,0,0,.25);
-  animation:koch-settings-in .18s ease-out both;
-}
-.upgrade-page .settings-panel-heading {
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:8px;
-  margin-bottom:14px;
-  color:#e9e9e9;
-  font-size:9px;
-  font-weight:900;
-  letter-spacing:.8px;
-}
-.upgrade-page .settings-panel-status {
-  color:#c7a51b;
-  font-size:8px;
-}
-.upgrade-page .quick-spin-option {
-  display:flex;
-  align-items:center;
-  gap:12px;
-  cursor:pointer;
-}
-.upgrade-page .quick-spin-copy {
-  display:flex;
-  flex:1;
-  flex-direction:column;
-  gap:5px;
-  min-width:0;
-}
-.upgrade-page .quick-spin-copy strong {
-  color:#eee;
-  font-size:11px;
-  font-weight:800;
-}
-.upgrade-page .quick-spin-copy small {
-  color:#818181;
-  font-size:9px;
-  line-height:1.5;
-}
-.upgrade-page .quick-spin-option input {
-  position:absolute;
-  width:1px;
-  height:1px;
-  opacity:0;
-  pointer-events:none;
-}
-.upgrade-page .quick-spin-switch {
-  position:relative;
-  flex:0 0 auto;
-  width:36px;
-  height:20px;
-  border:1px solid #3a3a3a;
-  border-radius:20px;
-  background:#242424;
-  transition:background .2s,border-color .2s;
-}
-.upgrade-page .quick-spin-switch::after {
-  content:"";
-  position:absolute;
-  top:3px;
-  left:3px;
-  width:12px;
-  height:12px;
-  border-radius:50%;
-  background:#aaa;
-  transition:transform .2s,background .2s;
-}
-.upgrade-page .quick-spin-option input:checked+.quick-spin-switch {
-  border-color:#d7b000;
-  background:#5b4900;
-}
-.upgrade-page .quick-spin-option input:checked+.quick-spin-switch::after {
-  transform:translateX(16px);
-  background:#ffe16a;
-}
-.upgrade-page .settings-spin-time {
-  display:flex;
-  justify-content:space-between;
-  gap:8px;
-  margin-top:14px;
-  padding-top:11px;
-  border-top:1px solid rgba(255,255,255,.07);
-  color:#858585;
-  font-size:9px;
-}
-.upgrade-page .settings-spin-time strong {
-  color:#f3d54c;
-}
-@keyframes koch-settings-in {
-  from {
-    opacity:0;
-    transform:translateY(-4px);
-  }
-  to {
-    opacity:1;
-    transform:translateY(0);
-  }
-}
-.upgrade-page .upgrade-selection {
-  display:grid;
-  grid-template-columns:minmax(0,1fr) minmax(0,1fr);
-  gap:20px;
-  align-items:start;
-  width:min(1260px,100%);
-  margin:64px auto 0;
-}
-.upgrade-page .selection-panel {
-  position:relative;
-  min-width:0;
-  min-height:300px;
-  padding:21px;
-  border:1px solid rgba(255,255,255,.065);
-  border-radius:13px;
-  background:linear-gradient(145deg,#121212,#090909 85%);
-  box-shadow:0 20px 55px rgba(0,0,0,.17);
-}
-.upgrade-page .selection-panel::before {
-  content:"";
-  position:absolute;
-  top:-1px;
-  left:20px;
-  width:100px;
-  height:1px;
-  background:linear-gradient(90deg,rgba(245,196,0,.75),rgba(245,196,0,.08),transparent);
-}
-.upgrade-page .selection-header {
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:14px;
-  min-width:0;
-  padding-bottom:17px;
-  margin-bottom:16px;
-  border-bottom:1px solid rgba(255,255,255,.065);
-}
-.upgrade-page .selection-header h2 {
-  margin:0 0 5px;
-  color:#f5f5f5;
-  font-size:15px;
-  font-weight:850;
-}
-.upgrade-page .selection-header span {
-  display:block;
-  color:#888;
-  font-size:10px;
-  line-height:1.6;
-}
-.upgrade-page .market-label {
-  flex-shrink:0;
-  padding:7px 9px;
-  border:1px solid rgba(245,196,0,.2);
-  border-radius:6px;
-  background:rgba(245,196,0,.045);
-  color:#d7b52a;
-  font-size:9px;
-  font-weight:850;
-  letter-spacing:1.5px;
-}
-.upgrade-page .upgrade-tabs {
-  display:flex;
-  flex-shrink:0;
-  gap:5px;
-  padding:3px;
-  border:1px solid #202020;
-  border-radius:8px;
-  background:#090909;
-}
-.upgrade-page .upgrade-tab {
-  min-height:32px;
-  padding:0 12px;
-  border:1px solid transparent;
-  border-radius:6px;
-  background:transparent;
-  color:#999;
-  font-size:10px;
-  font-weight:800;
-  white-space:nowrap;
-}
-.upgrade-page .upgrade-tab:hover {
-  border-color:#303030;
-  background:#171717;
-  color:#eee;
-}
-.upgrade-page .upgrade-tab.active {
-  border-color:rgba(245,196,0,.6);
-  background:rgba(245,196,0,.11);
-  color:#ffda3f;
-}
-.upgrade-page .upgrade-filters {
-  display:flex;
-  flex-wrap:wrap;
-  align-items:center;
-  gap:10px;
-  margin-bottom:14px;
-}
-.upgrade-page input[type="text"],.upgrade-page select {
-  max-width:100%;
-  min-width:0;
-  height:40px;
-  padding:0 12px;
-  border:1px solid #292929;
-  border-radius:8px;
-  background:#0b0b0b;
-  color:#e9e9e9;
-  font-size:11px;
-  color-scheme:dark;
-  transition:border-color .18s;
-}
-.upgrade-page .upgrade-filters input[type="text"] {
-  flex:1 1 200px;
-}
-.upgrade-page .upgrade-filters select {
-  flex:1 1 145px;
-}
-.upgrade-page input[type="text"]::placeholder {
-  color:#666;
-}
-.upgrade-page input[type="text"]:hover,.upgrade-page select:hover {
-  border-color:#414141;
-}
-.upgrade-page input[type="text"]:focus,.upgrade-page select:focus {
-  border-color:rgba(245,196,0,.55);
-  box-shadow:0 0 0 2px rgba(245,196,0,.045);
-}
-.upgrade-page select option {
-  background:#101010;
-  color:#eee;
-}
-.upgrade-page .market-toolbar {
-  display:flex;
-  flex-wrap:wrap;
-  gap:8px;
-  margin-bottom:14px;
-}
-.upgrade-page .market-action-button {
-  min-height:36px;
-  padding:0 12px;
-  border:1px solid #303030;
-  border-radius:8px;
-  background:#111;
-  color:#f5c400;
-  font-size:10px;
-  font-weight:850;
-}
-.upgrade-page .market-action-button:hover {
-  border-color:rgba(245,196,0,.5);
-  background:#19170d;
-}
-.upgrade-page .cart-section {
-  margin-bottom:14px;
-  padding:14px;
-  border:1px solid rgba(245,196,0,.14);
-  border-radius:10px;
-  background:#0c0c0c;
-}
-.upgrade-page .cart-title {
-  margin-bottom:12px;
-  color:var(--yellow);
-  font-size:12px;
-  font-weight:850;
-}
-.upgrade-page .cart-empty {
-  padding:15px 0;
-  color:#777;
-  font-size:11px;
-}
-.upgrade-page .selection-grid {
-  display:grid;
-  grid-template-columns:repeat(4,minmax(0,1fr));
-  gap:9px;
-  align-items:stretch;
-}
-.upgrade-page .selection-item {
-  position:relative;
-  display:flex;
-  flex-direction:column;
-  justify-content:flex-start;
-  align-items:center;
-  min-width:0;
-  min-height:144px;
-  padding:11px 8px;
-  border:1px solid rgba(255,255,255,.065);
-  border-radius:9px;
-  background:linear-gradient(145deg,#151515,#0c0c0c);
-  color:#eee;
-  text-align:center;
-  box-shadow:inset 0 1px rgba(255,255,255,.015);
-  transition:transform .18s,border-color .18s,background .18s,box-shadow .18s;
-}
-.upgrade-page button.selection-item:hover:not(:disabled) {
-  transform:translateY(-2px);
-  border-color:rgba(245,196,0,.35);
-  background:linear-gradient(145deg,#19180f,#10100d);
-  box-shadow:0 9px 24px rgba(0,0,0,.22);
-}
-.upgrade-page .selection-item.chosen {
-  border-color:rgba(245,196,0,.72);
-  background:linear-gradient(145deg,rgba(245,196,0,.1),#10100c);
-  box-shadow:inset 0 0 0 1px rgba(245,196,0,.045);
-}
-.upgrade-page .selection-item:disabled {
-  opacity:.45;
-}
-.upgrade-page .selection-item img {
-  display:block;
-  width:100%;
-  max-width:95px;
-  height:68px;
-  object-fit:contain;
-  filter:drop-shadow(0 8px 12px rgba(0,0,0,.4));
-  transition:transform .18s;
-}
-.upgrade-page button.selection-item:hover:not(:disabled) img {
-  transform:translateY(-2px) scale(1.035);
-}
-.upgrade-page .selection-item span {
-  display:block;
-  width:100%;
-  margin-top:8px;
-  color:#c9c9c9;
-  font-size:10px;
-  line-height:1.5;
-  font-weight:650;
-  overflow-wrap:anywhere;
-}
-.upgrade-page .selection-item strong {
-  display:block;
-  margin-top:5px;
-  color:#f5cf28;
-  font-size:11px;
-  font-weight:850;
-  font-variant-numeric:tabular-nums;
-}
-.upgrade-page .inventory-buy-button {
-  width:100%;
-  min-height:30px;
-  margin-top:8px;
-  padding:5px 7px;
-  border:1px solid rgba(245,196,0,.26);
-  border-radius:6px;
-  background:rgba(245,196,0,.07);
-  color:#eac52a;
-  font-size:10px;
-  font-weight:800;
-  transition:background .16s,border-color .16s,color .16s;
-}
-.upgrade-page .inventory-buy-button:hover:not(:disabled) {
-  border-color:rgba(245,196,0,.6);
-  background:rgba(245,196,0,.14);
-  color:#ffdf4f;
-}
-.upgrade-page .inventory-buy-button:disabled {
-  border-color:#292929;
-  background:#151515;
-  color:#777;
-}
-.upgrade-page .remove-cart-button {
-  border-color:#303030;
-  background:#141414;
-  color:#aaa;
-}
-.upgrade-page .empty-selection {
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  min-height:150px;
-  padding:20px;
-  color:#888;
-  font-size:12px;
-  line-height:1.7;
-  text-align:center;
-}
-.upgrade-page .market-loading {
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  gap:10px;
-  min-height:56px;
-  padding:12px;
-  color:#c9b45a;
-  font-size:11px;
-}
-.upgrade-page .market-loader {
-  width:17px;
-  height:17px;
-  border:2px solid #38311a;
-  border-top-color:var(--yellow);
-  border-radius:50%;
-  animation:koch-market-spin .75s linear infinite;
-}
-@keyframes koch-market-spin {
-  to {
-    transform:rotate(360deg);
-  }
-}
-.upgrade-page .market-error {
-  margin:12px 0;
-  padding:12px;
-  border:1px solid #493a12;
-  border-radius:8px;
-  background:#151208;
-  color:#e2c95c;
-  font-size:11px;
-  line-height:1.6;
-}
-.upgrade-page .upgrade-result-overlay {
-  position:fixed;
-  z-index:9999;
-  inset:0;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  padding:20px;
-  background:rgba(0,0,0,.84);
-  backdrop-filter:blur(9px);
-  -webkit-backdrop-filter:blur(9px);
-}
-.upgrade-page .upgrade-result-modal {
-  position:relative;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  overflow:auto;
-  max-height:90vh;
-  width:min(410px,100%);
-  padding:30px 26px 26px;
-  border:1px solid rgba(245,196,0,.32);
-  border-radius:16px;
-  background:radial-gradient(ellipse at 50% 0%,rgba(245,196,0,.075),transparent 48%),linear-gradient(145deg,#151515,#090909);
-  box-shadow:0 30px 100px rgba(0,0,0,.65);
-  animation:koch-result-appear .24s ease-out both;
-  text-align:center;
-}
-.upgrade-page .upgrade-result-symbol {
-  display:grid;
-  place-items:center;
-  width:45px;
-  height:45px;
-  margin-bottom:16px;
-  border:1px solid rgba(245,196,0,.35);
-  border-radius:50%;
-  background:rgba(245,196,0,.08);
-  color:var(--yellow);
-  font-size:24px;
-  font-weight:800;
-}
-.upgrade-page .upgrade-result-symbol.fail {
-  border-color:rgba(255,255,255,.12);
-  background:#171717;
-  color:#999;
-}
-.upgrade-page .upgrade-result-title {
-  color:#f5cf32;
-  font-size:11px;
-  font-weight:900;
-  letter-spacing:2px;
-}
-.upgrade-page .upgrade-result-image {
-  display:block;
-  width:210px;
-  max-width:100%;
-  height:165px;
-  margin:15px auto;
-  object-fit:contain;
-  filter:drop-shadow(0 14px 22px rgba(0,0,0,.5));
-}
-.upgrade-page .upgrade-result-modal h2 {
-  margin:8px 0;
-  color:#f5f5f5;
-  font-size:16px;
-  line-height:1.5;
-}
-.upgrade-page .upgrade-result-price {
-  margin-top:5px;
-  color:#ffda3d;
-  font-size:18px;
-  font-weight:900;
-  font-variant-numeric:tabular-nums;
-}
-.upgrade-page .upgrade-result-actions {
-  display:flex;
-  width:100%;
-  gap:10px;
-  margin-top:23px;
-}
-.upgrade-page .result-sell-button,.upgrade-page .result-inventory-button {
-  flex:1;
-  min-width:0;
-  min-height:45px;
-  padding:0 12px;
-  border-radius:8px;
-  font-size:11px;
-  font-weight:850;
-  transition:background .16s,border-color .16s,transform .16s;
-}
-.upgrade-page .result-sell-button {
-  border:1px solid #f5c400;
-  background:#f5c400;
-  color:#111;
-}
-.upgrade-page .result-sell-button:hover {
-  background:#ffda35;
-  transform:translateY(-1px);
-}
-.upgrade-page .result-inventory-button {
-  border:1px solid #303030;
-  background:#171717;
-  color:#eaeaea;
-}
-.upgrade-page .result-inventory-button:hover {
-  border-color:rgba(245,196,0,.5);
-  background:#1c1b15;
-}
-.upgrade-page .result-inventory-button.only {
-  width:100%;
-  margin-top:22px;
-}
-.upgrade-page .upgrade-fail-text {
-  margin-top:20px;
-  color:#aaa;
-  line-height:1.7;
-}
-.upgrade-page .fair-proof {
-  width:100%;
-  margin-top:18px;
-  padding-top:12px;
-  border-top:1px solid #292929;
-  color:#aaa;
-  text-align:left;
-  font-size:9px;
-  overflow-wrap:anywhere;
-}
-.upgrade-page .fair-proof summary {
-  cursor:pointer;
-  color:#e2c64c;
-  font-weight:800;
-}
-.upgrade-page .fair-proof p {
-  margin:8px 0;
-}
-.upgrade-page .fair-proof code {
-  color:#e8e8e8;
-  overflow-wrap:anywhere;
-}
-.upgrade-page .fair-proof small {
-  color:#777;
-  line-height:1.5;
-}
-@keyframes koch-result-appear {
-  from {
-    opacity:0;
-    transform:translateY(9px) scale(.985);
-  }
-  to {
-    opacity:1;
-    transform:translateY(0) scale(1);
-  }
-}
-@media (max-width:1100px) {
-  .upgrade-page {
-    padding-right:22px;
-    padding-left:22px;
-  }
-  .upgrade-page .upgrade-stage {
-    grid-template-columns:minmax(0,220px) minmax(250px,1fr) minmax(0,220px);
-    gap:20px;
-  }
-  .upgrade-page .selected-card {
-    min-height:265px;
-  }
-  .upgrade-page .upgrade-wheel {
-    width:min(300px,100%);
-  }
-  .upgrade-page .selection-panel {
-    padding:16px;
-  }
-  .upgrade-page .selection-grid {
-    grid-template-columns:repeat(3,minmax(0,1fr));
-  }
-}
-@media (max-width:900px) {
-  .upgrade-page {
-    padding:24px 20px 60px;
-  }
-  .upgrade-page .upgrade-stage {
-    grid-template-columns:repeat(2,minmax(0,1fr));
-    gap:22px;
-  }
-  .upgrade-page .upgrade-stage>.selected-side:first-child {
-    grid-column:1;
-    grid-row:1;
-  }
-  .upgrade-page .upgrade-stage>.selected-side:last-child {
-    grid-column:2;
-    grid-row:1;
-  }
-  .upgrade-page .upgrade-wheel-area {
-    grid-column:1 / -1;
-    grid-row:2;
-    margin-top:8px;
-  }
-  .upgrade-page .selected-card {
-    max-width:none;
-    min-height:250px;
-  }
-  .upgrade-page .upgrade-wheel {
-    width:min(310px,82vw);
-  }
-  .upgrade-page .upgrade-selection {
-    grid-template-columns:minmax(0,1fr);
-    gap:16px;
-    margin-top:42px;
-  }
-}
-@media (max-width:600px) {
-  .upgrade-page {
-    padding:18px 12px 45px;
-  }
-  .upgrade-page .upgrade-heading {
-    min-height:62px;
-    margin-bottom:24px;
-  }
-  .upgrade-page .upgrade-logo {
-    width:150px;
-    height:62px;
-  }
-  .upgrade-page .upgrade-stage {
-    gap:12px;
-  }
-  .upgrade-page .selected-title {
-    gap:5px;
-    margin-bottom:10px;
-    font-size:9px;
-    letter-spacing:1px;
-  }
-  .upgrade-page .selected-title::before,.upgrade-page .selected-title::after {
-    width:10px;
-  }
-  .upgrade-page .selected-card {
-    min-height:205px;
-    padding:12px 8px;
-    border-radius:10px;
-  }
-  .upgrade-page .selected-card img {
-    height:100px;
-  }
-  .upgrade-page .selected-name {
-    margin-top:12px;
-    font-size:11px;
-  }
-  .upgrade-page .selected-price {
-    margin-top:6px;
-    font-size:12px;
-  }
-  .upgrade-page .selected-card.empty span {
-    font-size:10px;
-  }
-  .upgrade-page .upgrade-wheel {
-    width:min(285px,76vw);
-  }
-  .upgrade-page .upgrade-wheel-rim {
-    border-width:6px;
-  }
-  .upgrade-page .upgrade-wheel-inner-arrow {
-    top:19%;
-    width:15px;
-    height:31%;
-  }
-  .upgrade-page .upgrade-wheel-chance {
-    font-size:25px;
-  }
-  .upgrade-page .upgrade-chances {
-    gap:6px;
-    margin-top:18px;
-  }
-  .upgrade-page .upgrade-chance-button {
-    min-width:43px;
-    height:32px;
-    padding:0 10px;
-  }
-  .upgrade-page .upgrade-button {
-    width:min(270px,100%);
-    min-height:49px;
-    margin-top:16px;
-  }
-  .upgrade-page .upgrade-selection {
-    margin-top:36px;
-  }
-  .upgrade-page .selection-panel {
-    padding:13px;
-    border-radius:10px;
-  }
-  .upgrade-page .selection-header {
-    align-items:flex-start;
-    flex-wrap:wrap;
-    gap:12px;
-  }
-  .upgrade-page .selection-grid {
-    grid-template-columns:repeat(2,minmax(0,1fr));
-    gap:8px;
-  }
-  .upgrade-page .selection-item {
-    min-height:136px;
-    padding:9px 7px;
-  }
-  .upgrade-page .selection-item img {
-    height:61px;
-  }
-  .upgrade-page .selection-item span,.upgrade-page .selection-item strong {
-    font-size:10px;
-  }
-  .upgrade-page .upgrade-filters input[type="text"] {
-    flex-basis:100%;
-    width:100%;
-  }
-  .upgrade-page .upgrade-filters select {
-    flex:1 1 125px;
-    width:100%;
-  }
-  .upgrade-page .upgrade-result-modal {
-    padding:25px 17px 19px;
-    border-radius:13px;
-  }
-  .upgrade-page .upgrade-result-image {
-    height:140px;
-  }
-  .upgrade-page .upgrade-settings-toggle,.upgrade-page .upgrade-settings-panel,.upgrade-page .upgrade-bet-panel {
-    max-width:none;
-  }
-}
-@media (max-width:360px) {
-  .upgrade-page .selected-card {
-    min-height:185px;
-  }
-  .upgrade-page .selected-card img {
-    height:83px;
-  }
-  .upgrade-page .upgrade-wheel {
-    width:min(245px,75vw);
-  }
-  .upgrade-page .selection-panel {
-    padding:10px;
-  }
-}
-
-
-/* Visual fixes: richer gold, roomier center label, and a visible outer rotating pointer. */
-.upgrade-page .upgrade-wheel-ring {
-  background: conic-gradient(from 0deg, #fff0a6 0deg, #ffd84a 8deg, #f5bd00 22deg, #d99b00 38deg, #f5c400 52deg, #171717 52deg, #101010 100%);
-}
-.upgrade-page .upgrade-wheel-inner-arrow {
-  z-index: 9;
-  top: -3.5%;
-  left: 50%;
-  width: 24px;
-  height: 39%;
-  transform-origin: 50% 63%;
-  border: 1px solid rgba(255, 245, 190, .9);
-  border-radius: 8px 8px 5px 5px;
-  background: linear-gradient(90deg, #805900 0%, #d69e00 17%, #fff1a3 42%, #ffdc42 58%, #e7ad00 82%, #805900 100%);
-  clip-path: polygon(50% 0%, 100% 22%, 70% 22%, 70% 72%, 100% 86%, 50% 100%, 0% 86%, 30% 72%, 30% 22%, 0% 22%);
-  filter: drop-shadow(0 0 5px rgba(255, 207, 35, .7)) drop-shadow(0 3px 4px rgba(0, 0, 0, .9));
-  pointer-events: none;
-}
-.upgrade-page .upgrade-wheel-center {
-  width: 44%;
-  height: 44%;
-  padding: 12px;
-  gap: 0;
-  overflow: hidden;
-  border: 1px solid rgba(255, 219, 75, .8);
-  background: radial-gradient(circle at 32% 22%, #393323 0%, #1b1911 43%, #090909 78%);
-  box-shadow: inset 0 0 0 4px #101010, inset 0 0 0 5px rgba(255, 226, 110, .1), 0 0 0 4px #171717, 0 0 0 5px rgba(245, 196, 0, .2), 0 0 22px rgba(245, 196, 0, .08);
-}
-.upgrade-page .upgrade-wheel-center-mark {
-  margin-bottom: 4px;
-  font-size: clamp(8px, 1vw, 10px);
-  letter-spacing: 2px;
-  line-height: 1.1;
-}
-.upgrade-page .upgrade-wheel-chance {
-  max-width: 100%;
-  font-size: clamp(20px, 2.5vw, 29px);
-  letter-spacing: -1.2px;
-  line-height: 1.05;
-  white-space: nowrap;
-}
-.upgrade-page .upgrade-wheel-label {
-  margin-top: 5px;
-  font-size: 8px;
-  letter-spacing: 1.7px;
-  line-height: 1.1;
-}
-@media (max-width: 600px) {
-  .upgrade-page .upgrade-wheel-center { width: 46%; height: 46%; padding: 8px; }
-  .upgrade-page .upgrade-wheel-center-mark { font-size: 8px; }
-  .upgrade-page .upgrade-wheel-chance { font-size: clamp(18px, 6vw, 25px); }
-  .upgrade-page .upgrade-wheel-label { font-size: 7px; letter-spacing: 1.3px; }
-  .upgrade-page .upgrade-wheel-inner-arrow { width: 20px; height: 38%; top: -3%; }
-}
-/* Стрелка над рулеткой Koch Drop */
-.upgrade-wheel {
-  position: relative;
-  overflow: visible !important;
-}
-
-.upgrade-pointer {
-  position: absolute;
-  top: -43px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 44px;
-  height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #ffd600;
+  gap: 9px;
+  margin-bottom: 15px;
+  color: #999;
+  font-size: 10px;
+  font-weight: 850;
+  letter-spacing: 2px;
+}
+
+.upgrade-page .selected-title::before,
+.upgrade-page .selected-title::after {
+  content: "";
+  width: 19px;
+  height: 1px;
+  background: rgba(245, 196, 0, 0.42);
+}
+
+/* =========================
+   Карточки выбранных предметов
+========================= */
+
+.upgrade-page .selected-card {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  width: 100%;
+  max-width: 260px;
+  min-height: 292px;
+  padding: 20px 15px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  background:
+    radial-gradient(ellipse at 50% 35%, rgba(245, 196, 0, 0.07), transparent 58%),
+    linear-gradient(145deg, #151515, #0b0b0b 78%);
+  color: #eee;
+  text-align: center;
+  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.3);
+  transition: border-color 0.2s, transform 0.2s, background 0.2s;
+}
+
+.upgrade-page .selected-card::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  top: 25%;
+  left: 50%;
+  width: 170px;
+  height: 170px;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  background: rgba(245, 196, 0, 0.08);
+  filter: blur(48px);
+  pointer-events: none;
+}
+
+.upgrade-page .selected-card:hover {
+  border-color: rgba(245, 196, 0, 0.38);
+}
+
+.upgrade-page .selected-card.selected {
+  border-color: rgba(245, 196, 0, 0.55);
+}
+
+.upgrade-page .selected-card.empty {
+  border-style: dashed;
+  border-color: rgba(255, 255, 255, 0.14);
+  background: linear-gradient(145deg, #111, #090909);
+  box-shadow: none;
+}
+
+.upgrade-page .selected-card img {
+  display: block;
+  width: 100%;
+  max-width: 205px;
+  height: 150px;
+  object-fit: contain;
+  filter: drop-shadow(0 12px 18px rgba(0, 0, 0, 0.48));
+}
+
+.upgrade-page .selected-name {
+  max-width: 100%;
+  margin-top: 17px;
+  color: #ededed;
+  font-size: 13px;
+  font-weight: 750;
+  overflow-wrap: anywhere;
+}
+
+.upgrade-page .selected-price {
+  margin-top: 9px;
+  color: var(--gold);
+  font-size: 15px;
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
+}
+
+.upgrade-page .selected-hint {
+  margin-top: 9px;
+  color: #777;
+  font-size: 9px;
+}
+
+.upgrade-page .empty-symbol {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  margin-bottom: 17px;
+  border: 1px solid rgba(245, 196, 0, 0.28);
+  border-radius: 50%;
+  background: rgba(245, 196, 0, 0.055);
+  color: var(--yellow);
+  font-size: 25px;
+}
+
+.upgrade-page .selected-card.empty span {
+  max-width: 190px;
+  color: #777;
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+/* =========================
+   Колесо рулетки
+========================= */
+
+.upgrade-page .upgrade-wheel-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+}
+
+.upgrade-page .upgrade-wheel {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: min(360px, 100%);
+  aspect-ratio: 1;
+  overflow: visible;
+  filter: drop-shadow(0 22px 35px rgba(0, 0, 0, 0.65));
+}
+
+.upgrade-page .upgrade-wheel::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 3%;
+  border-radius: 50%;
+  background: rgba(245, 196, 0, 0.075);
+  filter: blur(38px);
+}
+
+.upgrade-page .upgrade-wheel::after {
+  content: "";
+  position: absolute;
+  z-index: 6;
+  inset: -5px;
+  border: 1px solid rgba(245, 196, 0, 0.22);
+  border-radius: 50%;
+  box-shadow:
+    0 0 0 4px rgba(255, 255, 255, 0.012),
+    0 0 22px rgba(245, 196, 0, 0.035);
+  pointer-events: none;
+}
+
+.upgrade-page .upgrade-wheel-rim {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  border: 9px solid #1b1b1b;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #393939, #111 35%, #292929 65%, #080808);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.17),
+    inset 0 0 0 4px #111,
+    0 0 0 1px rgba(245, 196, 0, 0.4);
+}
+
+.upgrade-page .upgrade-wheel-track {
+  position: absolute;
+  z-index: 1;
+  inset: 10px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 50%;
+  background: #0c0c0c;
+}
+
+.upgrade-page .upgrade-wheel-spin {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: 50%;
+}
+
+.upgrade-page .upgrade-wheel-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 0deg,
+    #fff0a6 0deg,
+    #ffd84a 8deg,
+    #f5bd00 22deg,
+    #d99b00 38deg,
+    #f5c400 52deg,
+    #171717 52deg,
+    #101010 100%
+  );
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.08),
+    inset 0 0 35px rgba(0, 0, 0, 0.3);
+}
+
+.upgrade-page .upgrade-wheel-separators {
+  position: absolute;
+  inset: 0;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 50%;
+  background: repeating-conic-gradient(
+    from 0deg,
+    transparent 0deg 29.65deg,
+    rgba(255, 255, 255, 0.14) 29.65deg 30deg
+  );
+  pointer-events: none;
+}
+
+/* Стрелка на колесе */
+
+.upgrade-page .upgrade-wheel-inner-arrow {
+  position: absolute;
+  z-index: 9;
+  top: -3%;
+  left: 50%;
+  width: 20px;
+  height: 38%;
+  transform-origin: 50% 63%;
+  border: 1px solid rgba(255, 245, 190, 0.9);
+  border-radius: 8px 8px 5px 5px;
+  background: linear-gradient(
+    90deg,
+    #805900 0%,
+    #d69e00 17%,
+    #fff1a3 42%,
+    #ffdc42 58%,
+    #e7ad00 82%,
+    #805900 100%
+  );
+  clip-path: polygon(
+    50% 0%,
+    100% 22%,
+    70% 22%,
+    70% 72%,
+    100% 86%,
+    50% 100%,
+    0% 86%,
+    30% 72%,
+    30% 22%,
+    0% 22%
+  );
+  filter:
+    drop-shadow(0 0 5px rgba(255, 207, 35, 0.7))
+    drop-shadow(0 3px 4px rgba(0, 0, 0, 0.9));
+  pointer-events: none;
+}
+
+/* Внешняя стрелка, если она присутствует в JSX */
+
+.upgrade-page .upgrade-pointer {
+  position: absolute;
   z-index: 50;
+  top: -43px;
+  left: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 40px;
+  transform: translateX(-50%);
+  color: #ffd600;
   pointer-events: none;
   filter:
     drop-shadow(0 0 4px rgba(255, 214, 0, 0.65))
     drop-shadow(0 0 10px rgba(255, 214, 0, 0.2));
 }
 
-.upgrade-pointer-svg {
+.upgrade-page .upgrade-pointer-svg {
   display: block;
   width: 100%;
   height: 100%;
   overflow: visible;
 }
 
-/* Стрелка не вращается вместе с рулеткой */
-.upgrade-pointer,
-.upgrade-pointer * {
+.upgrade-page .upgrade-pointer,
+.upgrade-page .upgrade-pointer * {
   animation: none !important;
-} 
-.upgrade-button:hover {
-  box-shadow: none !important;
-  filter: none !important;
-  outline: none !important;
 }
 
-.upgrade-button:focus,
-.upgrade-button:focus-visible,
-.upgrade-button:active {
-  outline: none !important;
-  box-shadow: none !important;
-} 
-.upgrade-page button,
-.upgrade-page button:hover,
-.upgrade-page button:focus,
-.upgrade-page button:focus-visible,
-.upgrade-page button:active {
-  background-color: #f5c400 !important;
-  color: #080808 !important;
-  border-color: #f5c400 !important;
-  outline-color: #f5c400 !important;
-  box-shadow: none !important;
-  -webkit-tap-highlight-color: transparent !important;
+/* Центр колеса */
+
+.upgrade-page .upgrade-wheel-center {
+  position: absolute;
+  z-index: 4;
+  top: 50%;
+  left: 50%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 0;
+  width: 44%;
+  height: 44%;
+  padding: 12px;
+  overflow: hidden;
+  transform: translate(-50%, -50%);
+  border: 1px solid rgba(255, 219, 75, 0.8);
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 32% 22%,
+    #393323 0%,
+    #1b1911 43%,
+    #090909 78%
+  );
+  box-shadow:
+    inset 0 0 0 4px #101010,
+    inset 0 0 0 5px rgba(255, 226, 110, 0.1),
+    0 0 0 4px #171717,
+    0 0 0 5px rgba(245, 196, 0, 0.2),
+    0 0 22px rgba(245, 196, 0, 0.08);
+  pointer-events: none;
+}
+
+.upgrade-page .upgrade-wheel-center::before {
+  content: "";
+  position: absolute;
+  inset: 7px;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 50%;
+}
+
+.upgrade-page .upgrade-wheel-center-mark {
+  margin-bottom: 4px;
+  color: rgba(245, 196, 0, 0.72);
+  font-size: clamp(8px, 1vw, 10px);
+  font-weight: 950;
+  letter-spacing: 2px;
+  line-height: 1.1;
+}
+
+.upgrade-page .upgrade-wheel-chance {
+  max-width: 100%;
+  color: #ffe16a;
+  font-size: clamp(20px, 2.5vw, 29px);
+  font-weight: 950;
+  letter-spacing: -1.2px;
+  line-height: 1.05;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+  text-shadow: 0 0 14px rgba(245, 196, 0, 0.12);
+}
+
+.upgrade-page .upgrade-wheel-label {
+  margin-top: 5px;
+  color: #999;
+  font-size: 8px;
+  font-weight: 850;
+  letter-spacing: 1.7px;
+  line-height: 1.1;
+}
+
+/* =========================
+   Шансы и кнопка апгрейда
+========================= */
+
+.upgrade-page .upgrade-chances {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-top: 24px;
+}
+
+.upgrade-page .upgrade-chance-button {
+  min-width: 47px;
+  height: 34px;
+  padding: 0 13px;
+  border: 1px solid #303030;
+  border-radius: 7px;
+  background: #101010;
+  color: #999;
+  font-size: 11px;
+  font-weight: 850;
+  transition: color 0.18s, border-color 0.18s, background 0.18s;
+}
+
+.upgrade-page .upgrade-chance-button:hover:not(:disabled) {
+  border-color: rgba(245, 196, 0, 0.5);
+  background: #19170d;
+  color: #fff;
+}
+
+.upgrade-page .upgrade-chance-button.active {
+  border-color: rgba(245, 196, 0, 0.75);
+  background: rgba(245, 196, 0, 0.1);
+  color: #ffdf50;
+}
+
+.upgrade-page .upgrade-chance-button:disabled {
+  opacity: 0.4;
+}
+
+.upgrade-page .upgrade-chance-note {
+  min-height: 16px;
+  margin-top: 12px;
+  color: #999;
+  font-size: 10px;
+  text-align: center;
+}
+
+.upgrade-page .upgrade-button {
+  position: relative;
+  z-index: 8;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: min(260px, 100%);
+  min-height: 54px;
+  margin-top: 17px;
+  padding: 0 18px;
+  border: 1px solid #ffe77b;
+  border-radius: 10px;
+  background: linear-gradient(180deg, #ffdf45 0%, #f5c400 55%, #dfaa00 100%);
+  color: #151100;
+  font-size: 12px;
+  font-weight: 950;
+  letter-spacing: 1.7px;
+  box-shadow:
+    0 8px 24px rgba(245, 196, 0, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.45);
+  transition: transform 0.18s, filter 0.18s, box-shadow 0.18s;
+}
+
+.upgrade-page .upgrade-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  filter: brightness(1.07);
+  box-shadow:
+    0 12px 30px rgba(245, 196, 0, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+.upgrade-page .upgrade-button:disabled {
+  border-color: #6e5b16;
+  background: linear-gradient(180deg, #625318, #39300f);
+  color: #c5b46b;
+  box-shadow: none;
+  filter: none;
+}
+
+.upgrade-page .upgrade-fair-note {
+  margin-top: 10px;
+  color: #686868;
+  font-size: 8px;
+  letter-spacing: 0.5px;
+  text-align: center;
+}
+
+/* =========================
+   Ставка
+========================= */
+
+.upgrade-page .upgrade-bet-panel {
+  width: 100%;
+  max-width: 260px;
+  margin-top: 13px;
+  padding: 13px;
+  border: 1px solid rgba(255, 255, 255, 0.075);
+  border-radius: 10px;
+  background: linear-gradient(145deg, #121212, #090909);
+}
+
+.upgrade-page .upgrade-bet-panel > label {
+  display: block;
+  margin-bottom: 9px;
+  color: #c8a92b;
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: 1.7px;
+}
+
+.upgrade-page .upgrade-bet-input-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 10px;
+  border: 1px solid #303030;
+  border-radius: 8px;
+  background: #090909;
+}
+
+.upgrade-page .upgrade-bet-input-wrap:focus-within {
+  border-color: rgba(245, 196, 0, 0.55);
+}
+
+.upgrade-page .upgrade-bet-input-wrap input {
+  width: 100%;
+  min-width: 0;
+  height: 39px;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: #f4d64c;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.upgrade-page .upgrade-bet-input-wrap input:focus {
+  box-shadow: none;
+}
+
+.upgrade-page .upgrade-bet-input-wrap > span {
+  color: #b6a04b;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.upgrade-page .upgrade-bet-presets {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 5px;
+  margin-top: 8px;
+}
+
+.upgrade-page .upgrade-bet-presets button {
+  min-height: 28px;
+  padding: 0 4px;
+  border: 1px solid #2d2d2d;
+  border-radius: 6px;
+  background: #151515;
+  color: #aaa;
+  font-size: 9px;
+  font-weight: 800;
+}
+
+.upgrade-page .upgrade-bet-presets button:hover:not(:disabled) {
+  border-color: rgba(245, 196, 0, 0.45);
+  background: #19170d;
+  color: #ffdf50;
+}
+
+.upgrade-page .upgrade-bet-panel p {
+  margin: 9px 0 0;
+  color: #696969;
+  font-size: 8px;
+  line-height: 1.5;
+}
+
+/* =========================
+   Настройки и быстрый спин
+========================= */
+
+.upgrade-page .upgrade-settings-toggle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  max-width: 260px;
+  min-height: 42px;
+  margin-bottom: 12px;
+  padding: 0 13px;
+  border: 1px solid #292929;
+  border-radius: 9px;
+  background: linear-gradient(135deg, #171717, #0d0d0d);
+  color: #c7c7c7;
+  font-size: 10px;
+  font-weight: 850;
+  letter-spacing: 1.2px;
+  text-align: left;
+  transition: border-color 0.2s, background 0.2s, color 0.2s;
+}
+
+.upgrade-page .upgrade-settings-toggle:hover,
+.upgrade-page .upgrade-settings-toggle.active {
+  border-color: rgba(245, 196, 0, 0.55);
+  background: linear-gradient(135deg, #201d10, #10100c);
+  color: #ffdf50;
+}
+
+.upgrade-page .settings-toggle-icon {
+  display: grid;
+  place-items: center;
+  width: 25px;
+  height: 25px;
+  border: 1px solid rgba(245, 196, 0, 0.25);
+  border-radius: 7px;
+  background: rgba(245, 196, 0, 0.08);
+  color: #f5c400;
+  font-size: 15px;
+}
+
+.upgrade-page .settings-toggle-arrow {
+  margin-left: auto;
+  color: #f5c400;
+  font-size: 16px;
+}
+
+.upgrade-page .upgrade-settings-panel {
+  width: 100%;
+  max-width: 260px;
+  margin-bottom: 18px;
+  padding: 14px;
+  border: 1px solid rgba(245, 196, 0, 0.2);
+  border-radius: 11px;
+  background:
+    radial-gradient(ellipse at top right, rgba(245, 196, 0, 0.055), transparent 55%),
+    linear-gradient(145deg, #151515, #0a0a0a);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+  animation: koch-settings-in 0.18s ease-out both;
+}
+
+.upgrade-page .settings-panel-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 14px;
+  color: #e9e9e9;
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: 0.8px;
+}
+
+.upgrade-page .settings-panel-status {
+  color: #c7a51b;
+  font-size: 8px;
+}
+
+.upgrade-page .quick-spin-option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+}
+
+.upgrade-page .quick-spin-copy {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+}
+
+.upgrade-page .quick-spin-copy strong {
+  color: #eee;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.upgrade-page .quick-spin-copy small {
+  color: #818181;
+  font-size: 9px;
+  line-height: 1.5;
+}
+
+.upgrade-page .quick-spin-option input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.upgrade-page .quick-spin-switch {
+  position: relative;
+  flex: 0 0 auto;
+  width: 36px;
+  height: 20px;
+  border: 1px solid #3a3a3a;
+  border-radius: 20px;
+  background: #242424;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.upgrade-page .quick-spin-switch::after {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #aaa;
+  transition: transform 0.2s, background 0.2s;
+}
+
+.upgrade-page .quick-spin-option input:checked + .quick-spin-switch {
+  border-color: #d7b000;
+  background: #5b4900;
+}
+
+.upgrade-page .quick-spin-option input:checked + .quick-spin-switch::after {
+  transform: translateX(16px);
+  background: #ffe16a;
+}
+
+.upgrade-page .settings-spin-time {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 14px;
+  padding-top: 11px;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+  color: #858585;
+  font-size: 9px;
+}
+
+.upgrade-page .settings-spin-time strong {
+  color: #f3d54c;
+}
+
+@keyframes koch-settings-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* =========================
+   Панели выбора предметов
+========================= */
+
+.upgrade-page .upgrade-selection {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 20px;
+  align-items: start;
+  width: min(1260px, 100%);
+  margin: 64px auto 0;
+}
+
+.upgrade-page .selection-panel {
+  position: relative;
+  min-width: 0;
+  min-height: 300px;
+  padding: 21px;
+  border: 1px solid rgba(255, 255, 255, 0.065);
+  border-radius: 13px;
+  background: linear-gradient(145deg, #121212, #090909 85%);
+  box-shadow: 0 20px 55px rgba(0, 0, 0, 0.17);
+}
+
+.upgrade-page .selection-panel::before {
+  content: "";
+  position: absolute;
+  top: -1px;
+  left: 20px;
+  width: 100px;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(245, 196, 0, 0.75), rgba(245, 196, 0, 0.08), transparent);
+}
+
+.upgrade-page .selection-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+  padding-bottom: 17px;
+  margin-bottom: 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.065);
+}
+
+.upgrade-page .selection-header h2 {
+  margin: 0 0 5px;
+  color: #f5f5f5;
+  font-size: 15px;
+  font-weight: 850;
+}
+
+.upgrade-page .selection-header span {
+  display: block;
+  color: #888;
+  font-size: 10px;
+  line-height: 1.6;
+}
+
+.upgrade-page .market-label {
+  flex-shrink: 0;
+  padding: 7px 9px;
+  border: 1px solid rgba(245, 196, 0, 0.2);
+  border-radius: 6px;
+  background: rgba(245, 196, 0, 0.045);
+  color: #d7b52a;
+  font-size: 9px;
+  font-weight: 850;
+  letter-spacing: 1.5px;
+}
+
+.upgrade-page .upgrade-tabs {
+  display: flex;
+  flex-shrink: 0;
+  gap: 5px;
+  padding: 3px;
+  border: 1px solid #202020;
+  border-radius: 8px;
+  background: #090909;
+}
+
+.upgrade-page .upgrade-tab {
+  min-height: 32px;
+  padding: 0 12px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: transparent;
+  color: #999;
+  font-size: 10px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.upgrade-page .upgrade-tab:hover {
+  border-color: #303030;
+  background: #171717;
+  color: #eee;
+}
+
+.upgrade-page .upgrade-tab.active {
+  border-color: rgba(245, 196, 0, 0.6);
+  background: rgba(245, 196, 0, 0.11);
+  color: #ffda3f;
+}
+
+/* Фильтры рынка */
+
+.upgrade-page .upgrade-filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.upgrade-page input[type="text"],
+.upgrade-page select {
+  max-width: 100%;
+  min-width: 0;
+  height: 40px;
+  padding: 0 12px;
+  border: 1px solid #292929;
+  border-radius: 8px;
+  background: #0b0b0b;
+  color: #e9e9e9;
+  font-size: 11px;
+  color-scheme: dark;
+  transition: border-color 0.18s;
+}
+
+.upgrade-page .upgrade-filters input[type="text"] {
+  flex: 1 1 200px;
+}
+
+.upgrade-page .upgrade-filters select {
+  flex: 1 1 145px;
+}
+
+.upgrade-page input[type="text"]::placeholder {
+  color: #666;
+}
+
+.upgrade-page input[type="text"]:hover,
+.upgrade-page select:hover {
+  border-color: #414141;
+}
+
+.upgrade-page input[type="text"]:focus,
+.upgrade-page select:focus {
+  border-color: rgba(245, 196, 0, 0.55);
+  box-shadow: 0 0 0 2px rgba(245, 196, 0, 0.045);
+}
+
+.upgrade-page select option {
+  background: #101010;
+  color: #eee;
+}
+
+.upgrade-page .market-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.upgrade-page .market-action-button {
+  min-height: 36px;
+  padding: 0 12px;
+  border: 1px solid #303030;
+  border-radius: 8px;
+  background: #111;
+  color: #f5c400;
+  font-size: 10px;
+  font-weight: 850;
+}
+
+.upgrade-page .market-action-button:hover {
+  border-color: rgba(245, 196, 0, 0.5);
+  background: #19170d;
+}
+
+/* Корзина */
+
+.upgrade-page .cart-section {
+  margin-bottom: 14px;
+  padding: 14px;
+  border: 1px solid rgba(245, 196, 0, 0.14);
+  border-radius: 10px;
+  background: #0c0c0c;
+}
+
+.upgrade-page .cart-title {
+  margin-bottom: 12px;
+  color: var(--yellow);
+  font-size: 12px;
+  font-weight: 850;
+}
+
+.upgrade-page .cart-empty {
+  padding: 15px 0;
+  color: #777;
+  font-size: 11px;
+}
+
+/* Сетка предметов */
+
+.upgrade-page .selection-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 9px;
+  align-items: stretch;
+}
+
+.upgrade-page .selection-item {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  min-width: 0;
+  min-height: 144px;
+  padding: 11px 8px;
+  border: 1px solid rgba(255, 255, 255, 0.065);
+  border-radius: 9px;
+  background: linear-gradient(145deg, #151515, #0c0c0c);
+  color: #eee;
+  text-align: center;
+  box-shadow: inset 0 1px rgba(255, 255, 255, 0.015);
+  transition: transform 0.18s, border-color 0.18s, background 0.18s, box-shadow 0.18s;
+}
+
+.upgrade-page button.selection-item:hover:not(:disabled) {
+  transform: translateY(-2px);
+  border-color: rgba(245, 196, 0, 0.35);
+  background: linear-gradient(145deg, #19180f, #10100d);
+  box-shadow: 0 9px 24px rgba(0, 0, 0, 0.22);
+}
+
+.upgrade-page .selection-item.chosen {
+  border-color: rgba(245, 196, 0, 0.72);
+  background: linear-gradient(145deg, rgba(245, 196, 0, 0.1), #10100c);
+  box-shadow: inset 0 0 0 1px rgba(245, 196, 0, 0.045);
+}
+
+.upgrade-page .selection-item:disabled {
+  opacity: 0.45;
+}
+
+.upgrade-page .selection-item img {
+  display: block;
+  width: 100%;
+  max-width: 95px;
+  height: 68px;
+  object-fit: contain;
+  filter: drop-shadow(0 8px 12px rgba(0, 0, 0, 0.4));
+  transition: transform 0.18s;
+}
+
+.upgrade-page button.selection-item:hover:not(:disabled) img {
+  transform: translateY(-2px) scale(1.035);
+}
+
+.upgrade-page .selection-item span {
+  display: block;
+  width: 100%;
+  margin-top: 8px;
+  color: #c9c9c9;
+  font-size: 10px;
+  line-height: 1.5;
+  font-weight: 650;
+  overflow-wrap: anywhere;
+}
+
+.upgrade-page .selection-item strong {
+  display: block;
+  margin-top: 5px;
+  color: #f5cf28;
+  font-size: 11px;
+  font-weight: 850;
+  font-variant-numeric: tabular-nums;
+}
+
+.upgrade-page .inventory-buy-button {
+  width: 100%;
+  min-height: 30px;
+  margin-top: 8px;
+  padding: 5px 7px;
+  border: 1px solid rgba(245, 196, 0, 0.26);
+  border-radius: 6px;
+  background: rgba(245, 196, 0, 0.07);
+  color: #eac52a;
+  font-size: 10px;
+  font-weight: 800;
+  transition: background 0.16s, border-color 0.16s, color 0.16s;
+}
+
+.upgrade-page .inventory-buy-button:hover:not(:disabled) {
+  border-color: rgba(245, 196, 0, 0.6);
+  background: rgba(245, 196, 0, 0.14);
+  color: #ffdf4f;
+}
+
+.upgrade-page .inventory-buy-button:disabled {
+  border-color: #292929;
+  background: #151515;
+  color: #777;
+}
+
+.upgrade-page .remove-cart-button {
+  border-color: #303030;
+  background: #141414;
+  color: #aaa;
+}
+
+.upgrade-page .empty-selection {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 150px;
+  padding: 20px;
+  color: #888;
+  font-size: 12px;
+  line-height: 1.7;
+  text-align: center;
+}
+
+/* Загрузка и ошибки рынка */
+
+.upgrade-page .market-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  min-height: 56px;
+  padding: 12px;
+  color: #c9b45a;
+  font-size: 11px;
+}
+
+.upgrade-page .market-loader {
+  width: 17px;
+  height: 17px;
+  border: 2px solid #38311a;
+  border-top-color: var(--yellow);
+  border-radius: 50%;
+  animation: koch-market-spin 0.75s linear infinite;
+}
+
+@keyframes koch-market-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.upgrade-page .market-error {
+  margin: 12px 0;
+  padding: 12px;
+  border: 1px solid #493a12;
+  border-radius: 8px;
+  background: #151208;
+  color: #e2c95c;
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+/* =========================
+   Окно результата
+========================= */
+
+.upgrade-page .upgrade-result-overlay {
+  position: fixed;
+  z-index: 9999;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.84);
+  backdrop-filter: blur(9px);
+  -webkit-backdrop-filter: blur(9px);
+}
+
+.upgrade-page .upgrade-result-modal {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow: auto;
+  max-height: 90vh;
+  width: min(410px, 100%);
+  padding: 30px 26px 26px;
+  border: 1px solid rgba(245, 196, 0, 0.32);
+  border-radius: 16px;
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(245, 196, 0, 0.075), transparent 48%),
+    linear-gradient(145deg, #151515, #090909);
+  box-shadow: 0 30px 100px rgba(0, 0, 0, 0.65);
+  animation: koch-result-appear 0.24s ease-out both;
+  text-align: center;
+}
+
+.upgrade-page .upgrade-result-symbol {
+  display: grid;
+  place-items: center;
+  width: 45px;
+  height: 45px;
+  margin-bottom: 16px;
+  border: 1px solid rgba(245, 196, 0, 0.35);
+  border-radius: 50%;
+  background: rgba(245, 196, 0, 0.08);
+  color: var(--yellow);
+  font-size: 24px;
+  font-weight: 800;
+}
+
+.upgrade-page .upgrade-result-symbol.fail {
+  border-color: rgba(255, 255, 255, 0.12);
+  background: #171717;
+  color: #999;
+}
+
+.upgrade-page .upgrade-result-title {
+  color: #f5cf32;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 2px;
+}
+
+.upgrade-page .upgrade-result-image {
+  display: block;
+  width: 210px;
+  max-width: 100%;
+  height: 165px;
+  margin: 15px auto;
+  object-fit: contain;
+  filter: drop-shadow(0 14px 22px rgba(0, 0, 0, 0.5));
+}
+
+.upgrade-page .upgrade-result-modal h2 {
+  margin: 8px 0;
+  color: #f5f5f5;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.upgrade-page .upgrade-result-price {
+  margin-top: 5px;
+  color: #ffda3d;
+  font-size: 18px;
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
+}
+
+.upgrade-page .upgrade-result-actions {
+  display: flex;
+  width: 100%;
+  gap: 10px;
+  margin-top: 23px;
+}
+
+.upgrade-page .result-sell-button,
+.upgrade-page .result-inventory-button {
+  flex: 1;
+  min-width: 0;
+  min-height: 45px;
+  padding: 0 12px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 850;
+  transition: background 0.16s, border-color 0.16s, transform 0.16s;
+}
+
+.upgrade-page .result-sell-button {
+  border: 1px solid #f5c400;
+  background: #f5c400;
+  color: #111;
+}
+
+.upgrade-page .result-sell-button:hover {
+  background: #ffda35;
+  transform: translateY(-1px);
+}
+
+.upgrade-page .result-inventory-button {
+  border: 1px solid #303030;
+  background: #171717;
+  color: #eaeaea;
+}
+
+.upgrade-page .result-inventory-button:hover {
+  border-color: rgba(245, 196, 0, 0.5);
+  background: #1c1b15;
+}
+
+.upgrade-page .result-inventory-button.only {
+  width: 100%;
+  margin-top: 22px;
+}
+
+.upgrade-page .upgrade-fail-text {
+  margin-top: 20px;
+  color: #aaa;
+  line-height: 1.7;
+}
+
+.upgrade-page .fair-proof {
+  width: 100%;
+  margin-top: 18px;
+  padding-top: 12px;
+  border-top: 1px solid #292929;
+  color: #aaa;
+  text-align: left;
+  font-size: 9px;
+  overflow-wrap: anywhere;
+}
+
+.upgrade-page .fair-proof summary {
+  cursor: pointer;
+  color: #e2c64c;
+  font-weight: 800;
+}
+
+.upgrade-page .fair-proof p {
+  margin: 8px 0;
+}
+
+.upgrade-page .fair-proof code {
+  color: #e8e8e8;
+  overflow-wrap: anywhere;
+}
+
+.upgrade-page .fair-proof small {
+  color: #777;
+  line-height: 1.5;
+}
+
+@keyframes koch-result-appear {
+  from {
+    opacity: 0;
+    transform: translateY(9px) scale(0.985);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* =========================
+   Адаптация под планшеты
+========================= */
+
+@media (max-width: 1100px) {
+  .upgrade-page {
+    padding-right: 22px;
+    padding-left: 22px;
+  }
+
+  .upgrade-page .upgrade-stage {
+    grid-template-columns: minmax(0, 220px) minmax(250px, 1fr) minmax(0, 220px);
+    gap: 20px;
+  }
+
+  .upgrade-page .selected-card {
+    min-height: 265px;
+  }
+
+  .upgrade-page .upgrade-wheel {
+    width: min(300px, 100%);
+  }
+
+  .upgrade-page .selection-panel {
+    padding: 16px;
+  }
+
+  .upgrade-page .selection-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+/* =========================
+   Адаптация под небольшие экраны
+========================= */
+
+@media (max-width: 900px) {
+  .upgrade-page {
+    padding: 24px 20px 60px;
+  }
+
+  .upgrade-page .upgrade-stage {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 22px;
+  }
+
+  .upgrade-page .upgrade-stage > .selected-side:first-child {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .upgrade-page .upgrade-stage > .selected-side:last-child {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .upgrade-page .upgrade-wheel-area {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    margin-top: 8px;
+  }
+
+  .upgrade-page .selected-card {
+    max-width: none;
+    min-height: 250px;
+  }
+
+  .upgrade-page .upgrade-wheel {
+    width: min(310px, 82vw);
+  }
+
+  .upgrade-page .upgrade-selection {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+    margin-top: 42px;
+  }
+}
+
+/* =========================
+   Мобильная версия
+========================= */
+
+@media (max-width: 600px) {
+  .upgrade-page {
+    padding: 18px 12px 45px;
+  }
+
+  .upgrade-page .upgrade-heading {
+    min-height: 62px;
+    margin-bottom: 24px;
+  }
+
+  .upgrade-page .upgrade-logo {
+    width: 150px;
+    height: 62px;
+  }
+
+  .upgrade-page .upgrade-stage {
+    gap: 12px;
+  }
+
+  .upgrade-page .selected-title {
+    gap: 5px;
+    margin-bottom: 10px;
+    font-size: 9px;
+    letter-spacing: 1px;
+  }
+
+  .upgrade-page .selected-title::before,
+  .upgrade-page .selected-title::after {
+    width: 10px;
+  }
+
+  .upgrade-page .selected-card {
+    min-height: 205px;
+    padding: 12px 8px;
+    border-radius: 10px;
+  }
+
+  .upgrade-page .selected-card img {
+    height: 100px;
+  }
+
+  .upgrade-page .selected-name {
+    margin-top: 12px;
+    font-size: 11px;
+  }
+
+  .upgrade-page .selected-price {
+    margin-top: 6px;
+    font-size: 12px;
+  }
+
+  .upgrade-page .selected-card.empty span {
+    font-size: 10px;
+  }
+
+  .upgrade-page .upgrade-wheel {
+    width: min(285px, 76vw);
+  }
+
+  .upgrade-page .upgrade-wheel-rim {
+    border-width: 6px;
+  }
+
+  .upgrade-page .upgrade-wheel-inner-arrow {
+    top: -3%;
+    width: 20px;
+    height: 38%;
+  }
+
+  .upgrade-page .upgrade-wheel-center {
+    width: 46%;
+    height: 46%;
+    padding: 8px;
+  }
+
+  .upgrade-page .upgrade-wheel-center-mark {
+    font-size: 8px;
+  }
+
+  .upgrade-page .upgrade-wheel-chance {
+    font-size: clamp(18px, 6vw, 25px);
+  }
+
+  .upgrade-page .upgrade-wheel-label {
+    font-size: 7px;
+    letter-spacing: 1.3px;
+  }
+
+  .upgrade-page .upgrade-chances {
+    gap: 6px;
+    margin-top: 18px;
+  }
+
+  .upgrade-page .upgrade-chance-button {
+    min-width: 43px;
+    height: 32px;
+    padding: 0 10px;
+  }
+
+  .upgrade-page .upgrade-button {
+    width: min(270px, 100%);
+    min-height: 49px;
+    margin-top: 16px;
+  }
+
+  .upgrade-page .upgrade-selection {
+    margin-top: 36px;
+  }
+
+  .upgrade-page .selection-panel {
+    padding: 13px;
+    border-radius: 10px;
+  }
+
+  .upgrade-page .selection-header {
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .upgrade-page .selection-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .upgrade-page .selection-item {
+    min-height: 136px;
+    padding: 9px 7px;
+  }
+
+  .upgrade-page .selection-item img {
+    height: 61px;
+  }
+
+  .upgrade-page .selection-item span,
+  .upgrade-page .selection-item strong {
+    font-size: 10px;
+  }
+
+  .upgrade-page .upgrade-filters input[type="text"] {
+    flex-basis: 100%;
+    width: 100%;
+  }
+
+  .upgrade-page .upgrade-filters select {
+    flex: 1 1 125px;
+    width: 100%;
+  }
+
+  .upgrade-page .upgrade-result-modal {
+    padding: 25px 17px 19px;
+    border-radius: 13px;
+  }
+
+  .upgrade-page .upgrade-result-image {
+    height: 140px;
+  }
+
+  .upgrade-page .upgrade-settings-toggle,
+  .upgrade-page .upgrade-settings-panel,
+  .upgrade-page .upgrade-bet-panel {
+    max-width: none;
+  }
+
+  .upgrade-page .upgrade-pointer {
+    top: -28px;
+    width: 36px;
+    height: 32px;
+  }
+}
+
+@media (max-width: 360px) {
+  .upgrade-page .selected-card {
+    min-height: 185px;
+  }
+
+  .upgrade-page .selected-card img {
+    height: 83px;
+  }
+
+  .upgrade-page .upgrade-wheel {
+    width: min(245px, 75vw);
+  }
+
+  .upgrade-page .selection-panel {
+    padding: 10px;
+  }
 }

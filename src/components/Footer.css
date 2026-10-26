@@ -1,0 +1,204 @@
+.footer {
+  position: relative;
+  width: 100%;
+  margin-top: 48px;
+  background: #080808;
+  border-top: 1px solid rgba(255, 205, 0, 0.28);
+  color: #fff;
+  font-family: inherit;
+  isolation: isolate;
+}
+
+.footer,
+.footer * {
+  box-sizing: border-box;
+}
+
+.footer-inner {
+  width: min(100% - 48px, 1440px);
+  min-height: 76px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 28px;
+}
+
+/* Логотип */
+
+.footer-logo {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  text-decoration: none;
+  font-size: 21px;
+  font-weight: 900;
+  letter-spacing: -1px;
+  line-height: 1;
+  transition: opacity 0.2s ease;
+}
+
+.footer-logo:hover {
+  opacity: 0.8;
+}
+
+.footer-logo-koch {
+  color: #fff;
+}
+
+.footer-logo-drop {
+  margin-left: 5px;
+  color: #ffcf00;
+}
+
+.footer-logo-dot {
+  color: #ffcf00;
+  font-size: 25px;
+}
+
+/* Навигация */
+
+.footer-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+  flex: 1;
+}
+
+.footer-link {
+  position: relative;
+  padding: 8px 0;
+  color: #a5a5a5;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color 0.2s ease;
+}
+
+.footer-link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 2px;
+  height: 2px;
+  border-radius: 2px;
+  background: #ffcf00;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.2s ease;
+}
+
+.footer-link:hover {
+  color: #ffcf00;
+}
+
+.footer-link:hover::after {
+  transform: scaleX(1);
+}
+
+/* Подпись справа */
+
+.footer-copy {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  color: #777;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  white-space: nowrap;
+}
+
+.footer-copy-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #ffcf00;
+  box-shadow: 0 0 8px rgba(255, 207, 0, 0.4);
+}
+
+.footer-copy-year {
+  color: #555;
+  font-weight: 500;
+  letter-spacing: 0;
+}
+
+/* Планшеты */
+
+@media (max-width: 700px) {
+  .footer-inner {
+    width: calc(100% - 32px);
+    min-height: 70px;
+    gap: 18px;
+  }
+
+  .footer-logo {
+    font-size: 18px;
+  }
+
+  .footer-nav {
+    gap: 16px;
+  }
+
+  .footer-link {
+    font-size: 12px;
+  }
+
+  .footer-copy {
+    gap: 5px;
+    font-size: 9px;
+  }
+
+  .footer-copy-year {
+    display: none;
+  }
+}
+
+/* Телефоны */
+
+@media (max-width: 480px) {
+  .footer {
+    margin-top: 32px;
+  }
+
+  .footer-inner {
+    min-height: auto;
+    padding: 20px 0;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    row-gap: 16px;
+  }
+
+  .footer-logo {
+    font-size: 20px;
+  }
+
+  .footer-nav {
+    order: 3;
+    flex: 0 0 100%;
+    justify-content: space-between;
+    gap: 12px;
+    padding-top: 12px;
+    border-top: 1px solid #202020;
+  }
+
+  .footer-link {
+    font-size: 12px;
+  }
+
+  .footer-copy {
+    font-size: 9px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .footer *,
+  .footer *::before,
+  .footer *::after {
+    transition: none !important;
+  }
+}

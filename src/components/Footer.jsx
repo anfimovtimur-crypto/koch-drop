@@ -1,105 +1,58 @@
-function Footer(){
+import "./Footer.css";
 
-return (
+const footerLinks = [
+  {
+    label: "Сайт",
+    href: "/",
+  },
+  {
+    label: "Наш чат",
+    href: "https://t.me/+_S0nYmgMsMVmMTky",
+  },
+  {
+    label: "Админ",
+    href: "#admin",
+  },
+];
 
-<footer className="footer">
+export default function Footer() {
+  return (
+    <footer className="footer">
+      <div className="footer-inner">
+        <a className="footer-logo" href="/" aria-label="Koch Drop">
+          <span className="footer-logo-koch">KOCH</span>
+          <span className="footer-logo-drop">DROP</span>
+          <span className="footer-logo-dot">.</span>
+        </a>
 
+        <nav className="footer-nav" aria-label="Ссылки в футере">
+          {footerLinks.map((link) => (
+            <a
+              key={link.label}
+              className="footer-link"
+              href={link.href}
+              target={
+                link.href.startsWith("https://") ? "_blank" : undefined
+              }
+              rel={
+                link.href.startsWith("https://")
+                  ? "noopener noreferrer"
+                  : undefined
+              }
+            >
+              {link.label}
+            </a>
+          ))}
+        </nav>
 
-<div className="footer-container">
-
-
-<div className="footer-brand">
-
-<h2>
-ProtonDrop
-</h2>
-
-<p>
-Открой мир премиальных развлечений:
-играй честно и наслаждайся уникальными впечатлениями.
-</p>
-
-<p>
-support@protondrop.com
-</p>
-
-<p className="warning">
-⚠️ Только для пользователей 18+
-</p>
-
-</div>
-
-
-
-<div className="footer-col">
-
-<h3>
-Бонусы
-</h3>
-
-<p>Ежедневные бонусы</p>
-<p>Промокоды</p>
-<p>Ивенты</p>
-
-</div>
-
-
-
-<div className="footer-col">
-
-<h3>
-Информация
-</h3>
-
-<p>Пользовательское соглашение</p>
-<p>Privacy Policy</p>
-<p>Контакты</p>
-
-</div>
-
-
-
-<div className="footer-col">
-
-<h3>
-Режимы
-</h3>
-
-<p>Кейсы</p>
-<p>Апгрейд</p>
-<p>Розыгрыши</p>
-
-</div>
-
-
-
-<div className="footer-col">
-
-<h3>
-Полезное
-</h3>
-
-<p>CS2 Wiki</p>
-<p>Гайды CS2</p>
-<p>Стоимость инвентаря</p>
-
-</div>
-
-
-</div>
-
-
-
-<div className="footer-bottom">
-© 2026 ProtonDrop
-</div>
-
-
-</footer>
-
-)
-
+        <div className="footer-copy">
+          <span className="footer-copy-dot" />
+          <span>KOCH DROP</span>
+          <span className="footer-copy-year">
+            © {new Date().getFullYear()}
+          </span>
+        </div>
+      </div>
+    </footer>
+  );
 }
-
-
-export default Footer

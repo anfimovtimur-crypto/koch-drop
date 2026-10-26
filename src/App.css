@@ -1291,21 +1291,12 @@ color:#00ff99;
 
 button {
   background: #f5c400;
+  border: none;
   color: #080808;
-}
-
-border:none;
-
-color:white;
-
-padding:12px 30px;
-
-border-radius:12px;
-
-cursor:pointer;
-
-transition:.3s;
-
+  padding: 12px 30px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: .3s;
 }
 
 
@@ -1484,7 +1475,7 @@ box-shadow:
 
   box-sizing:border-box;
 
-  color:white;
+  border:none;
 
   font-weight:700;
 

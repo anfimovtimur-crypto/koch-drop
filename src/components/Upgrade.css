@@ -1362,4 +1362,16 @@
 .upgrade-button:active {
   outline: none !important;
   box-shadow: none !important;
+} 
+.upgrade-page button,
+.upgrade-page button:hover,
+.upgrade-page button:focus,
+.upgrade-page button:focus-visible,
+.upgrade-page button:active {
+  background-color: #f5c400 !important;
+  color: #080808 !important;
+  border-color: #f5c400 !important;
+  outline-color: #f5c400 !important;
+  box-shadow: none !important;
+  -webkit-tap-highlight-color: transparent !important;
 }

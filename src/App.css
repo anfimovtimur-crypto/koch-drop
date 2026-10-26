@@ -176,9 +176,10 @@ color:white;
 
 
 button:hover {
-
-background:#ff5555;
-
+  background-color: #f5c400 !important;
+  color: #080808 !important;
+  box-shadow: none !important;
+  outline-color: #f5c400 !important;
 }
 
 
@@ -1289,8 +1290,9 @@ color:#00ff99;
 
 
 button {
-
-background:#007bff;
+  background: #f5c400;
+  color: #080808;
+}
 
 border:none;
 
@@ -6493,4 +6495,25 @@ body {
   .inventory-market-search span {
     display: none;
   }
+} 
+/* KOCH DROP — REMOVE BLUE GLOW ON UPGRADE */
+.upgrade-page button,
+.upgrade-page button:hover,
+.upgrade-page button:focus,
+.upgrade-page button:focus-visible,
+.upgrade-page button:active,
+.upgrade-page button::before,
+.upgrade-page button::after {
+  outline-color: #f5c400 !important;
+  box-shadow: none !important;
+  -webkit-tap-highlight-color: transparent !important;
+}
+
+/* Убираем синий цвет выделения */
+.upgrade-page * {
+  -webkit-tap-highlight-color: transparent !important;
+}
+
+.upgrade-page button:focus-visible {
+  outline: 1px solid #f5c400 !important;
 }

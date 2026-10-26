@@ -1,64 +1,57 @@
-.footer {
-  position: relative;
+
+.kd-footer {
   width: 100%;
-  margin-top: 48px;
+  margin-top: 40px;
   background: #080808;
-  border-top: 1px solid rgba(255, 205, 0, 0.28);
+  border-top: 1px solid rgba(255, 207, 0, 0.3);
   color: #fff;
   font-family: inherit;
-  isolation: isolate;
 }
 
-.footer,
-.footer * {
+.kd-footer,
+.kd-footer * {
   box-sizing: border-box;
 }
 
-.footer-inner {
-  width: min(100% - 48px, 1440px);
+.kd-footer__inner {
+  width: calc(100% - 48px);
+  max-width: 1440px;
   min-height: 76px;
   margin: 0 auto;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 28px;
+  gap: 24px;
 }
 
-/* Логотип */
-
-.footer-logo {
+.kd-footer__logo {
   display: inline-flex;
   align-items: center;
   flex-shrink: 0;
-  text-decoration: none;
+  color: #fff;
   font-size: 21px;
   font-weight: 900;
-  letter-spacing: -1px;
+  letter-spacing: -0.8px;
   line-height: 1;
+  text-decoration: none;
   transition: opacity 0.2s ease;
 }
 
-.footer-logo:hover {
+.kd-footer__logo:hover {
   opacity: 0.8;
 }
 
-.footer-logo-koch {
-  color: #fff;
-}
-
-.footer-logo-drop {
+.kd-footer__logo-accent {
   margin-left: 5px;
   color: #ffcf00;
 }
 
-.footer-logo-dot {
+.kd-footer__dot {
   color: #ffcf00;
-  font-size: 25px;
+  font-size: 26px;
 }
 
-/* Навигация */
-
-.footer-nav {
+.kd-footer__nav {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -66,7 +59,7 @@
   flex: 1;
 }
 
-.footer-link {
+.kd-footer__link {
   position: relative;
   padding: 8px 0;
   color: #a5a5a5;
@@ -77,31 +70,28 @@
   transition: color 0.2s ease;
 }
 
-.footer-link::after {
+.kd-footer__link::after {
   content: "";
   position: absolute;
-  left: 0;
   right: 0;
   bottom: 2px;
+  left: 0;
   height: 2px;
-  border-radius: 2px;
   background: #ffcf00;
   transform: scaleX(0);
   transform-origin: left;
   transition: transform 0.2s ease;
 }
 
-.footer-link:hover {
+.kd-footer__link:hover {
   color: #ffcf00;
 }
 
-.footer-link:hover::after {
+.kd-footer__link:hover::after {
   transform: scaleX(1);
 }
 
-/* Подпись справа */
-
-.footer-copy {
+.kd-footer__copyright {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -113,92 +103,82 @@
   white-space: nowrap;
 }
 
-.footer-copy-dot {
+.kd-footer__status {
   width: 6px;
   height: 6px;
+  flex-shrink: 0;
   border-radius: 50%;
   background: #ffcf00;
-  box-shadow: 0 0 8px rgba(255, 207, 0, 0.4);
+  box-shadow: 0 0 8px rgba(255, 207, 0, 0.35);
 }
 
-.footer-copy-year {
+.kd-footer__year {
   color: #555;
   font-weight: 500;
   letter-spacing: 0;
 }
 
-/* Планшеты */
-
 @media (max-width: 700px) {
-  .footer-inner {
+  .kd-footer__inner {
     width: calc(100% - 32px);
-    min-height: 70px;
-    gap: 18px;
-  }
-
-  .footer-logo {
-    font-size: 18px;
-  }
-
-  .footer-nav {
     gap: 16px;
   }
 
-  .footer-link {
+  .kd-footer__logo {
+    font-size: 17px;
+  }
+
+  .kd-footer__nav {
+    gap: 14px;
+  }
+
+  .kd-footer__link {
     font-size: 12px;
   }
 
-  .footer-copy {
+  .kd-footer__copyright {
     gap: 5px;
     font-size: 9px;
   }
 
-  .footer-copy-year {
+  .kd-footer__year {
     display: none;
   }
 }
 
-/* Телефоны */
-
 @media (max-width: 480px) {
-  .footer {
-    margin-top: 32px;
+  .kd-footer {
+    margin-top: 28px;
   }
 
-  .footer-inner {
+  .kd-footer__inner {
     min-height: auto;
     padding: 20px 0;
     flex-wrap: wrap;
-    justify-content: space-between;
     row-gap: 16px;
   }
 
-  .footer-logo {
+  .kd-footer__logo {
     font-size: 20px;
   }
 
-  .footer-nav {
+  .kd-footer__nav {
     order: 3;
     flex: 0 0 100%;
     justify-content: space-between;
-    gap: 12px;
     padding-top: 12px;
     border-top: 1px solid #202020;
   }
 
-  .footer-link {
-    font-size: 12px;
-  }
-
-  .footer-copy {
+  .kd-footer__copyright {
     font-size: 9px;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .footer *,
-  .footer *::before,
-  .footer *::after {
+  .kd-footer *,
+  .kd-footer *::before,
+  .kd-footer *::after {
     transition: none !important;
   }
 }

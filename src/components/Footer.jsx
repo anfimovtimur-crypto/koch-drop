@@ -1,6 +1,7 @@
+
 import "./Footer.css";
 
-const footerLinks = [
+const links = [
   {
     label: "Сайт",
     href: "/",
@@ -8,6 +9,7 @@ const footerLinks = [
   {
     label: "Наш чат",
     href: "https://t.me/+_S0nYmgMsMVmMTky",
+    external: true,
   },
   {
     label: "Админ",
@@ -17,38 +19,36 @@ const footerLinks = [
 
 export default function Footer() {
   return (
-    <footer className="footer">
-      <div className="footer-inner">
-        <a className="footer-logo" href="/" aria-label="Koch Drop">
-          <span className="footer-logo-koch">KOCH</span>
-          <span className="footer-logo-drop">DROP</span>
-          <span className="footer-logo-dot">.</span>
+    <footer className="kd-footer">
+      <div className="kd-footer__inner">
+        <a
+          className="kd-footer__logo"
+          href="/"
+          aria-label="Koch Drop"
+        >
+          <span>KOCH</span>
+          <span className="kd-footer__logo-accent">DROP</span>
+          <span className="kd-footer__dot">.</span>
         </a>
 
-        <nav className="footer-nav" aria-label="Ссылки в футере">
-          {footerLinks.map((link) => (
+        <nav className="kd-footer__nav" aria-label="Навигация в футере">
+          {links.map((link) => (
             <a
               key={link.label}
-              className="footer-link"
+              className="kd-footer__link"
               href={link.href}
-              target={
-                link.href.startsWith("https://") ? "_blank" : undefined
-              }
-              rel={
-                link.href.startsWith("https://")
-                  ? "noopener noreferrer"
-                  : undefined
-              }
+              target={link.external ? "_blank" : undefined}
+              rel={link.external ? "noopener noreferrer" : undefined}
             >
               {link.label}
             </a>
           ))}
         </nav>
 
-        <div className="footer-copy">
-          <span className="footer-copy-dot" />
+        <div className="kd-footer__copyright">
+          <span className="kd-footer__status" />
           <span>KOCH DROP</span>
-          <span className="footer-copy-year">
+          <span className="kd-footer__year">
             © {new Date().getFullYear()}
           </span>
         </div>

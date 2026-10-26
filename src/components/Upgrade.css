@@ -1350,4 +1350,16 @@
 .upgrade-pointer,
 .upgrade-pointer * {
   animation: none !important;
+} 
+.upgrade-button:hover {
+  box-shadow: none !important;
+  filter: none !important;
+  outline: none !important;
+}
+
+.upgrade-button:focus,
+.upgrade-button:focus-visible,
+.upgrade-button:active {
+  outline: none !important;
+  box-shadow: none !important;
 }

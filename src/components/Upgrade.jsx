@@ -854,11 +854,7 @@ function Upgrade({
             </div>
 
             <div className="upgrade-wheel-center">
-              <img
-                src="/upgrade-center.png"
-                alt=""
-                className="upgrade-center-image"
-              />
+            
 
               <div className="upgrade-wheel-chance">
                 {displayChance > 0

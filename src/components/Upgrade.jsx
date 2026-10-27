@@ -1,130 +1,50 @@
-import { useEffect, useRef, useState } from "react";
-import { getMarketSkins } from "../lib/marketSkins";
-import { supabase } from "../lib/supabase";
-import "./Upgrade.css";
-
-const MARKET_PAGE_SIZE = 10000;
-const MAX_MARKET_PAGES = 1000;
-
-const NORMAL_SPIN_DURATION = 10000;
-const QUICK_SPIN_DURATION = 2000;
-
-function parsePrice(value) {
-  if (typeof value === "number") {
-    return Number.isFinite(value) && value > 0 ? value : 0;
-  }
-
-  let text = String(value ?? "")
-    .trim()
-    .replace(/\s/g, "")
-    .replace(/[^\d,.-]/g, "");
-
-  if (!text) return 0;
-
-  if (text.includes(",") && text.includes(".")) {
-    if (text.lastIndexOf(",") > text.lastIndexOf(".")) {
-      text = text.replace(/\./g, "").replace(",", ".");
-    } else {
-      text = text.replace(/,/g, "");
-    }
-  } else if (text.includes(",")) {
-    text = text.replace(",", ".");
-  }
-
-  const parsed = Number(text);
-  return Number.isFinite(parsed) && parsed > 0 ? parsed : 0;
-}
+import { useEffect, useRef, useState } from "react"
+import { getMarketSkins } from "../lib/marketSkins"
+import { supabase } from "../lib/supabase"
+import "./Upgrade.css"
 
 function getPrice(item) {
-  const values = [
-    item?.price,
-    item?.cost,
-    item?.value,
-    item?.marketPrice,
-    item?.market_price,
-    item?.min_price,
-    item?.suggested_price,
-    item?.item_price,
-  ];
-
-  for (const value of values) {
-    const price = parsePrice(value);
-    if (price > 0) return price;
-  }
-
-  return 0;
-}
-
-function normalizeMarketSkin(item) {
-  const price = getPrice(item);
-
-  return {
-    ...item,
-    name:
-      item?.name ||
-      item?.market_hash_name ||
-      item?.item_name ||
-      item?.marketHashName ||
-      item?.title ||
-      "Неизвестный предмет",
-    image:
-      item?.image ||
-      item?.item_image ||
-      item?.image_url ||
-      item?.icon_url ||
-      item?.iconUrl ||
-      item?.img ||
-      item?.icon ||
-      "/avatar.png",
-    price,
-    type:
-      item?.type ||
-      item?.weapon_type ||
-      item?.category ||
-      "",
-  };
+  return Number(
+    item?.price ??
+      item?.cost ??
+      item?.value ??
+      item?.marketPrice ??
+      0
+  )
 }
 
 function createUid() {
-  if (globalThis.crypto?.randomUUID) {
-    return globalThis.crypto.randomUUID();
-  }
-
-  return `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+  return (
+    Date.now() +
+    "-" +
+    Math.random()
+      .toString(36)
+      .slice(2, 10)
+  )
 }
 
 function getSkinTypeLabel(type = "") {
-  const value = String(type).toLowerCase();
-
-  if (value.includes("pistol")) return "Пистолеты";
-  if (value.includes("smg")) return "SMG";
-  if (value.includes("sniper")) return "Снайперки";
-  if (value.includes("shotgun")) return "Дробовики";
-  if (value.includes("machinegun")) return "Пулемёты";
-  if (value.includes("knife")) return "Ножи";
-
-  if (
-    value.includes("hands") ||
-    value.includes("gloves") ||
-    value.includes("glove")
-  ) {
-    return "Перчатки";
-  }
-
-  if (value.includes("rifle")) return "Винтовки";
-
-  return "Другое";
+  const value = String(type).toLowerCase()
+  if (value.includes("pistol")) return "Пистолеты"
+  if (value.includes("smg")) return "SMG"
+  if (value.includes("sniper")) return "Снайперки"
+  if (value.includes("shotgun")) return "Дробовики"
+  if (value.includes("machinegun")) return "Пулемёты"
+  if (value.includes("knife")) return "Ножи"
+  if (value.includes("hands") || value.includes("gloves")) return "Перчатки"
+  if (value.includes("rifle")) return "Винтовки"
+  return "Другое"
 }
 
 function sortSkins(items, sort) {
-  const result = [...items];
+  const result = [...items]
 
   if (sort === "price-asc") {
-    result.sort((a, b) => getPrice(a) - getPrice(b));
+    result.sort((a, b) => getPrice(a) - getPrice(b))
   }
 
   if (sort === "price-desc") {
-    result.sort((a, b) => getPrice(b) - getPrice(a));
+    result.sort((a, b) => getPrice(b) - getPrice(a))
   }
 
   if (sort === "name-asc") {
@@ -133,7 +53,7 @@ function sortSkins(items, sort) {
         String(b?.name || ""),
         "ru"
       )
-    );
+    )
   }
 
   if (sort === "name-desc") {
@@ -142,15 +62,15 @@ function sortSkins(items, sort) {
         String(a?.name || ""),
         "ru"
       )
-    );
+    )
   }
 
-  return result;
+  return result
 }
 
 function getDisplayChance(sourcePrice, targetPrice) {
   if (sourcePrice <= 0 || targetPrice <= sourcePrice) {
-    return 0;
+    return 0
   }
 
   return Math.min(
@@ -159,30 +79,40 @@ function getDisplayChance(sourcePrice, targetPrice) {
       1,
       Math.round((sourcePrice / targetPrice) * 77)
     )
-  );
+  )
 }
 
 function getRealChance(displayChance) {
   if (displayChance <= 30) {
-    return Math.max(3, Math.round(displayChance * 0.55));
+    return Math.max(3, Math.round(displayChance * 0.55))
   }
 
   if (displayChance <= 40) {
-    return Math.max(4, Math.round(displayChance * 0.6));
+    return Math.max(4, Math.round(displayChance * 0.6))
   }
 
-  if (displayChance <= 50) return 25;
-  if (displayChance <= 60) return 30;
-  if (displayChance <= 70) return 35;
+  if (displayChance <= 50) {
+    return 25
+  }
 
-  return Math.max(5, Math.round(displayChance * 0.5));
+  if (displayChance <= 60) {
+    return 30
+  }
+
+  if (displayChance <= 70) {
+    return 35
+  }
+
+  return Math.max(5, Math.round(displayChance * 0.5))
 }
 
 function trackUpgradeMultiplier(multiplier) {
-  if (!multiplier) return;
+  if (!multiplier) {
+    return
+  }
 
   try {
-    const saved = localStorage.getItem("koch_upgrade_stats");
+    const saved = localStorage.getItem("koch_upgrade_stats")
 
     const stats = saved
       ? JSON.parse(saved)
@@ -190,33 +120,43 @@ function trackUpgradeMultiplier(multiplier) {
           2: 0,
           3: 0,
           5: 0,
-          10: 0,
-        };
+          10: 0
+        }
 
-    stats[multiplier] =
-      Number(stats[multiplier] || 0) + 1;
+    stats[multiplier] = Number(stats[multiplier] || 0) + 1
 
     localStorage.setItem(
       "koch_upgrade_stats",
       JSON.stringify(stats)
-    );
+    )
 
-    window.dispatchEvent(new Event("koch-upgrade-stats"));
+    window.dispatchEvent(new Event("koch-upgrade-stats"))
   } catch (error) {
-    console.error("Ошибка статистики множителя:", error);
+    console.error("Ошибка статистики множителя:", error)
   }
 }
 
 function saveTopUpgradeDrop(item) {
-  if (!item) return;
+  if (!item) {
+    return
+  }
 
-  const price = getPrice(item);
-  if (!Number.isFinite(price) || price <= 0) return;
+  const price = Number(
+    item.price ??
+      item.value ??
+      item.cost ??
+      item.marketPrice ??
+      0
+  )
+
+  if (!Number.isFinite(price) || price <= 0) {
+    return
+  }
 
   try {
-    const saved = localStorage.getItem("koch_top_upgrade_drop");
-    const oldDrop = saved ? JSON.parse(saved) : null;
-    const oldPrice = Number(oldDrop?.price || 0);
+    const saved = localStorage.getItem("koch_top_upgrade_drop")
+    const oldDrop = saved ? JSON.parse(saved) : null
+    const oldPrice = Number(oldDrop?.price || 0)
 
     if (!oldDrop || price > oldPrice) {
       const data = {
@@ -230,455 +170,618 @@ function saveTopUpgradeDrop(item) {
           item.item_image ||
           item.img ||
           "/avatar.png",
-        price,
-      };
+        price
+      }
 
       localStorage.setItem(
         "koch_top_upgrade_drop",
         JSON.stringify(data)
-      );
+      )
 
-      window.dispatchEvent(new Event("koch-top-upgrade-drop"));
+      window.dispatchEvent(new Event("koch-top-upgrade-drop"))
     }
   } catch (error) {
-    console.error("Ошибка сохранения Top Drop:", error);
+    console.error("Ошибка сохранения Top Drop:", error)
   }
-}
-
-function marketItemKey(item) {
-  return String(
-    item?.market_hash_name ||
-      item?.marketHashName ||
-      item?.id ||
-      item?.assetid ||
-      `${item?.name || item?.title || "item"}-${getPrice(item)}`
-  );
-}
-
-function formatMoney(value) {
-  return `${Number(value || 0).toLocaleString("ru-RU", {
-    maximumFractionDigits: 2,
-  })} ₽`;
 }
 
 function Upgrade({
   balance = 0,
   setBalance,
   inventory = [],
-  setInventory,
+  setInventory
 }) {
-  const [selectedItem, setSelectedItem] = useState(null);
-  const [selectedInventoryIndex, setSelectedInventoryIndex] =
-    useState(null);
-  const [selectedTarget, setSelectedTarget] = useState(null);
-  const [selectedMultiplier, setSelectedMultiplier] =
-    useState(null);
+  const [selectedItem, setSelectedItem] = useState(null)
+  const [selectedInventoryIndex, setSelectedInventoryIndex] = useState(null)
+  const [sourceMode, setSourceMode] = useState("inventory")
+  const [balanceStake, setBalanceStake] = useState(0.01)
+  const [selectedTarget, setSelectedTarget] = useState(null)
+  const [selectedMultiplier, setSelectedMultiplier] = useState(null)
+  const [tab, setTab] = useState("inventory")
+  const [displayChance, setDisplayChance] = useState(0)
+  const [realChance, setRealChance] = useState(0)
+  const [rotation, setRotation] = useState(0)
+  const [spinning, setSpinning] = useState(false)
+  const [result, setResult] = useState(null)
 
-  const [tab, setTab] = useState("inventory");
-  const [displayChance, setDisplayChance] = useState(0);
-  const [realChance, setRealChance] = useState(0);
-  const [rotation, setRotation] = useState(0);
-  const [spinning, setSpinning] = useState(false);
-  const [result, setResult] = useState(null);
+  const [market, setMarket] = useState([])
+  const [marketStart, setMarketStart] = useState(0)
+  const [marketTotal, setMarketTotal] = useState(0)
+  const [marketLoading, setMarketLoading] = useState(true)
+  const [marketLoadingMore, setMarketLoadingMore] = useState(false)
+  const [marketError, setMarketError] = useState("")
+  const [marketHasMore, setMarketHasMore] = useState(true)
 
-  // Новый переключатель быстрой крутки.
-  const [quickSpin, setQuickSpin] = useState(false);
+  const marketRequestLock = useRef(false)
+  const marketRetryAfter = useRef(0)
+  const lastMarketRequestAt = useRef(0)
 
-  const [market, setMarket] = useState([]);
-  const [marketStart, setMarketStart] = useState(0);
-  const [marketTotal, setMarketTotal] = useState(0);
-  const [marketLoading, setMarketLoading] = useState(true);
-  const [marketLoadingMore, setMarketLoadingMore] = useState(false);
-  const [marketError, setMarketError] = useState("");
+  const [marketSearch, setMarketSearch] = useState("")
+  const [marketType, setMarketType] = useState("all")
+  const [marketSort, setMarketSort] = useState("price-asc")
 
-  const [marketSearch, setMarketSearch] = useState("");
-  const [marketType, setMarketType] = useState("all");
-  const [marketSort, setMarketSort] = useState("price-asc");
+  const [targetSearch, setTargetSearch] = useState("")
+  const [targetType, setTargetType] = useState("all")
+  const [targetSort, setTargetSort] = useState("price-asc")
 
-  const [targetSearch, setTargetSearch] = useState("");
-  const [targetType, setTargetType] = useState("all");
-  const [targetSort, setTargetSort] = useState("price-asc");
+  const [cart, setCart] = useState([])
+  const [cartOpen, setCartOpen] = useState(false)
 
-  const [cart, setCart] = useState([]);
-  const [cartOpen, setCartOpen] = useState(false);
+  const items = Array.isArray(inventory) ? inventory : []
+  const currentBalance = Number(balance) || 0
 
-  const marketRequestRef = useRef(0);
-  const spinTimerRef = useRef(null);
+  const maxBalanceStake = Math.max(
+    0,
+    Math.floor((currentBalance + Number.EPSILON) * 100) / 100
+  )
 
-  const items = Array.isArray(inventory) ? inventory : [];
-  const currentBalance = Number(balance) || 0;
+  const effectiveBalanceStake =
+    maxBalanceStake >= 0.01 && Number(balanceStake) > 0
+      ? Math.min(
+          maxBalanceStake,
+          Math.max(0.01, Math.round(Number(balanceStake) * 100) / 100)
+        )
+      : 0
 
   useEffect(() => {
-    loadMarketSkins(true);
-
-    return () => {
-      marketRequestRef.current += 1;
-
-      if (spinTimerRef.current) {
-        clearTimeout(spinTimerRef.current);
-      }
-    };
-    // Загрузка запускается при открытии страницы.
+    loadMarketSkins(true)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  /* =========================================
-     ЗАГРУЗКА МАРКЕТА
-     ========================================= */
+  }, [])
 
   async function loadMarketSkins(firstLoad = false) {
-    if (!firstLoad && marketLoadingMore) return;
+    if (marketRequestLock.current) return
 
-    const requestId = ++marketRequestRef.current;
+    const blockedFor = marketRetryAfter.current - Date.now()
 
-    setMarketLoading(true);
-    setMarketLoadingMore(true);
-    setMarketError("");
-
-    let start = firstLoad ? 0 : marketStart;
-    let total = firstLoad ? 0 : marketTotal;
-    let pages = 0;
-
-    const unique = new Map();
-
-    if (!firstLoad) {
-      for (const rawItem of market) {
-        const item = normalizeMarketSkin(rawItem);
-        unique.set(marketItemKey(item), item);
-      }
-    } else {
-      setMarket([]);
-      setMarketStart(0);
-      setMarketTotal(0);
+    if (blockedFor > 0) {
+      setMarketError(
+        `Steam временно ограничил запросы. Подожди ${Math.ceil(blockedFor / 1000)} сек.`
+      )
+      return
     }
 
+    marketRequestLock.current = true
+
+    const start = firstLoad ? 0 : marketStart
+    const existingItems = firstLoad ? [] : market
+    const collected = []
+    const collectedKeys = new Set()
+
+    let nextStart = start
+    let latestTotal = firstLoad ? 0 : marketTotal
+    let reachedEnd = false
+
+    if (firstLoad) {
+      setMarket([])
+      setMarketStart(0)
+      setMarketTotal(0)
+      setMarketHasMore(true)
+      setMarketError("")
+      setMarketLoading(true)
+    } else {
+      setMarketError("")
+    }
+
+    setMarketLoadingMore(true)
+
     try {
-      while (pages < MAX_MARKET_PAGES) {
-        if (requestId !== marketRequestRef.current) return;
+      // Собираем одну порцию из 100 предметов последовательными запросами.
+      // Это работает и когда функция маркета возвращает только 10 предметов.
+      const targetBatchSize = 100
+      const maxRequestsPerLoad = 10
+
+      for (
+        let requestIndex = 0;
+        requestIndex < maxRequestsPerLoad &&
+        collected.length < targetBatchSize;
+        requestIndex += 1
+      ) {
+        const wait = Math.max(
+          0,
+          1300 - (Date.now() - lastMarketRequestAt.current)
+        )
+
+        if (wait > 0) {
+          await new Promise((resolve) => setTimeout(resolve, wait))
+        }
+
+        lastMarketRequestAt.current = Date.now()
 
         const data = await getMarketSkins({
-          start,
-          count: MARKET_PAGE_SIZE,
-        });
+          start: nextStart,
+          count: targetBatchSize - collected.length
+        })
 
-        if (requestId !== marketRequestRef.current) return;
+        const batch = Array.isArray(data?.items) ? data.items : []
 
-        const rawItems = Array.isArray(data?.items)
-          ? data.items
-          : [];
-
-        const reportedTotal = Number(data?.total || 0);
-
-        if (reportedTotal > 0) {
-          total = reportedTotal;
+        if (Number(data?.total) > 0) {
+          latestTotal = Number(data.total)
         }
 
-        if (rawItems.length === 0) break;
-
-        for (const rawItem of rawItems) {
-          const item = normalizeMarketSkin(rawItem);
-          unique.set(marketItemKey(item), item);
+        if (batch.length === 0) {
+          reachedEnd = true
+          break
         }
 
-        pages += 1;
+        let addedThisRequest = 0
 
-        const nextStart = start + rawItems.length;
-        if (nextStart <= start) break;
+        for (const item of batch) {
+          const key =
+            item?.market_hash_name ||
+            item?.id ||
+            item?.name
 
-        start = nextStart;
+          if (!key || collectedKeys.has(key)) continue
 
-        const loadedItems = Array.from(unique.values());
+          collectedKeys.add(key)
+          collected.push(item)
+          addedThisRequest += 1
+        }
 
-        setMarket(loadedItems);
-        setMarketStart(start);
-        setMarketTotal(total || loadedItems.length);
+        // Если API снова вернул те же предметы, не зацикливаем запросы.
+        if (addedThisRequest === 0) {
+          reachedEnd = true
+          break
+        }
 
-        if (total > 0 && start >= total) break;
+        nextStart += batch.length
 
         if (
-          total <= 0 &&
-          rawItems.length < MARKET_PAGE_SIZE
+          latestTotal >= targetBatchSize &&
+          nextStart >= latestTotal &&
+          collected.length >= targetBatchSize
         ) {
-          break;
+          reachedEnd = true
+          break
+        }
+
+        if (batch.length < 10) {
+          reachedEnd = true
+          break
         }
       }
 
-      if (requestId !== marketRequestRef.current) return;
+      const unique = new Map()
 
-      const loadedItems = Array.from(unique.values());
+      for (const item of [...existingItems, ...collected]) {
+        const key =
+          item?.market_hash_name ||
+          item?.id ||
+          item?.name
 
-      setMarket(loadedItems);
-      setMarketStart(start);
-      setMarketTotal(total || loadedItems.length);
-
-      if (loadedItems.length === 0) {
-        setMarketError(
-          "Маркет не вернул предметы. Проверь подключение и попробуй ещё раз."
-        );
-      } else if (total > loadedItems.length && start < total) {
-        setMarketError(
-          `Загружено ${loadedItems.length.toLocaleString("ru-RU")} из ${total.toLocaleString("ru-RU")} предметов. Нажми «Повторить загрузку».`
-        );
+        if (key) unique.set(key, item)
       }
+
+      const nextItems = Array.from(unique.values())
+
+      setMarket(nextItems)
+      setMarketStart(nextStart)
+      setMarketTotal(latestTotal)
+
+      setMarketHasMore(
+        nextItems.length < 10000 &&
+          !reachedEnd &&
+          (latestTotal > nextStart ||
+            collected.length >= targetBatchSize)
+      )
+
+      setMarketError("")
     } catch (error) {
-      if (requestId !== marketRequestRef.current) return;
+      const message = String(error?.message || error)
+      console.error("Ошибка загрузки Market:", error)
 
-      console.error("Ошибка загрузки маркета:", error);
+      // Сохраняем уже полученные предметы, если следующий запрос получил 429.
+      if (collected.length > 0) {
+        const unique = new Map()
 
-      const loadedItems = Array.from(unique.values());
+        for (const item of [...existingItems, ...collected]) {
+          const key =
+            item?.market_hash_name ||
+            item?.id ||
+            item?.name
 
-      setMarket(loadedItems);
-      setMarketTotal(total || loadedItems.length);
+          if (key) unique.set(key, item)
+        }
 
-      setMarketError(
-        loadedItems.length > 0
-          ? `Маркет загрузился частично. ${error?.message || "Неизвестная ошибка"}`
-          : `Не удалось загрузить маркет: ${error?.message || "Неизвестная ошибка"}`
-      );
-    } finally {
-      if (requestId === marketRequestRef.current) {
-        setMarketLoading(false);
-        setMarketLoadingMore(false);
+        setMarket(Array.from(unique.values()))
+        setMarketStart(nextStart)
+        setMarketTotal(latestTotal)
+        setMarketHasMore(true)
       }
+
+      if (/429|rate.?limit|too many requests/i.test(message)) {
+        marketRetryAfter.current = Date.now() + 60000
+        setMarketError(
+          "Steam ограничил запросы (HTTP 429). Подожди около минуты и повтори загрузку."
+        )
+      } else {
+        setMarketError(message || "Не удалось загрузить маркет.")
+      }
+    } finally {
+      marketRequestLock.current = false
+      setMarketLoading(false)
+      setMarketLoadingMore(false)
     }
   }
 
   const filteredMarket = sortSkins(
     market.filter((item) => {
-      const search = marketSearch.trim().toLowerCase();
+      const search = marketSearch.trim().toLowerCase()
+
       const name = String(
         item?.name ||
           item?.market_hash_name ||
-          item?.title ||
           ""
-      ).toLowerCase();
+      ).toLowerCase()
 
-      const matchesSearch = !search || name.includes(search);
+      const matchesSearch = !search || name.includes(search)
+
       const matchesType =
         marketType === "all" ||
-        getSkinTypeLabel(item?.type) === marketType;
+        getSkinTypeLabel(item?.type) === marketType
 
-      return matchesSearch && matchesType;
+      return matchesSearch && matchesType
     }),
     marketSort
-  );
+  )
 
   const filteredTargetMarket = sortSkins(
     market.filter((item) => {
-      const search = targetSearch.trim().toLowerCase();
+      const search = targetSearch.trim().toLowerCase()
+
       const name = String(
         item?.name ||
           item?.market_hash_name ||
-          item?.title ||
           ""
-      ).toLowerCase();
+      ).toLowerCase()
 
-      const matchesSearch = !search || name.includes(search);
+      const matchesSearch = !search || name.includes(search)
+
       const matchesType =
         targetType === "all" ||
-        getSkinTypeLabel(item?.type) === targetType;
+        getSkinTypeLabel(item?.type) === targetType
 
-      return matchesSearch && matchesType;
+      return matchesSearch && matchesType
     }),
     targetSort
-  );
+  )
 
   function resetSelection() {
-    if (spinning) return;
+    if (spinning) {
+      return
+    }
 
-    setSelectedItem(null);
-    setSelectedInventoryIndex(null);
-    setSelectedTarget(null);
-    setSelectedMultiplier(null);
-    setDisplayChance(0);
-    setRealChance(0);
-    setResult(null);
+    setSelectedItem(null)
+    setSelectedInventoryIndex(null)
+    setSourceMode("inventory")
+    setSelectedTarget(null)
+    setSelectedMultiplier(null)
+    setDisplayChance(0)
+    setRealChance(0)
+    setResult(null)
   }
 
   function chooseItem(item, index) {
-    if (spinning) return;
+    if (spinning) {
+      return
+    }
 
     const preparedItem = {
-      ...normalizeMarketSkin(item),
-      uid: item?.uid || createUid(),
-    };
+      ...item,
+      uid: item?.uid || createUid()
+    }
 
     if (!item?.uid && typeof setInventory === "function") {
-      setInventory((previous) => {
-        const current = Array.isArray(previous) ? previous : [];
+      setInventory((prev) => {
+        const current = Array.isArray(prev) ? prev : []
 
         return current.map((currentItem, currentIndex) =>
           currentIndex === index ? preparedItem : currentItem
-        );
-      });
+        )
+      })
     }
 
-    setSelectedItem(preparedItem);
-    setSelectedInventoryIndex(index);
-    setSelectedTarget(null);
-    setSelectedMultiplier(null);
-    setDisplayChance(0);
-    setRealChance(0);
-    setResult(null);
+    setSelectedItem(preparedItem)
+    setSelectedInventoryIndex(index)
+    setSourceMode("inventory")
+    setSelectedTarget(null)
+    setSelectedMultiplier(null)
+    setDisplayChance(0)
+    setRealChance(0)
+    setResult(null)
+  }
+
+  function updateBalanceStake(value) {
+    const rawValue = String(value ?? "").trim()
+
+    // Двигаешь ползунок — сразу выбирается ставка с баланса.
+    setSourceMode("balance")
+    setSelectedInventoryIndex(null)
+    setResult(null)
+
+    if (rawValue === "") {
+      setBalanceStake(0)
+      setSelectedItem(null)
+      setSelectedTarget(null)
+      setSelectedMultiplier(null)
+      setDisplayChance(0)
+      setRealChance(0)
+      return
+    }
+
+    const parsed = Number(rawValue)
+    if (!Number.isFinite(parsed)) return
+
+    const nextStake =
+      maxBalanceStake > 0
+        ? Math.min(
+            maxBalanceStake,
+            Math.max(0.01, Math.round(parsed * 100) / 100)
+          )
+        : 0
+
+    setBalanceStake(nextStake)
+
+    if (nextStake <= 0) {
+      setSelectedItem(null)
+      setSelectedTarget(null)
+      setSelectedMultiplier(null)
+      setDisplayChance(0)
+      setRealChance(0)
+      return
+    }
+
+    setSelectedItem({
+      uid: "koch-balance-stake",
+      name: "Ставка с баланса",
+      image: "/logo.png",
+      price: nextStake,
+      isBalanceStake: true
+    })
+
+    if (!selectedTarget) {
+      setSelectedMultiplier(null)
+      setDisplayChance(0)
+      setRealChance(0)
+      return
+    }
+
+    const targetPrice = getPrice(selectedTarget)
+
+    if (targetPrice <= nextStake) {
+      setSelectedTarget(null)
+      setSelectedMultiplier(null)
+      setDisplayChance(0)
+      setRealChance(0)
+      return
+    }
+
+    const nextDisplayChance = getDisplayChance(
+      nextStake,
+      targetPrice
+    )
+
+    setDisplayChance(nextDisplayChance)
+    setRealChance(getRealChance(nextDisplayChance))
   }
 
   function chooseTarget(item, multiplier = null) {
-    if (spinning || !selectedItem) return;
+    if (spinning || !selectedItem) {
+      return
+    }
 
-    const preparedTarget = normalizeMarketSkin(item);
-    const sourcePrice = getPrice(selectedItem);
-    const targetPrice = getPrice(preparedTarget);
+    const sourcePrice = getPrice(selectedItem)
+    const targetPrice = getPrice(item)
 
-    if (sourcePrice <= 0 || targetPrice <= sourcePrice) return;
+    if (sourcePrice <= 0 || targetPrice <= sourcePrice) {
+      return
+    }
 
     const nextDisplayChance = getDisplayChance(
       sourcePrice,
       targetPrice
-    );
+    )
 
-    const nextRealChance = getRealChance(nextDisplayChance);
+    const nextRealChance = getRealChance(nextDisplayChance)
 
     setSelectedTarget({
-      ...preparedTarget,
+      ...item,
       uid: item?.uid || createUid(),
-      price: targetPrice,
-    });
+      price: targetPrice
+    })
 
-    setSelectedMultiplier(multiplier);
-    setDisplayChance(nextDisplayChance);
-    setRealChance(nextRealChance);
-    setResult(null);
+    setSelectedMultiplier(multiplier)
+    setDisplayChance(nextDisplayChance)
+    setRealChance(nextRealChance)
+    setResult(null)
   }
 
   function chooseMultiplier(multiplier) {
-    if (spinning || !selectedItem) return;
+    if (spinning || !selectedItem) {
+      return
+    }
 
-    const sourcePrice = getPrice(selectedItem);
-    if (sourcePrice <= 0) return;
+    const sourcePrice = getPrice(selectedItem)
 
-    const wantedPrice = sourcePrice * multiplier;
+    if (sourcePrice <= 0) {
+      return
+    }
+
+    const wantedPrice = sourcePrice * multiplier
 
     const possibleTargets = market.filter(
       (item) => getPrice(item) > sourcePrice
-    );
+    )
 
-    if (possibleTargets.length === 0) return;
+    if (possibleTargets.length === 0) {
+      return
+    }
 
     const closestTarget = [...possibleTargets].sort(
-      (a, b) =>
-        Math.abs(getPrice(a) - wantedPrice) -
-        Math.abs(getPrice(b) - wantedPrice)
-    )[0];
+      (a, b) => {
+        const differenceA = Math.abs(
+          getPrice(a) - wantedPrice
+        )
 
-    if (closestTarget) chooseTarget(closestTarget, multiplier);
+        const differenceB = Math.abs(
+          getPrice(b) - wantedPrice
+        )
+
+        return differenceA - differenceB
+      }
+    )[0]
+
+    if (!closestTarget) {
+      return
+    }
+
+    chooseTarget(closestTarget, multiplier)
   }
 
   function addToCart(item) {
-    if (spinning || !item) return;
+    if (spinning || !item) {
+      return
+    }
 
     setCart((current) => {
-      const key = marketItemKey(item);
+      const key =
+        item?.market_hash_name ||
+        item?.id ||
+        item?.name
 
       if (
         current.some(
-          (cartItem) => marketItemKey(cartItem) === key
+          (cartItem) =>
+            (cartItem?.market_hash_name ||
+              cartItem?.id ||
+              cartItem?.name) === key
         )
       ) {
-        return current;
+        return current
       }
 
-      return [...current, normalizeMarketSkin(item)];
-    });
+      return [...current, item]
+    })
   }
 
   function removeFromCart(item) {
-    const key = marketItemKey(item);
+    const key =
+      item?.market_hash_name ||
+      item?.id ||
+      item?.name
 
     setCart((current) =>
       current.filter(
-        (cartItem) => marketItemKey(cartItem) !== key
+        (cartItem) =>
+          (cartItem?.market_hash_name ||
+            cartItem?.id ||
+            cartItem?.name) !== key
       )
-    );
+    )
   }
 
   function buySkin(item) {
-    if (spinning) return;
+    if (spinning) {
+      return
+    }
 
-    const preparedItem = normalizeMarketSkin(item);
-    const price = getPrice(preparedItem);
+    const price = getPrice(item)
 
-    if (price <= 0 || currentBalance < price) return;
+    if (price <= 0) {
+      return
+    }
+
+    if (currentBalance < price) {
+      return
+    }
 
     if (
       typeof setBalance !== "function" ||
       typeof setInventory !== "function"
     ) {
-      return;
+      return
     }
 
     const newItem = {
-      ...preparedItem,
+      ...item,
       price,
-      uid: createUid(),
-    };
+      uid: createUid()
+    }
 
     setBalance(
-      (previous) => (Number(previous) || 0) - price
-    );
+      (prev) => (Number(prev) || 0) - price
+    )
 
-    setInventory((previous) => [
-      ...(Array.isArray(previous) ? previous : []),
-      newItem,
-    ]);
+    setInventory((prev) => [
+      ...(Array.isArray(prev) ? prev : []),
+      newItem
+    ])
 
-    setSelectedItem(newItem);
-    setSelectedInventoryIndex(items.length);
-    setSelectedTarget(null);
-    setSelectedMultiplier(null);
-    setDisplayChance(0);
-    setRealChance(0);
-    setTab("inventory");
-
-    removeFromCart(item);
+    setSelectedItem(newItem)
+    setSelectedInventoryIndex(items.length)
+    setSourceMode("inventory")
+    setSelectedTarget(null)
+    setSelectedMultiplier(null)
+    setDisplayChance(0)
+    setRealChance(0)
+    setTab("inventory")
+    removeFromCart(item)
   }
 
   async function addDropToSupabase(item) {
-    if (!item) return false;
+    if (!item) {
+      return false
+    }
 
     const drop = {
       username: "Гость",
       item_name: item.name || "Unknown",
       item_image: item.image || null,
-      item_price: Number(getPrice(item)) || 0,
-    };
+      item_price: Number(getPrice(item)) || 0
+    }
 
     try {
       const { data, error } = await supabase
         .from("drops")
         .insert(drop)
         .select()
-        .single();
+        .single()
 
       if (error) {
         console.error(
           "Ошибка добавления дропа в Supabase:",
           error
-        );
-        return false;
+        )
+        return false
       }
 
-      console.log("LIVE DROP:", data);
-      return true;
+      console.log("LIVE DROP:", data)
+      return true
     } catch (error) {
-      console.error("Supabase exception:", error);
-      return false;
+      console.error("Supabase exception:", error)
+      return false
     }
   }
-
-  /* =========================================
-     ЗАПУСК АПГРЕЙДА
-     Скорость не меняет шанс победы.
-     ========================================= */
 
   function startUpgrade() {
     if (
@@ -688,56 +791,83 @@ function Upgrade({
       displayChance <= 0 ||
       realChance <= 0
     ) {
-      return;
+      return
     }
 
-    const sourcePrice = getPrice(selectedItem);
-    const targetPrice = getPrice(selectedTarget);
+    const sourcePrice = getPrice(selectedItem)
+    const targetPrice = getPrice(selectedTarget)
 
-    if (sourcePrice <= 0 || targetPrice <= sourcePrice) return;
+    if (sourcePrice <= 0 || targetPrice <= sourcePrice) {
+      return
+    }
 
-    const spinDuration = quickSpin
-      ? QUICK_SPIN_DURATION
-      : NORMAL_SPIN_DURATION;
+    const isBalanceStake =
+      sourceMode === "balance" || selectedItem?.isBalanceStake
 
-    const yellowAngle = (displayChance / 100) * 360;
-    const won = Math.random() * 100 < realChance;
+    if (isBalanceStake) {
+      if (
+        typeof setBalance !== "function" ||
+        currentBalance < sourcePrice
+      ) {
+        return
+      }
+    }
 
-    let landingAngle;
+    const yellowAngle = (displayChance / 100) * 360
+    const won = Math.random() * 100 < realChance
+
+    let landingAngle
 
     if (won) {
-      landingAngle = Math.random() * yellowAngle;
+      landingAngle = Math.random() * yellowAngle
     } else {
-      const blackAngle = 360 - yellowAngle;
-      landingAngle =
-        yellowAngle + Math.random() * blackAngle;
+      const blackAngle = 360 - yellowAngle
+      landingAngle = yellowAngle + Math.random() * blackAngle
     }
 
-    const currentAngle = ((rotation % 360) + 360) % 360;
-    const desiredRotation = (360 - landingAngle) % 360;
+    const currentAngle =
+      ((rotation % 360) + 360) % 360
+
+    const desiredRotation = (360 - landingAngle) % 360
+
     const extraRotation =
-      (desiredRotation - currentAngle + 360) % 360;
+      (desiredRotation - currentAngle + 360) % 360
 
     const finalRotation =
-      rotation + 360 * 12 + extraRotation;
+      rotation +
+      360 * 12 +
+      extraRotation
 
-    trackUpgradeMultiplier(selectedMultiplier);
+    trackUpgradeMultiplier(selectedMultiplier)
 
-    setSpinning(true);
-    setResult(null);
-    setRotation(finalRotation);
+    setSpinning(true)
+    setResult(null)
+    setRotation(finalRotation)
 
-    if (typeof setInventory === "function") {
-      setInventory((previous) => {
-        const current = Array.isArray(previous) ? previous : [];
+    if (isBalanceStake) {
+      setBalance((prev) => {
+        const previousBalance = Number(prev) || 0
+
+        const nextBalance = Math.max(
+          0,
+          Math.round((previousBalance - sourcePrice) * 100) / 100
+        )
+
+        return nextBalance
+      })
+    } else if (typeof setInventory === "function") {
+      setInventory((prev) => {
+        const current = Array.isArray(prev) ? prev : []
 
         if (selectedItem?.uid) {
           const uidIndex = current.findIndex(
             (item) => item?.uid === selectedItem.uid
-          );
+          )
 
           if (uidIndex !== -1) {
-            return current.filter((_, index) => index !== uidIndex);
+            return current.filter(
+              (_, index) => index !== uidIndex
+            )
           }
         }
 
@@ -748,95 +878,98 @@ function Upgrade({
         ) {
           return current.filter(
             (_, index) => index !== selectedInventoryIndex
-          );
+          )
         }
 
-        return current;
-      });
+        return current
+      })
     }
 
-    if (spinTimerRef.current) {
-      clearTimeout(spinTimerRef.current);
-    }
-
-    spinTimerRef.current = window.setTimeout(async () => {
-      spinTimerRef.current = null;
-      setSpinning(false);
+    window.setTimeout(async () => {
+      setSpinning(false)
 
       if (won) {
         const wonItem = {
           ...selectedTarget,
-          uid: createUid(),
-        };
+          uid: createUid()
+        }
 
-        saveTopUpgradeDrop(wonItem);
+        saveTopUpgradeDrop(wonItem)
 
         setResult({
           won: true,
-          item: wonItem,
-        });
+          item: wonItem
+        })
 
-        await addDropToSupabase(wonItem);
+        await addDropToSupabase(wonItem)
       } else {
         setResult({
           won: false,
           item: selectedItem,
-        });
+          balanceStake: isBalanceStake
+        })
       }
-    }, spinDuration);
+    }, 10000)
   }
 
   function sellResult() {
-    if (!result || !result.won) return;
+    if (!result || !result.won) {
+      return
+    }
 
-    const price = getPrice(result.item);
+    const price = getPrice(result.item)
 
     if (typeof setBalance === "function") {
       setBalance(
-        (previous) => (Number(previous) || 0) + price
-      );
+        (prev) => (Number(prev) || 0) + price
+      )
     }
 
-    closeResult();
+    closeResult()
   }
 
   function keepResult() {
-    if (!result || !result.won) return;
-
-    if (typeof setInventory === "function") {
-      setInventory((previous) => [
-        ...(Array.isArray(previous) ? previous : []),
-        result.item,
-      ]);
+    if (!result || !result.won) {
+      return
     }
 
-    closeResult();
+    if (typeof setInventory === "function") {
+      setInventory((prev) => [
+        ...(Array.isArray(prev) ? prev : []),
+        result.item
+      ])
+    }
+
+    closeResult()
   }
 
   function closeResult() {
-    if (spinning) return;
+    if (spinning) {
+      return
+    }
 
-    setResult(null);
-    setSelectedItem(null);
-    setSelectedInventoryIndex(null);
-    setSelectedTarget(null);
-    setSelectedMultiplier(null);
-    setDisplayChance(0);
-    setRealChance(0);
-    setRotation(0);
+    setResult(null)
+    setSelectedItem(null)
+    setSelectedInventoryIndex(null)
+    setSourceMode("inventory")
+    setSelectedTarget(null)
+    setSelectedMultiplier(null)
+    setDisplayChance(0)
+    setRealChance(0)
+    setRotation(0)
   }
 
   const filterSelectStyle = {
     height: "40px",
     padding: "0 12px",
     background: "#0d0d0d",
-    color: "#f3f3f3",
-    border: "1px solid #303030",
+    color: "#fff",
+    border: "1px solid #252525",
     borderRadius: "8px",
     outline: "none",
     cursor: "pointer",
-    minWidth: "180px",
-  };
+    minWidth: "180px"
+  }
 
   const filterInputStyle = {
     flex: "1 1 240px",
@@ -844,26 +977,23 @@ function Upgrade({
     height: "40px",
     padding: "0 12px",
     background: "#0d0d0d",
-    color: "#f3f3f3",
-    border: "1px solid #303030",
+    color: "#fff",
+    border: "1px solid #252525",
     borderRadius: "8px",
-    outline: "none",
-    caretColor: "#f5c400",
-  };
+    outline: "none"
+  }
 
   const actionButtonStyle = {
     height: "40px",
     padding: "0 14px",
-    background: "#111111",
+    background: "#111",
     color: "#f5c400",
-    border: "1px solid #303030",
+    border: "1px solid #292929",
     borderRadius: "8px",
     cursor: "pointer",
     fontWeight: 800,
-    outline: "none",
-    boxShadow: "none",
-    filter: "none",
-  };
+    outline: "none"
+  }
 
   return (
     <div className="upgrade-page">
@@ -876,9 +1006,10 @@ function Upgrade({
       </div>
 
       <div className="upgrade-stage">
-        {/* ИСХОДНЫЙ ПРЕДМЕТ */}
         <div className="selected-side source-side">
-          <div className="selected-title">ТВОЙ ПРЕДМЕТ</div>
+          <div className="selected-title">
+            ТВОЙ ПРЕДМЕТ
+          </div>
 
           {selectedItem ? (
             <div
@@ -886,32 +1017,108 @@ function Upgrade({
               onClick={spinning ? undefined : resetSelection}
             >
               <img
-                src={selectedItem.image || "/avatar.png"}
+                src={selectedItem.image}
                 alt={selectedItem.name}
               />
 
               <div className="selected-name">
-                {selectedItem.name}
+                {selectedItem.isBalanceStake
+                  ? "Ставка с баланса"
+                  : selectedItem.name}
               </div>
 
               <div className="selected-price">
-                {formatMoney(getPrice(selectedItem))}
+                {getPrice(selectedItem).toLocaleString("ru-RU")} ₽
               </div>
             </div>
           ) : (
             <div className="selected-card empty">
-              <span>Выбери предмет ниже</span>
+              <span>
+                Выбери предмет ниже
+              </span>
             </div>
           )}
+
+          <div className="balance-stake-control">
+            <div className="balance-stake-heading">
+              <span>СТАВКА С БАЛАНСА</span>
+              <strong>
+                {effectiveBalanceStake.toLocaleString("ru-RU")} ₽
+              </strong>
+            </div>
+
+            <input
+              className="balance-stake-slider"
+              type="range"
+              min={
+                maxBalanceStake > 0
+                  ? Math.min(0.01, maxBalanceStake)
+                  : 0
+              }
+              max={maxBalanceStake}
+              step="0.01"
+              value={effectiveBalanceStake}
+              disabled={
+                spinning ||
+                typeof setBalance !== "function" ||
+                maxBalanceStake < 0.01
+              }
+              onChange={(event) =>
+                updateBalanceStake(event.target.value)
+              }
+              aria-label="Размер ставки с баланса"
+            />
+
+            <div className="balance-stake-input-row">
+              <input
+                type="number"
+                min="0.01"
+                max={maxBalanceStake}
+                step="0.01"
+                value={
+                  effectiveBalanceStake > 0
+                    ? effectiveBalanceStake
+                    : ""
+                }
+                disabled={
+                  spinning ||
+                  typeof setBalance !== "function" ||
+                  maxBalanceStake < 0.01
+                }
+                onChange={(event) =>
+                  updateBalanceStake(event.target.value)
+                }
+                aria-label="Ввести сумму ставки"
+              />
+
+              <button
+                type="button"
+                className="balance-stake-max"
+                disabled={
+                  spinning ||
+                  typeof setBalance !== "function" ||
+                  maxBalanceStake < 0.01
+                }
+                onClick={() =>
+                  updateBalanceStake(maxBalanceStake)
+                }
+              >
+                MAX
+              </button>
+            </div>
+
+            {sourceMode === "balance" &&
+              selectedItem?.isBalanceStake && (
+                <div className="balance-stake-active">
+                  СТАВКА ВЫБРАНА
+                </div>
+              )}
+          </div>
         </div>
 
-        {/* ЦЕНТРАЛЬНОЕ КОЛЕСО */}
         <div className="upgrade-wheel-area">
           <div className="upgrade-wheel">
-            <div
-              className="upgrade-pointer"
-              aria-hidden="true"
-            >
+            <div className="upgrade-pointer" aria-hidden="true">
               <svg
                 viewBox="0 0 52 46"
                 className="upgrade-pointer-svg"
@@ -920,15 +1127,14 @@ function Upgrade({
                 <path
                   d="M26 5 V23"
                   fill="none"
-                  stroke="#f5c400"
+                  stroke="currentColor"
                   strokeWidth="5"
                   strokeLinecap="round"
                 />
-
                 <path
                   d="M12 18 Q17 29 26 39 Q35 29 40 18"
                   fill="none"
-                  stroke="#f5c400"
+                  stroke="currentColor"
                   strokeWidth="5"
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -941,11 +1147,7 @@ function Upgrade({
               style={{
                 transform: `rotate(${rotation}deg)`,
                 transition: spinning
-                  ? `transform ${
-                      quickSpin
-                        ? QUICK_SPIN_DURATION
-                        : NORMAL_SPIN_DURATION
-                    }ms cubic-bezier(0.08, 0.85, 0.12, 1)`
+                  ? "transform 10s cubic-bezier(0.08, 0.85, 0.12, 1)"
                   : "none",
                 background: `conic-gradient(
                   from 0deg,
@@ -953,7 +1155,7 @@ function Upgrade({
                   #f5c400 ${(displayChance / 100) * 360}deg,
                   #111111 ${(displayChance / 100) * 360}deg,
                   #111111 360deg
-                )`,
+                )`
               }}
             >
               <div className="upgrade-wheel-separators" />
@@ -967,10 +1169,14 @@ function Upgrade({
               />
 
               <div className="upgrade-wheel-chance">
-                {displayChance > 0 ? `${displayChance}%` : "—"}
+                {displayChance > 0
+                  ? `${displayChance}%`
+                  : "—"}
               </div>
 
-              <div className="upgrade-wheel-label">ШАНС</div>
+              <div className="upgrade-wheel-label">
+                ШАНС
+              </div>
             </div>
           </div>
 
@@ -986,72 +1192,39 @@ function Upgrade({
                 }
                 disabled={!selectedItem || spinning}
                 onClick={() => chooseMultiplier(multiplier)}
+                style={{ outline: "none" }}
               >
                 x{multiplier}
               </button>
             ))}
           </div>
 
-          {/* КНОПКА АПГРЕЙДА + МОЛНИЯ */}
-          <div className="upgrade-actions">
-            <button
-              type="button"
-              className="upgrade-button"
-              disabled={
-                !selectedItem ||
-                !selectedTarget ||
-                spinning
-              }
-              onClick={startUpgrade}
-            >
-              {spinning ? "АПГРЕЙД..." : "АПГРЕЙД"}
-            </button>
-
-            <button
-              type="button"
-              className={`quick-spin-toggle ${
-                quickSpin ? "active" : ""
-              }`}
-              onClick={() =>
-                setQuickSpin((current) => !current)
-              }
-              disabled={spinning}
-              aria-label={
-                quickSpin
-                  ? "Выключить быструю крутку"
-                  : "Включить быструю крутку"
-              }
-              aria-pressed={quickSpin}
-              title={
-                quickSpin
-                  ? "Быстрая крутка включена"
-                  : "Быстрая крутка"
-              }
-            >
-              <svg
-                viewBox="0 0 24 24"
-                width="25"
-                height="25"
-                aria-hidden="true"
-                focusable="false"
-              >
-                <path
-                  d="M13.5 2.5 5.5 13h5l-.8 8.5L18.5 10h-5.2z"
-                  fill="currentColor"
-                />
-              </svg>
-            </button>
-          </div>
+          <button
+            type="button"
+            className="upgrade-button"
+            disabled={
+              !selectedItem ||
+              !selectedTarget ||
+              spinning ||
+              (sourceMode === "balance" &&
+                currentBalance < getPrice(selectedItem))
+            }
+            onClick={startUpgrade}
+            style={{ outline: "none" }}
+          >
+            {spinning ? "АПГРЕЙД..." : "АПГРЕЙД"}
+          </button>
         </div>
 
-        {/* ЦЕЛЕВОЙ ПРЕДМЕТ */}
         <div className="selected-side target-side">
-          <div className="selected-title">ЦЕЛЬ</div>
+          <div className="selected-title">
+            ЦЕЛЬ
+          </div>
 
           {selectedTarget ? (
             <div className="selected-card target selected">
               <img
-                src={selectedTarget.image || "/avatar.png"}
+                src={selectedTarget.image}
                 alt={selectedTarget.name}
               />
 
@@ -1060,33 +1233,30 @@ function Upgrade({
               </div>
 
               <div className="selected-price">
-                {formatMoney(getPrice(selectedTarget))}
+                {getPrice(selectedTarget).toLocaleString("ru-RU")} ₽
               </div>
             </div>
           ) : (
             <div className="selected-card target empty">
-              <span>Выбери цель ниже</span>
+              <span>
+                Выбери цель ниже
+              </span>
             </div>
           )}
         </div>
       </div>
 
-      {/* ИНВЕНТАРЬ И МАРКЕТ */}
       <div className="upgrade-selection">
         <div className="selection-panel">
           <div className="selection-header">
             <div>
-              <h2>{tab === "inventory" ? "Инвентарь" : "Маркет"}</h2>
+              <h2>
+                {tab === "inventory" ? "Инвентарь" : "Маркет"}
+              </h2>
 
               <span>
                 {tab === "inventory"
                   ? "Твои предметы"
-                  : marketLoading
-                  ? `Загружено ${market.length.toLocaleString("ru-RU")}${
-                      marketTotal > 0
-                        ? ` из ${marketTotal.toLocaleString("ru-RU")}`
-                        : ""
-                    }`
                   : `${market.length.toLocaleString("ru-RU")} загружено`}
               </span>
             </div>
@@ -1100,6 +1270,7 @@ function Upgrade({
                     : "upgrade-tab"
                 }
                 onClick={() => setTab("inventory")}
+                style={{ outline: "none" }}
               >
                 Инвентарь
               </button>
@@ -1112,6 +1283,7 @@ function Upgrade({
                     : "upgrade-tab"
                 }
                 onClick={() => setTab("market")}
+                style={{ outline: "none" }}
               >
                 Маркет
               </button>
@@ -1127,7 +1299,7 @@ function Upgrade({
                       item?.uid &&
                       selectedItem.uid === item.uid) ||
                     (!selectedItem?.uid &&
-                      selectedInventoryIndex === index);
+                      selectedInventoryIndex === index)
 
                   return (
                     <button
@@ -1143,6 +1315,10 @@ function Upgrade({
                       }
                       disabled={spinning}
                       onClick={() => chooseItem(item, index)}
+                      style={{
+                        outline: "none",
+                        WebkitTapHighlightColor: "transparent"
+                      }}
                     >
                       <img
                         src={item.image || "/avatar.png"}
@@ -1151,9 +1327,11 @@ function Upgrade({
 
                       <span>{item.name}</span>
 
-                      <strong>{formatMoney(getPrice(item))}</strong>
+                      <strong>
+                        {getPrice(item).toLocaleString("ru-RU")} ₽
+                      </strong>
                     </button>
-                  );
+                  )
                 })}
               </div>
             ) : (
@@ -1163,7 +1341,15 @@ function Upgrade({
             )
           ) : (
             <>
-              <div className="upgrade-filters">
+              <div
+                style={{
+                  display: "flex",
+                  gap: "10px",
+                  marginBottom: "14px",
+                  flexWrap: "wrap",
+                  alignItems: "center"
+                }}
+              >
                 <input
                   type="text"
                   value={marketSearch}
@@ -1172,6 +1358,9 @@ function Upgrade({
                   }
                   placeholder="Поиск скина..."
                   style={filterInputStyle}
+                  onFocus={(event) => {
+                    event.currentTarget.style.outline = "none"
+                  }}
                 />
 
                 <select
@@ -1200,38 +1389,41 @@ function Upgrade({
                   }
                   style={filterSelectStyle}
                 >
-                  <option value="price-asc">Цена: по возрастанию</option>
-                  <option value="price-desc">Цена: по убыванию</option>
-                  <option value="name-asc">Название: А → Я</option>
-                  <option value="name-desc">Название: Я → А</option>
+                  <option value="price-asc">
+                    Цена: по возрастанию
+                  </option>
+                  <option value="price-desc">
+                    Цена: по убыванию
+                  </option>
+                  <option value="name-asc">
+                    Название: А → Я
+                  </option>
+                  <option value="name-desc">
+                    Название: Я → А
+                  </option>
                 </select>
 
                 <button
                   type="button"
-                  className="market-action-button"
-                  onClick={() =>
-                    setCartOpen((value) => !value)
-                  }
+                  style={actionButtonStyle}
+                  onClick={() => setCartOpen((value) => !value)}
                 >
                   Корзина ({cart.length})
                 </button>
-
-                {!marketLoading && (
-                  <button
-                    type="button"
-                    className="market-action-button"
-                    onClick={() => loadMarketSkins(true)}
-                  >
-                    Обновить маркет
-                  </button>
-                )}
               </div>
 
               {cartOpen && (
-                <div className="cart-panel">
+                <div
+                  className="selection-panel"
+                  style={{
+                    marginBottom: "14px",
+                    padding: "14px"
+                  }}
+                >
                   <div className="selection-header">
                     <div>
                       <h2>Корзина</h2>
+
                       <span>
                         {cart.length > 0
                           ? `${cart.length} предметов`
@@ -1242,7 +1434,7 @@ function Upgrade({
                     {cart.length > 0 && (
                       <button
                         type="button"
-                        className="market-action-button"
+                        style={actionButtonStyle}
                         onClick={() => setCart([])}
                       >
                         Очистить
@@ -1252,10 +1444,14 @@ function Upgrade({
 
                   {cart.length > 0 && (
                     <div className="selection-grid">
-                      {cart.map((item) => (
+                      {cart.map((item, index) => (
                         <div
                           className="selection-item"
-                          key={marketItemKey(item)}
+                          key={
+                            item?.market_hash_name ||
+                            item?.id ||
+                            `${item?.name}-${index}`
+                          }
                         >
                           <img
                             src={item.image || "/avatar.png"}
@@ -1265,10 +1461,15 @@ function Upgrade({
                           <span>{item.name}</span>
 
                           <strong>
-                            {formatMoney(getPrice(item))}
+                            {getPrice(item).toLocaleString("ru-RU")} ₽
                           </strong>
 
-                          <div className="cart-item-actions">
+                          <div
+                            style={{
+                              display: "flex",
+                              gap: "6px"
+                            }}
+                          >
                             <button
                               type="button"
                               className="inventory-buy-button"
@@ -1277,6 +1478,7 @@ function Upgrade({
                                 currentBalance < getPrice(item)
                               }
                               onClick={() => buySkin(item)}
+                              style={{ outline: "none" }}
                             >
                               {currentBalance >= getPrice(item)
                                 ? "Купить"
@@ -1285,10 +1487,10 @@ function Upgrade({
 
                             <button
                               type="button"
-                              className="inventory-buy-button"
+                              style={actionButtonStyle}
                               onClick={() => removeFromCart(item)}
                             >
-                              Убрать
+                              ×
                             </button>
                           </div>
                         </div>
@@ -1298,27 +1500,36 @@ function Upgrade({
                 </div>
               )}
 
-              {marketLoading && market.length === 0 ? (
+              {marketLoading ? (
                 <div className="empty-selection">
-                  Загружаем маркет...
+                  Загружаем до 100 скинов...
                 </div>
               ) : (
                 <div className="selection-grid">
                   {filteredMarket.map((item, index) => {
-                    const price = getPrice(item);
-                    const canBuy =
-                      price > 0 && currentBalance >= price;
-                    const cartKey = marketItemKey(item);
+                    const price = getPrice(item)
+                    const canBuy = currentBalance >= price
+
+                    const cartKey =
+                      item?.market_hash_name ||
+                      item?.id ||
+                      item?.name
 
                     const inCart = cart.some(
                       (cartItem) =>
-                        marketItemKey(cartItem) === cartKey
-                    );
+                        (cartItem?.market_hash_name ||
+                          cartItem?.id ||
+                          cartItem?.name) === cartKey
+                    )
 
                     return (
                       <div
                         className="selection-item"
-                        key={`${cartKey}-${index}`}
+                        key={
+                          item?.market_hash_name ||
+                          item?.id ||
+                          `${item?.name}-${index}`
+                        }
                       >
                         <img
                           src={item.image || "/avatar.png"}
@@ -1327,13 +1538,16 @@ function Upgrade({
 
                         <span>{item.name}</span>
 
-                        <strong>{formatMoney(price)}</strong>
+                        <strong>
+                          {price.toLocaleString("ru-RU")} ₽
+                        </strong>
 
                         <button
                           type="button"
                           className="inventory-buy-button"
-                          disabled={spinning || inCart}
+                          disabled={spinning}
                           onClick={() => addToCart(item)}
+                          style={{ outline: "none" }}
                         >
                           {inCart ? "В корзине" : "В корзину"}
                         </button>
@@ -1343,61 +1557,96 @@ function Upgrade({
                           className="inventory-buy-button"
                           disabled={spinning || !canBuy}
                           onClick={() => buySkin(item)}
+                          style={{ outline: "none" }}
                         >
                           {canBuy ? "Купить" : "Недостаточно"}
                         </button>
                       </div>
-                    );
+                    )
                   })}
                 </div>
               )}
 
-              {!marketLoading &&
-                filteredMarket.length === 0 &&
-                !marketError && (
-                  <div className="empty-selection">
-                    Ничего не найдено
-                  </div>
-                )}
-
               {marketError && (
-                <div className="market-error" role="alert">
-                  <span>{marketError}</span>
+                <div
+                  className="empty-selection"
+                  role="alert"
+                  style={{ marginTop: 12 }}
+                >
+                  {marketError}
+                </div>
+              )}
 
-                  <button
-                    type="button"
-                    className="market-action-button"
-                    onClick={() => loadMarketSkins(true)}
-                  >
-                    Повторить загрузку
-                  </button>
+              {(marketHasMore || marketError) && (
+                <button
+                  type="button"
+                  disabled={marketLoading || marketLoadingMore}
+                  onClick={() =>
+                    loadMarketSkins(!market.length && marketStart === 0)
+                  }
+                  style={{
+                    display: "block",
+                    width: "100%",
+                    marginTop: 12,
+                    padding: "12px 14px",
+                    border: "1px solid #514515",
+                    borderRadius: 8,
+                    background: "#111111",
+                    color: "#f5c400",
+                    fontWeight: 800,
+                    cursor: "pointer",
+                    transition: "none",
+                    opacity:
+                      marketLoading || marketLoadingMore ? 0.55 : 1
+                  }}
+                >
+                  {marketLoadingMore
+                    ? "ЗАГРУЗКА..."
+                    : marketError
+                    ? "ПОВТОРИТЬ ЗАГРУЗКУ"
+                    : "ЗАГРУЗИТЬ ЕЩЁ"}
+                </button>
+              )}
+
+              {!marketLoading && filteredMarket.length === 0 && (
+                <div className="empty-selection">
+                  Ничего не найдено
                 </div>
               )}
             </>
           )}
         </div>
 
-        {/* ВЫБОР ЦЕЛИ */}
         <div className="selection-panel">
           <div className="selection-header">
             <div>
               <h2>Выбор цели</h2>
 
               <span>
-                Цель должна быть дороже исходного предмета
+                Все скины рынка · цель должна быть дороже своего предмета
               </span>
             </div>
 
-            <div className="market-label">ЦЕЛЬ</div>
+            <div className="market-label">
+              ЦЕЛЬ
+            </div>
           </div>
 
-          {marketLoading && market.length === 0 ? (
+          {marketLoading ? (
             <div className="empty-selection">
               Загружаем цели...
             </div>
           ) : (
             <>
-              <div className="upgrade-filters">
+              <div
+                style={{
+                  display: "flex",
+                  gap: "10px",
+                  marginBottom: "14px",
+                  flexWrap: "wrap",
+                  alignItems: "center"
+                }}
+              >
                 <input
                   type="text"
                   value={targetSearch}
@@ -1406,6 +1655,9 @@ function Upgrade({
                   }
                   placeholder="Поиск цели..."
                   style={filterInputStyle}
+                  onFocus={(event) => {
+                    event.currentTarget.style.outline = "none"
+                  }}
                 />
 
                 <select
@@ -1434,33 +1686,41 @@ function Upgrade({
                   }
                   style={filterSelectStyle}
                 >
-                  <option value="price-asc">Цена: по возрастанию</option>
-                  <option value="price-desc">Цена: по убыванию</option>
-                  <option value="name-asc">Название: А → Я</option>
-                  <option value="name-desc">Название: Я → А</option>
+                  <option value="price-asc">
+                    Цена: по возрастанию
+                  </option>
+                  <option value="price-desc">
+                    Цена: по убыванию
+                  </option>
+                  <option value="name-asc">
+                    Название: А → Я
+                  </option>
+                  <option value="name-desc">
+                    Название: Я → А
+                  </option>
                 </select>
               </div>
 
               <div className="selection-grid">
                 {filteredTargetMarket.map((item, index) => {
-                  const price = getPrice(item);
-                  const sourcePrice = getPrice(selectedItem);
+                  const price = getPrice(item)
+                  const sourcePrice = getPrice(selectedItem)
 
                   const disabled =
                     !selectedItem ||
-                    price <= sourcePrice ||
-                    price <= 0;
+                    price <= sourcePrice
 
                   const active =
                     selectedTarget &&
                     (
                       selectedTarget.market_hash_name ||
                       selectedTarget.name
-                    ) === (
-                      item.market_hash_name ||
-                      item.name
-                    ) &&
-                    getPrice(selectedTarget) === price;
+                    ) ===
+                      (
+                        item.market_hash_name ||
+                        item.name
+                      ) &&
+                    getPrice(selectedTarget) === price
 
                   return (
                     <button
@@ -1470,9 +1730,19 @@ function Upgrade({
                           ? "selection-item chosen"
                           : "selection-item"
                       }
-                      key={`${marketItemKey(item)}-${index}`}
+                      key={
+                        `target-${
+                          item?.market_hash_name ||
+                          item?.name ||
+                          "item"
+                        }-${index}`
+                      }
                       disabled={disabled || spinning}
                       onClick={() => chooseTarget(item)}
+                      style={{
+                        outline: "none",
+                        WebkitTapHighlightColor: "transparent"
+                      }}
                     >
                       <img
                         src={item.image || "/avatar.png"}
@@ -1481,17 +1751,17 @@ function Upgrade({
 
                       <span>{item.name}</span>
 
-                      <strong>{formatMoney(price)}</strong>
+                      <strong>
+                        {price.toLocaleString("ru-RU")} ₽
+                      </strong>
                     </button>
-                  );
+                  )
                 })}
               </div>
 
               {filteredTargetMarket.length === 0 && (
                 <div className="empty-selection">
-                  {selectedItem
-                    ? "Подходящих целей не найдено"
-                    : "Сначала выбери свой предмет"}
+                  Ничего не найдено
                 </div>
               )}
             </>
@@ -1499,7 +1769,6 @@ function Upgrade({
         </div>
       </div>
 
-      {/* ОКНО РЕЗУЛЬТАТА */}
       {result && (
         <div className="upgrade-result-overlay">
           <div className="upgrade-result-modal">
@@ -1512,7 +1781,7 @@ function Upgrade({
             {result.won ? (
               <>
                 <img
-                  src={result.item.image || "/avatar.png"}
+                  src={result.item.image}
                   alt={result.item.name}
                   className="upgrade-result-image"
                 />
@@ -1520,7 +1789,7 @@ function Upgrade({
                 <h2>{result.item.name}</h2>
 
                 <div className="upgrade-result-price">
-                  {formatMoney(getPrice(result.item))}
+                  {getPrice(result.item).toLocaleString("ru-RU")} ₽
                 </div>
 
                 <div className="upgrade-result-actions">
@@ -1528,6 +1797,7 @@ function Upgrade({
                     type="button"
                     className="result-sell-button"
                     onClick={sellResult}
+                    style={{ outline: "none" }}
                   >
                     Продать
                   </button>
@@ -1536,6 +1806,7 @@ function Upgrade({
                     type="button"
                     className="result-inventory-button"
                     onClick={keepResult}
+                    style={{ outline: "none" }}
                   >
                     В инвентарь
                   </button>
@@ -1544,13 +1815,16 @@ function Upgrade({
             ) : (
               <>
                 <div className="upgrade-fail-text">
-                  Предмет потерян.
+                  {result.balanceStake
+                    ? "Ставка потеряна."
+                    : "Предмет потерян."}
                 </div>
 
                 <button
                   type="button"
                   className="result-inventory-button only"
                   onClick={closeResult}
+                  style={{ outline: "none" }}
                 >
                   Закрыть
                 </button>
@@ -1560,7 +1834,7 @@ function Upgrade({
         </div>
       )}
     </div>
-  );
+  )
 }
 
-export default Upgrade;
+export default Upgrade

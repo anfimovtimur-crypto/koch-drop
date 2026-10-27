@@ -38,8 +38,8 @@ const promocodes = [
   // 250₽
   { code: "layrex", amount: 250, activations: 10 },
   { code: "CASE250", amount: 250, activations: 10 },
-  { code: "BONUS250", amount: 250, activations: 10 },
-  { code: "GIFT250", amount: 250, activations: 10 },
+  { code: "gugugaga", amount: 250, activations: 10 },
+  { code: "huinaff", amount: 250, activations: 10 },
   { code: "LUCK250", amount: 250, activations: 10 },
   { code: "SKIN250", amount: 250, activations: 10 },
   { code: "WIN250", amount: 250, activations: 10 },

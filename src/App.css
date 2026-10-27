@@ -1290,13 +1290,21 @@ color:#00ff99;
 
 
 button {
-  background: #f5c400;
-  border: none;
-  color: #080808;
-  padding: 12px 30px;
-  border-radius: 12px;
-  cursor: pointer;
-  transition: .3s;
+
+background:#007bff;
+
+border:none;
+
+color:white;
+
+padding:12px 30px;
+
+border-radius:12px;
+
+cursor:pointer;
+
+transition:.3s;
+
 }
 
 
@@ -6507,4 +6515,106 @@ body {
 
 .upgrade-page button:focus-visible {
   outline: 1px solid #f5c400 !important;
+} 
+/* ===== KOCH DROP — NO BLUE, ONLY BLACK & YELLOW ===== */
+
+:root {
+  --primary: #f5c400;
+  --accent: #f5c400;
+  --accent-color: #f5c400;
+  --focus-color: #f5c400;
+  --bs-primary: #f5c400;
+  --bs-link-color: #f5c400;
+  --bs-link-hover-color: #ffdf50;
+}
+
+* {
+  accent-color: #f5c400;
+  -webkit-tap-highlight-color: transparent;
+}
+
+::selection {
+  color: #080808 !important;
+  background: #f5c400 !important;
+}
+
+::-moz-selection {
+  color: #080808 !important;
+  background: #f5c400 !important;
+}
+
+/* Убираем синие обводки и подсветку фокуса */
+*:focus,
+*:focus-visible {
+  outline-color: #f5c400 !important;
+}
+
+button:focus,
+button:focus-visible,
+input:focus,
+input:focus-visible,
+select:focus,
+select:focus-visible,
+textarea:focus,
+textarea:focus-visible {
+  outline-color: #f5c400 !important;
+  accent-color: #f5c400 !important;
+}
+
+/* Ссылки */
+a {
+  text-decoration-color: rgba(245, 196, 0, 0.45);
+}
+
+a:hover {
+  text-decoration-color: #ffdf50;
+}
+
+/* Жёлтая обводка при наведении на кнопки */
+button:hover:not(:disabled) {
+  border-color: rgba(245, 196, 0, 0.65);
+}
+
+/* Убираем стандартную синюю подсветку полей */
+input,
+select,
+textarea {
+  caret-color: #f5c400;
+}
+
+/* Chrome / Chromium: автозаполнение */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus {
+  -webkit-text-fill-color: #f3f3f3;
+  caret-color: #f5c400;
+  box-shadow: 0 0 0 1000px #101010 inset;
+  border-color: rgba(245, 196, 0, 0.55);
+} 
+/* KOCH DROP — УБРАТЬ СВЕЧЕНИЕ У КНОПОК */
+
+button,
+button:hover,
+button:focus,
+button:focus-visible,
+button:active,
+button:disabled,
+[role="button"],
+input[type="button"],
+input[type="submit"],
+input[type="reset"] {
+  box-shadow: none !important;
+  text-shadow: none !important;
+  filter: none !important;
+}
+
+/* В том числе кнопки апгрейда */
+.upgrade-page button,
+.upgrade-page button:hover,
+.upgrade-page button:focus,
+.upgrade-page button:focus-visible,
+.upgrade-page button:active {
+  box-shadow: none !important;
+  text-shadow: none !important;
+  filter: none !important;
 }

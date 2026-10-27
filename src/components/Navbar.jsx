@@ -18,6 +18,13 @@ function Navbar({
           onClick={() => setPage("upgrade")}
         />
 
+<button
+  className={`kd-link ${page === "contracts" ? "active" : ""}`}
+  onClick={() => setPage("contracts")}
+>
+  Контракты
+</button>
+
         <div className="kd-links">
           <button
             className={`kd-link ${page === "upgrade" ? "active" : ""}`}

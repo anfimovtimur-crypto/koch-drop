@@ -38,6 +38,8 @@ function App() {
   );
 
   const [balance, setBalanceState] = useState(0);
+  const [toast, setToast] = useState("");
+  const [balanceLoaded, setBalanceLoaded] = useState(false);
 
   const [steamUser, setSteamUser] = useState(() => {
     try {
@@ -47,9 +49,6 @@ function App() {
       return null;
     }
   });
-
-  const [balanceLoaded, setBalanceLoaded] = useState(false);
-  const [toast, setToast] = useState("");
 
   useEffect(() => {
     loadSteamAccount();
@@ -122,23 +121,20 @@ function App() {
   }
 
   function setBalance(value) {
-    setBalanceState(value);
+    setBalanceState((previous) =>
+      typeof value === "function" ? value(previous) : value
+    );
   }
 
   useEffect(() => {
-    if (!balanceLoaded || !steamUser) {
-      return;
-    }
+    if (!balanceLoaded || !steamUser) return;
 
     saveBalance(balance);
   }, [balance, steamUser, balanceLoaded]);
 
   async function saveBalance(value) {
     const token = localStorage.getItem("koch_steam_token");
-
-    if (!token) {
-      return;
-    }
+    if (!token) return;
 
     try {
       await fetch(`${STEAM_FUNCTION}?action=balance`, {
@@ -190,6 +186,10 @@ function App() {
     localStorage.setItem("koch_page", JSON.stringify(page));
   }, [page]);
 
+  function handleLogin() {
+    window.location.href = `${STEAM_FUNCTION}?action=login`;
+  }
+
   return (
     <div className="app">
       <DropTicker />
@@ -199,18 +199,15 @@ function App() {
         setPage={setPage}
         balance={balance}
         steamUser={steamUser}
-        onLogin={() => {
-          window.location.href = `${STEAM_FUNCTION}?action=login`;
-        }}
+        onLogin={handleLogin}
       />
 
       <Toast message={toast} />
 
       <main className="main-content">
-        {page === "home" ? null : page === "cases" ? (
+        {page === "cases" ? (
           <>
             <TopSlider />
-
             <Cases
               balance={balance}
               setBalance={setBalance}

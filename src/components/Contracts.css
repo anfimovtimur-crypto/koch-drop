@@ -1,67 +1,86 @@
+/* =========================================
+   KOCH DROP — CONTRACTS
+   BLACK / YELLOW / PREMIUM
+   ========================================= */
+
 .contracts-page {
+  --contract-yellow: #f5c400;
+  --contract-yellow-light: #ffdf50;
+  --contract-bg: #070707;
+  --contract-panel: #101010;
+  --contract-border: #292929;
+  --contract-text: #f5f5f5;
+  --contract-muted: #858585;
+
   position: relative;
+  isolation: isolate;
   width: 100%;
   min-height: 100vh;
   overflow: hidden;
   box-sizing: border-box;
+
+  color: var(--contract-text);
+
   background:
     radial-gradient(
-      circle at 50% 0%,
-      rgba(0, 190, 255, 0.14),
-      transparent 40%
+      ellipse at 50% 0%,
+      rgba(245, 196, 0, 0.055),
+      transparent 44%
     ),
-    radial-gradient(
-      circle at 0% 70%,
-      rgba(0, 140, 255, 0.08),
-      transparent 35%
-    ),
-    #050a11;
+    #070707 !important;
 }
+
+.contracts-page *,
+.contracts-page *::before,
+.contracts-page *::after {
+  box-sizing: border-box;
+}
+
+.contracts-page button {
+  font: inherit;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.contracts-page button:focus-visible {
+  outline: 2px solid var(--contract-yellow);
+  outline-offset: 3px;
+}
+
+/* =========================================
+   BACKGROUND
+   ========================================= */
 
 .contracts-background {
   position: absolute;
+  z-index: -1;
   inset: 0;
   overflow: hidden;
   pointer-events: none;
+  background: transparent;
 }
 
-.blue-glow {
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(120px);
+.contracts-page .blue-glow {
+  display: none !important;
 }
 
-.glow-one {
-  width: 550px;
-  height: 550px;
-  left: -180px;
-  top: 200px;
-  background: rgba(0, 150, 255, 0.1);
-}
-
-.glow-two {
-  width: 600px;
-  height: 600px;
-  right: -200px;
-  top: 50px;
-  background: rgba(0, 210, 255, 0.08);
-}
-
-.blue-grid {
+.contracts-page .blue-grid {
   position: absolute;
   inset: 0;
-  opacity: 0.12;
+  opacity: 0.025;
+
   background-image:
     linear-gradient(
-      rgba(0, 180, 255, 0.08) 1px,
+      rgba(245, 196, 0, 0.2) 1px,
       transparent 1px
     ),
     linear-gradient(
       90deg,
-      rgba(0, 180, 255, 0.08) 1px,
+      rgba(245, 196, 0, 0.2) 1px,
       transparent 1px
     );
+
   background-size: 60px 60px;
+
   mask-image: linear-gradient(
     to bottom,
     black,
@@ -69,65 +88,89 @@
   );
 }
 
+/* =========================================
+   PAGE HEADER
+   ========================================= */
+
 .contracts-content {
   position: relative;
-  z-index: 2;
+  z-index: 1;
+
   width: min(1400px, calc(100% - 60px));
   margin: 0 auto;
-  padding: 45px 0 100px;
+  padding: 43px 0 90px;
 }
 
 .contracts-header {
+  margin-bottom: 32px;
   text-align: center;
-  margin-bottom: 30px;
 }
 
-.contracts-title span {
-  color: #20cfff;
-  font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 4px;
+.contracts-title > span {
+  display: inline-block;
+
+  margin-bottom: 5px;
+
+  color: var(--contract-yellow);
+
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 3px;
 }
 
 .contracts-title h1 {
-  margin: 8px 0;
-  color: #f4fbff;
-  font-size: 38px;
+  margin: 8px 0 11px;
+
+  color: #f7f7f7;
+
+  font-size: clamp(30px, 4vw, 43px);
   font-weight: 900;
+  line-height: 1.12;
+  letter-spacing: -1.2px;
+
   text-shadow: none;
   filter: none;
 }
 
 .contracts-title p {
-  margin: 0;
-  color: #6f8292;
-  font-size: 14px;
+  max-width: 570px;
+  margin: 0 auto;
+
+  color: #909090;
+
+  font-size: 13px;
+  line-height: 1.7;
 }
+
+/* =========================================
+   LAYOUT AND PANELS
+   ========================================= */
 
 .contracts-layout {
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 22px;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 20px;
 }
 
 .contracts-layout.single {
-  grid-template-columns: 1fr;
+  grid-template-columns: minmax(0, 1fr);
 }
 
 .contract-card,
 .inventory-panel,
 .roulette-section {
-  border: 1px solid rgba(77, 190, 255, 0.1);
-  border-radius: 20px;
-  background:
-    linear-gradient(
-      145deg,
-      rgba(13, 24, 35, 0.97),
-      rgba(7, 13, 21, 0.97)
-    );
-  box-shadow:
-    0 20px 70px rgba(0, 0, 0, 0.35),
-    inset 0 1px rgba(255, 255, 255, 0.025);
+  min-width: 0;
+
+  border: 1px solid #292929;
+  border-radius: 12px;
+
+  background: linear-gradient(
+    145deg,
+    #131313,
+    #0b0b0b
+  );
+
+  box-shadow: none;
 }
 
 .contract-card {
@@ -138,91 +181,163 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 16px;
+
   margin-bottom: 22px;
+}
+
+.section-header > div:first-child {
+  min-width: 0;
 }
 
 .section-header h2 {
   margin: 0;
-  color: #edf9ff;
-  font-size: 17px;
+
+  color: #f4f4f4;
+
+  font-size: 18px;
+  font-weight: 850;
+  letter-spacing: -0.3px;
 }
 
 .section-header p {
-  margin: 5px 0 0;
-  color: #657583;
+  margin: 6px 0 0;
+
+  color: var(--contract-muted);
+
   font-size: 12px;
+  line-height: 1.6;
 }
 
 .counter,
 .inventory-count {
-  min-width: 42px;
-  height: 32px;
   display: flex;
+  flex-shrink: 0;
   align-items: center;
   justify-content: center;
-  box-sizing: border-box;
-  border-radius: 9px;
-  background: rgba(0, 183, 255, 0.08);
-  border: 1px solid rgba(0, 183, 255, 0.18);
-  color: #25cfff;
-  font-weight: 800;
+
+  min-width: 44px;
+  height: 34px;
+  padding: 0 9px;
+
+  border: 1px solid rgba(245, 196, 0, 0.28);
+  border-radius: 6px;
+
+  background: rgba(245, 196, 0, 0.06);
+
+  color: var(--contract-yellow);
+
+  font-size: 12px;
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
 }
+
+/* =========================================
+   CONTRACT SLOTS
+   ========================================= */
 
 .contract-slots {
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 12px;
+  gap: 11px;
 }
 
-.contract-slot {
-  height: 125px;
-  min-width: 0;
+.contracts-page .contract-slot {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  box-sizing: border-box;
-  border-radius: 13px;
-  border: 1px dashed rgba(117, 157, 180, 0.16);
-  background: rgba(255, 255, 255, 0.015);
+
+  min-width: 0;
+  height: 135px;
+  padding: 9px;
+
+  overflow: hidden;
+
+  border: 1px dashed #353535;
+  border-radius: 8px;
+
+  background: #0b0b0b;
+
+  color: #f5f5f5;
+  text-align: center;
+
+  cursor: default;
+
+  box-shadow: none;
+  transform: none;
+  transition: none;
+}
+
+.contracts-page .contract-slot:disabled {
+  opacity: 1;
+}
+
+.contracts-page .contract-slot:not(:disabled) {
   cursor: pointer;
-  transition:
-    border-color 0.2s,
-    background 0.2s,
-    transform 0.2s;
 }
 
-.contract-slot:hover {
-  border-color: rgba(0, 196, 255, 0.45);
-  background: rgba(0, 174, 255, 0.045);
-  transform: translateY(-2px);
+.contracts-page .contract-slot:not(:disabled):hover {
+  border-color: #555;
+  background: #0b0b0b;
+  color: #f5f5f5;
+
+  box-shadow: none;
+  transform: none;
 }
 
-.contract-slot.has-item {
+.contracts-page .contract-slot.has-item {
   border-style: solid;
-  border-color: rgba(0, 191, 255, 0.2);
-  background: rgba(0, 157, 255, 0.035);
+  border-color: rgba(245, 196, 0, 0.35);
+
+  background: linear-gradient(
+    160deg,
+    rgba(245, 196, 0, 0.045),
+    #0b0b0b
+  );
+}
+
+.contracts-page .contract-slot.has-item:hover {
+  border-color: rgba(245, 196, 0, 0.55);
 }
 
 .contract-slot img {
-  width: 72px;
-  height: 72px;
+  display: block;
+
+  width: 76px;
+  height: 76px;
+  max-width: 100%;
+
   object-fit: contain;
+
+  pointer-events: none;
 }
 
-.contract-slot span {
-  max-width: 90%;
+.contract-slot > span {
+  display: block;
+
+  width: 100%;
+  margin-top: 3px;
+
   overflow: hidden;
-  color: #aebbc4;
+
+  color: #c5c5c5;
+
   font-size: 10px;
+  line-height: 1.35;
+
   white-space: nowrap;
   text-overflow: ellipsis;
 }
 
-.contract-slot b {
-  margin-top: 3px;
-  color: #20cfff;
+.contract-slot > b {
+  margin-top: 4px;
+
+  color: var(--contract-yellow);
+
   font-size: 11px;
+  font-weight: 850;
+  font-variant-numeric: tabular-nums;
 }
 
 .empty-slot {
@@ -232,252 +347,462 @@
   gap: 5px;
 }
 
-.empty-slot span {
-  color: #435664;
-  font-size: 28px;
+.empty-slot > span {
+  color: #675719;
+
+  font-size: 29px;
+  font-weight: 400;
+  line-height: 1;
 }
 
-.empty-slot small {
-  color: #3d4d58;
+.empty-slot > small {
+  color: #777;
+
   font-size: 8px;
-  letter-spacing: 1px;
+  font-weight: 800;
+  letter-spacing: 1.2px;
 }
+
+/* =========================================
+   CONTRACT PRICE AND CREATE BUTTON
+   ========================================= */
 
 .contract-footer {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 20px;
-  margin-top: 24px;
-  padding-top: 20px;
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
+
+  margin-top: 23px;
+  padding-top: 21px;
+
+  border-top: 1px solid #252525;
 }
 
-.contract-cost span {
+.contract-cost {
+  min-width: 0;
+}
+
+.contract-cost > span {
   display: block;
-  color: #63727d;
+
+  color: #888;
+
   font-size: 11px;
 }
 
-.contract-cost strong {
+.contract-cost > strong {
   display: block;
-  margin-top: 4px;
-  color: #eafaff;
-  font-size: 21px;
+
+  margin-top: 6px;
+
+  color: var(--contract-yellow);
+
+  font-size: clamp(21px, 2.5vw, 27px);
+  font-weight: 900;
+  letter-spacing: -0.5px;
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
 }
 
-.create-contract {
-  min-width: 190px;
-  border: 0;
-  border-radius: 10px;
-  padding: 14px 28px;
+/* The main button */
+
+.contracts-page .create-contract {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  min-width: 195px;
+  min-height: 47px;
+  padding: 13px 22px;
+
+  border: 1px solid var(--contract-yellow);
+  border-radius: 7px;
+
   background: linear-gradient(
-    135deg,
-    #009eea,
-    #18cfff
+    180deg,
+    #ffdf50,
+    #f5c400
   );
-  color: white;
-  font-weight: 800;
+
+  color: #101010;
+
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.3px;
+  text-align: center;
+
+  box-shadow: none;
+  text-shadow: none;
+  filter: none;
+  transform: none;
+
   cursor: pointer;
-  transition:
-    transform 0.2s,
-    box-shadow 0.2s;
-  box-shadow:
-    0 8px 25px rgba(0, 175, 255, 0.16);
+
+  transition: background 0.15s ease;
 }
 
-.create-contract:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow:
-    0 12px 35px rgba(0, 190, 255, 0.25);
+.contracts-page .create-contract:hover:not(:disabled),
+.contracts-page .create-contract:active:not(:disabled) {
+  border-color: #ffdf50;
+  background: #ffdf50;
+  color: #101010;
+
+  box-shadow: none;
+  text-shadow: none;
+  filter: none;
+  transform: none;
 }
 
-.create-contract:disabled {
-  background: #18232c;
-  color: #53616a;
+.contracts-page .create-contract:disabled {
+  border-color: #343434;
+  background: #1a1a1a;
+  color: #777;
+
   cursor: not-allowed;
+
   box-shadow: none;
 }
 
-/* ROULETTE */
+/* =========================================
+   MARKET STATUS AND MESSAGES
+   ========================================= */
+
+.market-status {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+
+  margin-top: 17px;
+  padding: 12px 14px;
+
+  border: 1px solid #292929;
+  border-radius: 7px;
+
+  background: #0b0b0b;
+
+  color: #a2a2a2;
+
+  font-size: 11px;
+  line-height: 1.7;
+
+  overflow-wrap: anywhere;
+}
+
+.market-status strong {
+  color: var(--contract-yellow);
+  font-weight: 850;
+}
+
+.market-status.is-loading {
+  color: #c0c0c0;
+}
+
+.market-status.is-error {
+  border-color: rgba(245, 196, 0, 0.24);
+
+  background: rgba(245, 196, 0, 0.035);
+
+  color: #e2d18b;
+}
+
+.market-error-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+
+  width: 100%;
+}
+
+.contracts-page .market-retry {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 32px;
+  padding: 7px 12px;
+
+  border: 1px solid #51461b;
+  border-radius: 5px;
+
+  background: #151208;
+
+  color: var(--contract-yellow);
+
+  font-size: 10px;
+  font-weight: 800;
+
+  box-shadow: none;
+  transform: none;
+  transition: none;
+  cursor: pointer;
+}
+
+.contracts-page .market-retry:hover {
+  border-color: #51461b;
+  background: #151208;
+  color: var(--contract-yellow);
+
+  box-shadow: none;
+  transform: none;
+}
+
+.contract-message {
+  margin-top: 12px;
+  padding: 11px 13px;
+
+  border: 1px solid rgba(245, 196, 0, 0.25);
+  border-radius: 6px;
+
+  background: rgba(245, 196, 0, 0.04);
+
+  color: #e9d683;
+
+  font-size: 11px;
+  line-height: 1.6;
+
+  overflow-wrap: anywhere;
+}
+
+/* =========================================
+   ROULETTE
+   ========================================= */
 
 .roulette-section {
   width: 100%;
-  margin-top: 22px;
-  padding: 25px;
-  box-sizing: border-box;
+  margin-top: 20px;
+  padding: 24px;
+
+  overflow: hidden;
 }
 
 .roulette-title {
-  text-align: center;
   margin-bottom: 20px;
-  color: #20cfff;
-  font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 3px;
+
+  color: var(--contract-yellow);
+
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 2.5px;
+
+  text-align: center;
 }
 
-.roulette-wrapper {
+/* Window is the positioning reference for the spinner. */
+
+.contracts-page .roulette-wrapper {
   position: relative;
+  isolation: isolate;
+
   width: 100%;
   height: 190px;
+
   overflow: hidden;
-  box-sizing: border-box;
-  border-radius: 15px;
-  background:
-    linear-gradient(
-      90deg,
-      #071019 0%,
-      #0b1822 50%,
-      #071019 100%
-    );
-  border: 1px solid rgba(0, 190, 255, 0.1);
+
+  border: 1px solid #2b2b2b;
+  border-radius: 8px;
+
+  background: #090909;
+
+  box-shadow: none;
 }
 
-.roulette-wrapper::before,
-.roulette-wrapper::after {
-  content: "";
+.contracts-page .roulette-wrapper::before,
+.contracts-page .roulette-wrapper::after {
   position: absolute;
   z-index: 3;
   top: 0;
   bottom: 0;
-  width: 180px;
+
+  width: 100px;
+
+  content: "";
+
   pointer-events: none;
 }
 
-.roulette-wrapper::before {
+.contracts-page .roulette-wrapper::before {
   left: 0;
+
   background: linear-gradient(
     90deg,
-    #071019 0%,
-    rgba(7, 16, 25, 0.75) 35%,
+    #090909 0%,
+    rgba(9, 9, 9, 0.8) 36%,
     transparent 100%
   );
 }
 
-.roulette-wrapper::after {
+.contracts-page .roulette-wrapper::after {
   right: 0;
+
   background: linear-gradient(
     270deg,
-    #071019 0%,
-    rgba(7, 16, 25, 0.75) 35%,
+    #090909 0%,
+    rgba(9, 9, 9, 0.8) 36%,
     transparent 100%
   );
 }
 
-.roulette-pointer {
+/* Yellow center pointer */
+
+.contracts-page .roulette-pointer {
   position: absolute;
   z-index: 10;
-  left: 50%;
   top: 0;
-  width: 3px;
-  height: 100%;
+  bottom: 0;
+  left: 50%;
+
+  width: 2px;
+
   transform: translateX(-50%);
-  background: #25d6ff;
-  box-shadow:
-    0 0 15px rgba(25, 205, 255, 0.9),
-    0 0 35px rgba(25, 205, 255, 0.5);
+
+  background: var(--contract-yellow);
+
+  box-shadow: none;
+
   pointer-events: none;
 }
 
-.roulette-pointer::before {
-  content: "";
+.contracts-page .roulette-pointer::before {
   position: absolute;
-  left: 50%;
   top: 0;
+  left: 50%;
+
   width: 0;
   height: 0;
+
+  content: "";
+
   transform: translateX(-50%);
-  border-left: 8px solid transparent;
+
   border-right: 8px solid transparent;
-  border-top: 12px solid #25d6ff;
+  border-left: 8px solid transparent;
+  border-top: 12px solid var(--contract-yellow);
 }
 
-.roulette-track {
+/*
+ * The track is moved by Contracts.jsx.
+ * Do not add a second CSS animation to this element.
+ */
+
+.contracts-page .roulette-track {
   position: absolute;
-  left: 50%;
   top: 10px;
+  left: 50%;
+
   display: flex;
   gap: 10px;
-  height: 170px;
+
   width: max-content;
+  height: 170px;
+
   transform: translateX(-50%);
+
   will-change: transform;
 }
 
-.roulette-spinning {
-  animation:
-    rouletteSpin 6.5s
-    cubic-bezier(0.08, 0.72, 0.12, 1)
-    forwards;
-}
-
-.roulette-item {
+.contracts-page .roulette-item {
   position: relative;
-  flex: 0 0 145px;
-  width: 145px;
-  height: 170px;
+
   display: flex;
+  flex: 0 0 145px;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  box-sizing: border-box;
-  border-radius: 12px;
-  background:
-    linear-gradient(
-      145deg,
-      rgba(20, 34, 46, 0.98),
-      rgba(8, 16, 24, 0.98)
-    );
-  border: 1px solid rgba(90, 150, 180, 0.1);
+
+  width: 145px;
+  height: 170px;
+  padding: 8px;
+
+  overflow: hidden;
+
+  border: 1px solid #2d2d2d;
+  border-radius: 7px;
+
+  background: linear-gradient(
+    150deg,
+    #191919,
+    #0c0c0c
+  );
+
+  text-align: center;
+
+  box-shadow: none;
 }
 
-.roulette-item img {
+/* Subtle indication of the actual winning item */
+
+.contracts-page .roulette-item.roulette-winner {
+  border-color: rgba(245, 196, 0, 0.6);
+
+  background: linear-gradient(
+    150deg,
+    #211c0b,
+    #0c0c0c
+  );
+}
+
+.contracts-page .roulette-item img {
+  display: block;
+
   width: 105px;
   height: 105px;
+
   object-fit: contain;
+
+  pointer-events: none;
 }
 
-.roulette-item span {
-  width: 90%;
+.contracts-page .roulette-item > span {
+  display: block;
+
+  width: 100%;
+  margin-top: 4px;
+
   overflow: hidden;
-  color: #9baeb9;
+
+  color: #c6c6c6;
+
   font-size: 9px;
+  line-height: 1.4;
+
   text-align: center;
   white-space: nowrap;
   text-overflow: ellipsis;
 }
 
-.roulette-item b {
-  margin-top: 4px;
-  color: #24cfff;
-  font-size: 11px;
+.contracts-page .roulette-item > b {
+  display: block;
+
+  margin-top: 5px;
+
+  color: var(--contract-yellow);
+
+  font-size: 10px;
+  font-weight: 850;
+  font-variant-numeric: tabular-nums;
 }
 
 .roulette-loading {
-  margin-top: 13px;
-  text-align: center;
-  color: #627986;
+  margin-top: 14px;
+
+  color: #a8a8a8;
+
   font-size: 11px;
-  animation: loadingPulse 1s infinite;
+  line-height: 1.6;
+
+  text-align: center;
+  animation: contracts-loading 1.2s ease-in-out infinite;
 }
 
-@keyframes rouletteSpin {
-  0% {
-    transform: translateX(-50%);
-  }
-
-  100% {
-    transform: translateX(
-      calc(-50% - 3487.5px)
-    );
-  }
-}
-
-@keyframes loadingPulse {
+@keyframes contracts-loading {
   0%,
   100% {
-    opacity: 0.45;
+    opacity: 0.55;
   }
 
   50% {
@@ -485,237 +810,332 @@
   }
 }
 
-/* INVENTORY */
+/* =========================================
+   INVENTORY
+   ========================================= */
 
 .inventory-panel {
-  margin-top: 22px;
+  margin-top: 20px;
   padding: 25px;
 }
 
 .inventory-grid {
   display: grid;
-  grid-template-columns:
-    repeat(6, minmax(0, 1fr));
+  grid-template-columns: repeat(6, minmax(0, 1fr));
   gap: 12px;
 }
 
-.inventory-item {
+.contracts-page .inventory-item {
   position: relative;
-  min-width: 0;
-  min-height: 155px;
-  padding: 10px;
+
   display: flex;
   flex-direction: column;
-  box-sizing: border-box;
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.018);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  cursor: pointer;
-  transition:
-    transform 0.2s,
-    border-color 0.2s,
-    background 0.2s;
-}
+  align-items: stretch;
 
-.inventory-item:hover {
+  min-width: 0;
+  min-height: 160px;
+  padding: 10px;
+
+  overflow: hidden;
+
+  border: 1px solid #292929;
+  border-radius: 8px;
+
+  background: #101010;
+
+  color: #f5f5f5;
+
+  text-align: left;
+
+  cursor: pointer;
+
+  box-shadow: none;
   transform: none;
   filter: none;
-  background: inherit;
-  color: inherit;
+  transition: none;
 }
 
+.contracts-page .inventory-item:hover,
+.contracts-page .inventory-item:active {
+  border-color: #363636;
+  background: #101010;
+  color: #f5f5f5;
 
-.inventory-item img {
+  box-shadow: none;
+  transform: none;
+  filter: none;
+}
+
+.contracts-page .inventory-item:disabled {
+  cursor: default;
+}
+
+.contracts-page .inventory-item:disabled:not(
+  .inventory-item-selected
+) {
+  opacity: 0.65;
+}
+
+.contracts-page .inventory-item.inventory-item-selected,
+.contracts-page .inventory-item.inventory-item-selected:hover {
+  border-color: rgba(245, 196, 0, 0.65);
+
+  background: linear-gradient(
+    160deg,
+    rgba(245, 196, 0, 0.07),
+    #101010
+  );
+
+  opacity: 0.85;
+}
+
+.contracts-page .inventory-item img {
+  display: block;
+
   width: 100%;
-  height: 105px;
+  height: 104px;
+
   object-fit: contain;
+
+  transform: none;
+  filter: none;
+
+  pointer-events: none;
 }
 
-.inventory-item span {
+.contracts-page .inventory-item:hover img,
+.contracts-page .inventory-item:active img {
+  transform: none;
+  filter: none;
+}
+
+.contracts-page .inventory-item > span {
+  display: block;
+
+  width: 100%;
+  margin-top: 6px;
+
   overflow: hidden;
-  color: #9baab4;
+
+  color: #c9c9c9;
+
   font-size: 10px;
+  line-height: 1.4;
+
   white-space: nowrap;
   text-overflow: ellipsis;
 }
 
-.inventory-item b {
-  margin-top: 3px;
-  color: #21cfff;
+.contracts-page .inventory-item:hover > span {
+  color: #c9c9c9;
+}
+
+.contracts-page .inventory-item > b {
+  display: block;
+
+  margin-top: 5px;
+
+  color: var(--contract-yellow);
+
   font-size: 11px;
+  font-weight: 850;
+  font-variant-numeric: tabular-nums;
 }
 
-.inventory-item-selected {
-  opacity: 0.45;
-  border-color: rgba(0, 196, 255, 0.15);
+.contracts-page .inventory-item:hover > b {
+  color: var(--contract-yellow);
 }
 
-.inventory-item-selected:hover {
-  transform: none;
-}
-
-.inventory-selected {
+.contracts-page .inventory-selected {
   position: absolute;
-  top: 8px;
-  right: 8px;
-  padding: 4px 7px;
-  border-radius: 6px;
-  background: rgba(0, 190, 255, 0.15);
-  border: 1px solid rgba(0, 190, 255, 0.2);
-  color: #25d6ff;
+  top: 7px;
+  right: 7px;
+
+  padding: 5px 7px;
+
+  border: 1px solid rgba(245, 196, 0, 0.3);
+  border-radius: 4px;
+
+  background: #191506;
+
+  color: var(--contract-yellow);
+
   font-size: 8px;
-  font-weight: 800;
+  font-weight: 850;
 }
+
+/* Empty inventory */
 
 .empty-inventory {
-  padding: 55px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 190px;
+  padding: 35px 20px;
+
+  border: 1px dashed #303030;
+  border-radius: 8px;
+
+  background: #0b0b0b;
+
   text-align: center;
-  color: #536673;
 }
 
-.empty-inventory div {
-  margin-bottom: 10px;
-  font-size: 35px;
+.empty-inventory-symbol {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 48px;
+  height: 48px;
+  margin-bottom: 15px;
+
+  border: 1px solid rgba(245, 196, 0, 0.25);
+
+  color: var(--contract-yellow);
+
+  font-size: 25px;
 }
 
 .empty-inventory p {
   margin: 0;
+
+  color: #8b8b8b;
+
   font-size: 12px;
+  line-height: 1.6;
 }
 
-/* RESULT */
+/* =========================================
+   RESULT MODAL
+   ========================================= */
 
 .result-overlay {
   position: fixed;
   z-index: 1000;
   inset: 0;
+
   display: flex;
   align-items: center;
   justify-content: center;
+
   padding: 20px;
-  box-sizing: border-box;
-  background: rgba(1, 6, 11, 0.78);
-  backdrop-filter: blur(12px);
+
+  overflow-y: auto;
+
+  background: rgba(0, 0, 0, 0.87);
+
+  backdrop-filter: blur(7px);
 }
 
 .result-modal {
   width: min(450px, 100%);
-  padding: 32px;
-  box-sizing: border-box;
-  border-radius: 22px;
+  padding: 30px;
+
+  border: 1px solid rgba(245, 196, 0, 0.3);
+  border-radius: 12px;
+
+  background: linear-gradient(
+    145deg,
+    #151515,
+    #090909
+  );
+
   text-align: center;
-  background:
-    radial-gradient(
-      circle at 50% 0%,
-      rgba(0, 195, 255, 0.1),
-      transparent 45%
-    ),
-    #09121a;
-  border: 1px solid rgba(0, 201, 255, 0.16);
-  box-shadow:
-    0 30px 100px rgba(0, 0, 0, 0.6),
-    0 0 80px rgba(0, 180, 255, 0.08);
-  animation: resultAppear 0.35s ease;
+
+  box-shadow: none;
+
+  animation: contracts-result-enter 200ms ease-out;
 }
 
-@keyframes resultAppear {
+@keyframes contracts-result-enter {
   from {
     opacity: 0;
-    transform: scale(0.88)
-      translateY(15px);
+    transform: translateY(8px);
   }
 
   to {
     opacity: 1;
-    transform: scale(1)
-      translateY(0);
+    transform: translateY(0);
   }
 }
 
 .result-label {
-  color: #22d2ff;
+  color: var(--contract-yellow);
+
   font-size: 10px;
-  font-weight: 800;
-  letter-spacing: 3px;
+  font-weight: 900;
+  letter-spacing: 2.5px;
 }
 
 .result-modal h2 {
-  margin: 10px 0 20px;
-  color: #eefaff;
-  font-size: 22px;
+  margin: 11px 0 20px;
+
+  color: #f5f5f5;
+
+  font-size: 23px;
+  font-weight: 900;
 }
 
 .result-item {
   position: relative;
-  width: 220px;
-  height: 220px;
-  margin: auto;
+
   display: flex;
   align-items: center;
   justify-content: center;
+
+  width: 220px;
+  height: 220px;
+  margin: 0 auto;
 }
 
 .result-glow {
   position: absolute;
-  inset: 20px;
+  inset: 28px;
+
   border-radius: 50%;
-  background: rgba(0, 190, 255, 0.12);
-  filter: blur(35px);
-  animation: resultGlow 2s infinite;
+
+  background: rgba(245, 196, 0, 0.055);
+
+  filter: none;
 }
 
 .result-item img {
   position: relative;
   z-index: 2;
+
+  display: block;
+
   width: 190px;
   height: 190px;
+
   object-fit: contain;
-  animation:
-    itemDrop 0.7s
-    cubic-bezier(0.17, 0.89, 0.32, 1.28);
-}
-
-@keyframes itemDrop {
-  0% {
-    opacity: 0;
-    transform:
-      translateY(-70px)
-      scale(0.65);
-  }
-
-  65% {
-    transform:
-      translateY(10px)
-      scale(1.08);
-  }
-
-  100% {
-    opacity: 1;
-    transform:
-      translateY(0)
-      scale(1);
-  }
-}
-
-@keyframes resultGlow {
-  50% {
-    transform: scale(1.15);
-    opacity: 0.7;
-  }
 }
 
 .result-modal h3 {
-  margin: 5px 0;
-  color: #d9f5ff;
-  font-size: 16px;
+  margin: 8px 0;
+
+  color: #e5e5e5;
+
+  font-size: 15px;
+  font-weight: 800;
+
+  overflow-wrap: anywhere;
 }
 
 .result-price {
   margin-bottom: 22px;
-  color: #22d2ff;
-  font-size: 18px;
-  font-weight: 800;
+
+  color: var(--contract-yellow);
+
+  font-size: 21px;
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
 }
+
+/* Result buttons */
 
 .result-actions {
   display: grid;
@@ -723,244 +1143,372 @@
   gap: 10px;
 }
 
-.result-actions button {
-  position: relative;
-  z-index: 5;
-  width: 100%;
-  height: 46px;
-  min-height: 46px;
-  padding: 0 13px;
-
+.contracts-page .result-actions button {
   display: flex;
   align-items: center;
   justify-content: center;
 
-  box-sizing: border-box;
+  width: 100%;
+  min-height: 46px;
+  padding: 12px 14px;
 
-  border-radius: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 7px;
 
-  font-weight: 800;
+  font-size: 12px;
+  font-weight: 850;
+
+  box-shadow: none;
+  transform: none;
+  filter: none;
+  transition: none;
+
   cursor: pointer;
-  pointer-events: auto;
-
-  transition:
-    transform 0.2s,
-    filter 0.2s;
 }
 
-.result-actions button:hover {
-  transform: translateY(-2px);
-  filter: brightness(1.05);
+.contracts-page .result-actions button:hover,
+.contracts-page .result-actions button:active {
+  box-shadow: none;
+  transform: none;
+  filter: none;
 }
 
-.sell-button {
-  background: #111c24;
-  color: #9eabb3;
+/* Sell */
+
+.contracts-page .sell-button {
+  border: 1px solid #51461b;
+  background: #111;
+  color: var(--contract-yellow);
 }
 
-.sell-button:hover {
-  background: #111c24;
-  color: #9eabb3;
+.contracts-page .sell-button:hover,
+.contracts-page .sell-button:active {
+  border-color: #6d5d20;
+  background: #15130a;
+  color: var(--contract-yellow-light);
 }
 
-.upgrade-button {
-  background:
-    linear-gradient(
-      135deg,
-      #008fd4,
-      #18cfff
-    );
-  color: white;
+/* Upgrade */
+
+.contracts-page .upgrade-button {
+  border: 1px solid var(--contract-yellow);
+
+  background: linear-gradient(
+    180deg,
+    #ffdf50,
+    #f5c400
+  );
+
+  color: #101010;
 }
 
-.upgrade-button:hover {
-  background:
-    linear-gradient(
-      135deg,
-      #008fd4,
-      #18cfff
-    );
-  color: white;
+.contracts-page .upgrade-button:hover,
+.contracts-page .upgrade-button:active {
+  border-color: #ffdf50;
+  background: #ffdf50;
+  color: #101010;
 }
 
-.sell-button {
-  background: #111c24;
-  color: #9eabb3;
-}
-
-.upgrade-button {
-  background:
-    linear-gradient(
-      135deg,
-      #008fd4,
-      #18cfff
-    );
-  color: white;
-}
-
-/* RESPONSIVE */
+/* =========================================
+   RESPONSIVE
+   ========================================= */
 
 @media (max-width: 1200px) {
   .inventory-grid {
-    grid-template-columns:
-      repeat(5, minmax(0, 1fr));
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+
+  .contract-slots {
+    gap: 9px;
   }
 }
 
-@media (max-width: 1000px) {
+@media (max-width: 950px) {
+  .contracts-content {
+    width: calc(100% - 36px);
+  }
+
   .inventory-grid {
-    grid-template-columns:
-      repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .contract-card,
+  .inventory-panel,
+  .roulette-section {
+    padding: 20px;
   }
 }
 
 @media (max-width: 700px) {
   .contracts-content {
-    width: calc(100% - 30px);
+    width: calc(100% - 26px);
     padding-top: 30px;
+    padding-bottom: 55px;
+  }
+
+  .contracts-header {
+    margin-bottom: 24px;
   }
 
   .contracts-title h1 {
     font-size: 30px;
+    letter-spacing: -0.7px;
   }
 
-  .contract-slots {
-    grid-template-columns:
-      repeat(2, minmax(0, 1fr));
+  .contracts-title p {
+    font-size: 12px;
   }
 
-  .inventory-grid {
-    grid-template-columns:
-      repeat(2, minmax(0, 1fr));
-  }
-
-  .contract-footer {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .create-contract {
-    width: 100%;
-  }
-
+  .contract-card,
+  .inventory-panel,
   .roulette-section {
     padding: 15px;
   }
 
-  .roulette-wrapper {
-    height: 175px;
+  .contract-slots {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 9px;
   }
 
-  .roulette-item {
+  .contract-slot {
+    height: 125px;
+  }
+
+  .contract-footer {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .contracts-page .create-contract {
+    width: 100%;
+  }
+
+  .market-status {
+    align-items: flex-start;
+  }
+
+  .market-error-content {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .inventory-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 9px;
+  }
+
+  .inventory-item {
+    min-height: 145px;
+    padding: 8px;
+  }
+
+  .contracts-page .inventory-item img {
+    height: 90px;
+  }
+
+  .roulette-section {
+    margin-top: 15px;
+  }
+
+  .contracts-page .roulette-wrapper {
+    height: 180px;
+  }
+
+  .contracts-page .roulette-track {
+    height: 160px;
+  }
+
+  .contracts-page .roulette-item {
     flex-basis: 125px;
     width: 125px;
-    height: 155px;
+    height: 160px;
   }
 
-  .roulette-item img {
+  .contracts-page .roulette-item img {
     width: 90px;
     height: 90px;
   }
 
-  .roulette-track {
-    height: 155px;
+  .result-modal {
+    padding: 22px 17px;
+  }
+}
+
+@media (max-width: 420px) {
+  .contracts-content {
+    width: calc(100% - 20px);
   }
 
-  .result-actions {
+  .section-header h2 {
+    font-size: 16px;
+  }
+
+  .section-header p {
+    font-size: 11px;
+  }
+
+  .contract-slots {
+    gap: 7px;
+  }
+
+  .contract-slot {
+    padding: 7px;
+  }
+
+  .contract-slot img {
+    width: 66px;
+    height: 66px;
+  }
+
+  .inventory-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .inventory-item {
+    min-height: 155px;
+  }
+
+  .contracts-page .inventory-item img {
+    height: 100px;
+  }
+
+  .contracts-page .result-actions {
     grid-template-columns: 1fr;
   }
+
+  .result-item {
+    width: 190px;
+    height: 190px;
+  }
+
+  .result-item img {
+    width: 165px;
+    height: 165px;
+  }
 } 
-.upgrade-icon {
-  width: 20px;
-  height: 20px;
-  object-fit: contain;
-  margin-right: 7px;
-} 
-.sell-button {
-  transform: translateY(12px);
+/* =========================================
+   FIX: УБИРАЕМ СИНИЙ HOVER В CONTRACTS
+   ========================================= */
+
+.contracts-page {
+  accent-color: #f5c400 !important;
+  -webkit-tap-highlight-color: transparent;
 }
 
-.sell-button:hover {
-  transform: translateY(8px);
-} 
-.contracts-page .inventory-item:hover {
-  transform: none !important;
-  filter: none !important;
-  box-shadow: none !important;
-}
-
-.contracts-page .inventory-item:hover img {
-  transform: none !important;
-  filter: none !important;
-}
-
-.contracts-page .inventory-item:hover span,
-.contracts-page .inventory-item:hover b {
-  color: inherit !important;
-} 
-/* Убираем hover-эффект у кнопок/элементов инвентаря */
-.contracts-page .inventory-panel button:hover,
-.contracts-page .inventory-item:hover,
-.contracts-page .inventory-grid > *:hover {
-  transform: none !important;
-  filter: none !important;
-  box-shadow: none !important;
-  background: inherit !important;
-  color: inherit !important;
-}
-
-/* Убираем свечение текста */
-.contracts-page .inventory-item:hover span,
-.contracts-page .inventory-item:hover b {
+.contracts-page button,
+.contracts-page a,
+.contracts-page [role="button"] {
+  -webkit-tap-highlight-color: transparent !important;
+  outline-color: #f5c400 !important;
   text-shadow: none !important;
-  color: inherit !important;
 }
 
-/* Убираем увеличение картинки */
-.contracts-page .inventory-item:hover img {
-  transform: none !important;
-  filter: none !important;
-} 
-/* УБРАТЬ ЛЮБОЙ HOVER У ИНВЕНТАРЯ */
-
-.contracts-page .inventory-item,
+/* Убираем синее свечение и фильтры */
+.contracts-page button:hover,
+.contracts-page a:hover,
+.contracts-page [role="button"]:hover,
+.contracts-page .contract-slot:hover,
 .contracts-page .inventory-item:hover,
-.contracts-page .inventory-item:active,
-.contracts-page .inventory-item:focus {
-  transform: none !important;
-  filter: none !important;
+.contracts-page .roulette-item:hover {
   box-shadow: none !important;
-  background: rgba(255, 255, 255, 0.018) !important;
-  color: inherit !important;
+  text-shadow: none !important;
+  filter: none !important;
 }
 
-.contracts-page .inventory-item img,
+/* Слоты контракта */
+.contracts-page .contract-slot:hover:not(:disabled) {
+  border-color: #555 !important;
+  background: #0b0b0b !important;
+  color: #f5f5f5 !important;
+  transform: none !important;
+}
+
+/* Карточки инвентаря */
+.contracts-page .inventory-item:hover:not(:disabled) {
+  border-color: #363636 !important;
+  background: #101010 !important;
+  color: #f5f5f5 !important;
+  transform: none !important;
+}
+
+.contracts-page .inventory-item-selected:hover {
+  border-color: rgba(245, 196, 0, 0.65) !important;
+  background: linear-gradient(
+    160deg,
+    rgba(245, 196, 0, 0.07),
+    #101010
+  ) !important;
+}
+
 .contracts-page .inventory-item:hover img {
   transform: none !important;
   filter: none !important;
 }
 
-.contracts-page .inventory-item span,
-.contracts-page .inventory-item b {
+/* Основная кнопка — жёлтая */
+.contracts-page .create-contract:hover:not(:disabled) {
+  border-color: #ffdf50 !important;
+  background: #ffdf50 !important;
+  color: #101010 !important;
+  box-shadow: none !important;
   transform: none !important;
 }
 
-.contracts-page .inventory-item:hover span,
-.contracts-page .inventory-item:hover b {
-  color: inherit !important;
-  text-shadow: none !important;
-} 
-/* Убираем hover-анимацию Маркет / Инвентарь */
-.contracts-page button:hover,
-.contracts-page a:hover {
-  transform: none !important;
-  filter: none !important;
+/* Повторная загрузка маркета */
+.contracts-page .market-retry:hover {
+  border-color: #51461b !important;
+  background: #151208 !important;
+  color: #f5c400 !important;
   box-shadow: none !important;
 }
 
-/* Не позволяем менять цвет текста при наведении */
-.contracts-page button:hover,
-.contracts-page a:hover {
-  color: inherit !important;
+/* Карточки рулетки */
+.contracts-page .roulette-item:hover {
+  border-color: #2d2d2d !important;
+  background: linear-gradient(
+    150deg,
+    #191919,
+    #0c0c0c
+  ) !important;
+}
+
+.contracts-page .roulette-item.roulette-winner:hover {
+  border-color: rgba(245, 196, 0, 0.6) !important;
+  background: linear-gradient(
+    150deg,
+    #211c0b,
+    #0c0c0c
+  ) !important;
+}
+
+/* Кнопка продажи */
+.contracts-page .sell-button:hover {
+  border-color: #6d5d20 !important;
+  background: #15130a !important;
+  color: #f5c400 !important;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* Кнопка апгрейда */
+.contracts-page .upgrade-button:hover {
+  border-color: #ffdf50 !important;
+  background: #ffdf50 !important;
+  color: #101010 !important;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* Жёлтый фокус вместо синей рамки */
+.contracts-page button:focus-visible,
+.contracts-page a:focus-visible {
+  outline: 2px solid #f5c400 !important;
+  outline-offset: 3px !important;
+  box-shadow: none !important;
+}
+
+/* Выделение текста */
+.contracts-page ::selection {
+  background: rgba(245, 196, 0, 0.3) !important;
+  color: #ffffff !important;
 }

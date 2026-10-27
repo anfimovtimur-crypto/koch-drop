@@ -1,127 +1,123 @@
-import {
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
-
+import { useEffect, useRef, useState } from "react";
 import { getMarketSkins } from "../lib/marketSkins";
 import "./Contracts.css";
 
-const MARKET_PAGE_SIZE = 10000;
-const MAX_MARKET_PAGES = 20;
-const MAX_CONTRACT_ITEMS = 10;
+const MARKET_COUNT = 500;
 const MIN_CONTRACT_ITEMS = 3;
-
+const MAX_CONTRACT_ITEMS = 10;
 const ROULETTE_ITEMS_COUNT = 80;
-const ROULETTE_WINNER_INDEX = 58;
+const WINNER_INDEX = 58;
 const SPIN_DURATION = 6500;
 
 function parsePrice(value) {
   if (typeof value === "number") {
-    return Number.isFinite(value) && value > 0 ? value : 0;
+    return Number.isFinite(value) ? value : 0;
   }
 
-  if (value === null || value === undefined || value === "") {
-    return 0;
-  }
+  if (value == null) return 0;
 
-  let cleaned = String(value)
+  let text = String(value)
+    .replace(/[₽$€]/g, "")
     .replace(/\s/g, "")
-    .replace(/[^\d.,-]/g, "");
+    .trim();
 
-  // Поддерживаем цены с запятой в качестве десятичного разделителя.
-  if (/,\d{1,2}$/.test(cleaned) && !cleaned.includes(".")) {
-    cleaned = cleaned.replace(",", ".");
+  if (!text) return 0;
+
+  if (text.includes(",") && !text.includes(".")) {
+    text = text.replace(",", ".");
   } else {
-    cleaned = cleaned.replace(/,/g, "");
+    text = text.replace(/,/g, "");
   }
 
-  const parsed = Number(cleaned);
+  text = text.replace(/[^\d.]/g, "");
 
-  return Number.isFinite(parsed) && parsed > 0 ? parsed : 0;
+  const result = Number(text);
+  return Number.isFinite(result) ? result : 0;
 }
 
 function getItemPrice(item) {
-  if (!item || typeof item !== "object") return 0;
-
-  const fields = [
-    item.price,
-    item.cost,
-    item.value,
-    item.marketPrice,
-    item.market_price,
-    item.min_price,
-    item.suggested_price,
-    item.item_price,
-    item.price_rub,
-    item.steam_price,
-  ];
-
-  for (const value of fields) {
-    const price = parsePrice(value);
-    if (price > 0) return price;
-  }
-
-  return 0;
+  return parsePrice(
+    item?.price ??
+      item?.cost ??
+      item?.value ??
+      item?.marketPrice ??
+      item?.market_price ??
+      item?.price_rub ??
+      item?.suggested_price ??
+      item?.min_price ??
+      0
+  );
 }
 
 function getItemName(item) {
-  if (!item || typeof item !== "object") return "Предмет";
-
   return (
-    item.name ||
-    item.market_hash_name ||
-    item.marketHashName ||
-    item.title ||
-    item.skin_name ||
-    item.item_name ||
-    item.market_name ||
-    "Предмет"
+    item?.name ||
+    item?.market_hash_name ||
+    item?.item_name ||
+    item?.marketName ||
+    "Неизвестный предмет"
   );
 }
 
 function getItemImage(item) {
-  if (!item || typeof item !== "object") return "/avatar.png";
+  const image =
+    item?.image ||
+    item?.item_image ||
+    item?.img ||
+    item?.image_url ||
+    item?.icon_url ||
+    item?.icon ||
+    "";
 
-  return (
-    item.image ||
-    item.item_image ||
-    item.image_url ||
-    item.icon_url ||
-    item.icon_url_large ||
-    item.img ||
-    item.icon ||
-    item.thumbnail ||
-    item.market_image ||
-    "/avatar.png"
-  );
+  return typeof image === "string" ? image : "";
 }
 
 function normalizeItem(item, index = 0) {
-  const name = getItemName(item);
-  const image = getItemImage(item);
   const price = getItemPrice(item);
 
   return {
     ...item,
-    id: item?.id ?? item?.assetid ?? `${name}-${price}-${index}`,
-    name,
-    image,
-    item_image: image,
+    uid:
+      item?.uid ||
+      item?.id ||
+      item?.market_hash_name ||
+      `${getItemName(item)}-${price}-${index}`,
+    name: getItemName(item),
     price,
-    cost: price,
+    image: getItemImage(item),
   };
 }
 
+function extractMarketItems(response) {
+  if (Array.isArray(response)) return response;
+
+  const data = response?.data;
+
+  if (Array.isArray(data)) return data;
+  if (Array.isArray(response?.items)) return response.items;
+  if (Array.isArray(response?.skins)) return response.skins;
+  if (Array.isArray(response?.results)) return response.results;
+  if (Array.isArray(data?.items)) return data.items;
+  if (Array.isArray(data?.skins)) return data.skins;
+  if (Array.isArray(data?.results)) return data.results;
+
+  return [];
+}
+
 function formatPrice(value) {
-  return `${Math.round(Number(value) || 0).toLocaleString("ru-RU")} ₽`;
+  return `${(Number(value) || 0).toLocaleString("ru-RU", {
+    maximumFractionDigits: 2,
+  })} ₽`;
+}
+
+function makeId() {
+  return `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
 }
 
 /*
- * Для контракта стоимостью 1800 ₽:
- * минимум результата — 500 ₽;
- * максимум результата — 10 000 ₽.
+ * Для контракта на 1800 ₽:
+ * минимальная стоимость результата — 500 ₽,
+ * максимальная — 10 000 ₽.
  */
 function getPayoutBounds(contractPrice) {
   const total = Math.max(0, Number(contractPrice) || 0);
@@ -130,7 +126,10 @@ function getPayoutBounds(contractPrice) {
     return { min: 0, max: 0 };
   }
 
-  const min = Math.min(10000, Math.max(1, Math.round(total / 3.6)));
+  const min = Math.min(
+    10000,
+    Math.max(1, Math.round(total / 3.6))
+  );
 
   const max = Math.max(
     min,
@@ -146,97 +145,184 @@ function pickRandom(items) {
   return items[Math.floor(Math.random() * items.length)];
 }
 
-function Contracts({
+/*
+ * Вероятности выбора категории результата:
+ * 90% — предмет дешевле контракта;
+ * 8% — примерно окупает контракт;
+ * 1.8% — прибыль до x2;
+ * 0.2% — редкий результат дороже x2.
+ *
+ * Если в выбранной категории нет подходящих предметов,
+ * результат берётся из менее дорогой категории.
+ * Отсутствие дорогих предметов не повышает их шанс.
+ */
+function chooseContractResult(market, contractPrice) {
+  const bounds = getPayoutBounds(contractPrice);
+
+  const eligible = market.filter((item) => {
+    const price = getItemPrice(item);
+    return price >= bounds.min && price <= bounds.max;
+  });
+
+  if (eligible.length === 0) return null;
+
+  const cheap = eligible.filter(
+    (item) => getItemPrice(item) < contractPrice
+  );
+
+  const breakEven = eligible.filter((item) => {
+    const price = getItemPrice(item);
+    return price >= contractPrice && price <= contractPrice * 1.25;
+  });
+
+  const profit = eligible.filter((item) => {
+    const price = getItemPrice(item);
+    return price > contractPrice * 1.25 && price <= contractPrice * 2;
+  });
+
+  const jackpot = eligible.filter(
+    (item) => getItemPrice(item) > contractPrice * 2
+  );
+
+  const roll = Math.random() * 100;
+
+  let preferredPools;
+
+  if (roll < 90) {
+    preferredPools = [cheap];
+  } else if (roll < 98) {
+    preferredPools = [breakEven, cheap];
+  } else if (roll < 99.8) {
+    preferredPools = [profit, breakEven, cheap];
+  } else {
+    preferredPools = [jackpot, profit, breakEven, cheap];
+  }
+
+  for (const pool of preferredPools) {
+    const selected = pickRandom(pool);
+    if (selected) return selected;
+  }
+
+  return [...eligible].sort(
+    (a, b) => getItemPrice(a) - getItemPrice(b)
+  )[0] || null;
+}
+
+function ContractItemImage({ item, className = "" }) {
+  const image = getItemImage(item);
+
+  return (
+    <div className={`contract-item-image ${className}`}>
+      {image ? (
+        <img
+          src={image}
+          alt={getItemName(item)}
+          loading="lazy"
+          decoding="async"
+          onError={(event) => {
+            event.currentTarget.style.visibility = "hidden";
+          }}
+        />
+      ) : (
+        <span className="contract-image-placeholder">?</span>
+      )}
+    </div>
+  );
+}
+
+export default function Contracts({
   inventory = [],
   setInventory,
-  balance,
+  balance = 0,
   setBalance,
   setPage,
+  addEventXp,
 }) {
-  const [selected, setSelected] = useState([]);
-  const [spinning, setSpinning] = useState(false);
-  const [rouletteItems, setRouletteItems] = useState([]);
-  const [result, setResult] = useState(null);
-  const [showResult, setShowResult] = useState(false);
-  const [rouletteKey, setRouletteKey] = useState(0);
+  const userInventory = Array.isArray(inventory) ? inventory : [];
 
-  const [marketSkins, setMarketSkins] = useState([]);
+  const [selectedIndices, setSelectedIndices] = useState([]);
+  const [market, setMarket] = useState([]);
   const [marketLoading, setMarketLoading] = useState(true);
   const [marketError, setMarketError] = useState("");
-  const [marketReload, setMarketReload] = useState(0);
-  const [message, setMessage] = useState("");
+  const [marketAttempt, setMarketAttempt] = useState(0);
 
-  const trackRef = useRef(null);
+  const [contractError, setContractError] = useState("");
+  const [rouletteOpen, setRouletteOpen] = useState(false);
+  const [rouletteItems, setRouletteItems] = useState([]);
+  const [spinOffset, setSpinOffset] = useState(0);
+  const [spinning, setSpinning] = useState(false);
+  const [pendingResult, setPendingResult] = useState(null);
+  const [result, setResult] = useState(null);
+
   const wrapperRef = useRef(null);
-  const startTimerRef = useRef(null);
-  const animationRef = useRef(null);
-  const resultTimerRef = useRef(null);
+  const trackRef = useRef(null);
+  const timerRef = useRef(null);
 
-  const safeInventory = Array.isArray(inventory) ? inventory : [];
+  const selectedEntries = selectedIndices
+    .map((index) => ({
+      index,
+      item: userInventory[index],
+    }))
+    .filter((entry) => entry.item);
 
-  // =========================================
-  // ЗАГРУЗКА ПРЕДМЕТОВ С МАРКЕТА
-  // =========================================
+  const contractPrice = selectedEntries.reduce(
+    (sum, entry) => sum + getItemPrice(entry.item),
+    0
+  );
 
+  /*
+   * Загружаем только одну порцию маркета.
+   * Не загружаем десятки страниц подряд.
+   */
   useEffect(() => {
     let cancelled = false;
 
     async function loadMarket() {
       setMarketLoading(true);
       setMarketError("");
-      setMarketSkins([]);
 
       try {
-        const allItems = [];
-        let start = 0;
-        let total = 0;
-
-        for (let page = 0; page < MAX_MARKET_PAGES; page += 1) {
-          const data = await getMarketSkins({
-            start,
-            count: MARKET_PAGE_SIZE,
-          });
-
-          const batch = Array.isArray(data?.items) ? data.items : [];
-          const reportedTotal = Number(data?.total);
-
-          if (Number.isFinite(reportedTotal) && reportedTotal > 0) {
-            total = reportedTotal;
-          }
-
-          if (batch.length === 0) break;
-
-          allItems.push(...batch);
-          start += batch.length;
-
-          if (total > 0 && start >= total) break;
-
-          if (batch.length < MARKET_PAGE_SIZE && total === 0) break;
-        }
-
-        const normalized = allItems
-          .map((item, index) => normalizeItem(item, index))
-          .filter((item) => item.name && item.price > 0);
+        const response = await getMarketSkins({
+          start: 0,
+          count: MARKET_COUNT,
+        });
 
         if (cancelled) return;
 
-        setMarketSkins(normalized);
+        const rawItems = extractMarketItems(response);
+
+        const seen = new Set();
+
+        const normalized = rawItems
+          .map((item, index) => normalizeItem(item, index))
+          .filter((item) => {
+            if (!item.name || item.price <= 0) return false;
+
+            const key = `${item.name}-${item.price}`;
+
+            if (seen.has(key)) return false;
+
+            seen.add(key);
+            return true;
+          });
+
+        setMarket(normalized);
 
         if (normalized.length === 0) {
           setMarketError(
-            "Маркет не вернул предметы с корректными ценами."
+            "Маркет не вернул предметы. Попробуй загрузить ещё раз."
           );
         }
       } catch (error) {
         console.error("Ошибка загрузки маркета контрактов:", error);
 
         if (!cancelled) {
-          setMarketError(
-            error?.message || "Не удалось загрузить предметы с маркета."
-          );
+          setMarketError("Не удалось загрузить предметы из маркета.");
         }
       } finally {
-        if (!cancelled) setMarketLoading(false);
+        if (!cancelled) {
+          setMarketLoading(false);
+        }
       }
     }
 
@@ -245,260 +331,29 @@ function Contracts({
     return () => {
       cancelled = true;
     };
-  }, [marketReload]);
+  }, [marketAttempt]);
 
-  // Очистка таймеров при уходе со страницы.
+  /*
+   * Выставляем выигрышный предмет точно под указатель.
+   */
   useEffect(() => {
-    return () => {
-      if (startTimerRef.current) clearTimeout(startTimerRef.current);
-      if (animationRef.current) clearTimeout(animationRef.current);
-      if (resultTimerRef.current) clearTimeout(resultTimerRef.current);
-    };
-  }, []);
-
-  // =========================================
-  // ЦЕНА КОНТРАКТА И ДИАПАЗОН
-  // =========================================
-
-  const totalPrice = useMemo(
-    () =>
-      selected.reduce(
-        (sum, item) => sum + getItemPrice(item),
-        0
-      ),
-    [selected]
-  );
-
-  const payoutBounds = useMemo(
-    () => getPayoutBounds(totalPrice),
-    [totalPrice]
-  );
-
-  const eligibleMarketSkins = useMemo(() => {
-    if (totalPrice <= 0) return [];
-
-    return marketSkins.filter((item) => {
-      const price = getItemPrice(item);
-
-      return (
-        price >= payoutBounds.min &&
-        price <= payoutBounds.max
-      );
-    });
-  }, [
-    marketSkins,
-    payoutBounds.min,
-    payoutBounds.max,
-    totalPrice,
-  ]);
-
-  // =========================================
-  // XP ИВЕНТА
-  // =========================================
-
-  const addEventXP = (amount) => {
-    if (amount <= 0) return;
-
-    try {
-      const oldXP = Number(localStorage.getItem("eventXP") || 0);
-      const newXP = oldXP + amount;
-
-      localStorage.setItem("eventXP", String(newXP));
-      window.dispatchEvent(new window.Event("contracter-xp"));
-    } catch (error) {
-      console.error("Не удалось обновить XP:", error);
-    }
-  };
-
-  // =========================================
-  // ВЫБОР ПРЕДМЕТОВ
-  // =========================================
-
-  const addItem = (item, index) => {
-    if (spinning || showResult) return;
-
-    if (selected.length >= MAX_CONTRACT_ITEMS) {
-      setMessage("В контракт можно добавить максимум 10 предметов.");
-      return;
+    if (!spinning || !pendingResult || rouletteItems.length === 0) {
+      return undefined;
     }
 
-    if (selected.some((entry) => entry.inventoryIndex === index)) {
-      return;
-    }
+    let firstFrame = 0;
+    let secondFrame = 0;
 
-    const normalized = normalizeItem(item, index);
+    firstFrame = window.requestAnimationFrame(() => {
+      secondFrame = window.requestAnimationFrame(() => {
+        const wrapper = wrapperRef.current;
+        const track = trackRef.current;
+        const winner = track?.children?.[WINNER_INDEX];
 
-    if (normalized.price <= 0) {
-      setMessage("У этого предмета не найдена корректная цена.");
-      return;
-    }
+        if (!wrapper || !track || !winner) return;
 
-    setMessage("");
-
-    setSelected((previous) => [
-      ...previous,
-      {
-        ...normalized,
-        inventoryIndex: index,
-      },
-    ]);
-  };
-
-  const removeItem = (selectedIndex) => {
-    if (spinning || showResult) return;
-
-    setSelected((previous) =>
-      previous.filter((_, index) => index !== selectedIndex)
-    );
-
-    setMessage("");
-  };
-
-  const clearSelection = () => {
-    if (spinning || showResult) return;
-
-    setSelected([]);
-    setMessage("");
-  };
-
-  // =========================================
-  // ВЫБОР РЕЗУЛЬТАТА ИЗ МАРКЕТА
-  // =========================================
-
-  const chooseResult = () => {
-    if (eligibleMarketSkins.length === 0) return null;
-
-    const categories = [
-      {
-        weight: 70,
-        items: eligibleMarketSkins.filter(
-          (item) => item.price < totalPrice
-        ),
-      },
-      {
-        weight: 20,
-        items: eligibleMarketSkins.filter(
-          (item) =>
-            item.price >= totalPrice &&
-            item.price <= totalPrice * 1.5
-        ),
-      },
-      {
-        weight: 9,
-        items: eligibleMarketSkins.filter(
-          (item) =>
-            item.price > totalPrice * 1.5 &&
-            item.price <= totalPrice * 4
-        ),
-      },
-      {
-        weight: 1,
-        items: eligibleMarketSkins.filter(
-          (item) => item.price > totalPrice * 4
-        ),
-      },
-    ].filter((category) => category.items.length > 0);
-
-    if (categories.length === 0) {
-      return pickRandom(eligibleMarketSkins);
-    }
-
-    // Если какой-то ценовой категории нет на маркете,
-    // оставшиеся категории делят вероятность между собой.
-    const weightSum = categories.reduce(
-      (sum, category) => sum + category.weight,
-      0
-    );
-
-    let roll = Math.random() * weightSum;
-
-    for (const category of categories) {
-      roll -= category.weight;
-
-      if (roll < 0) {
-        return pickRandom(category.items);
-      }
-    }
-
-    return pickRandom(categories[categories.length - 1].items);
-  };
-
-  // =========================================
-  // СОЗДАНИЕ РУЛЕТКИ
-  // =========================================
-
-  const createRoulette = (winningItem) => {
-    const items = [];
-
-    for (let index = 0; index < ROULETTE_ITEMS_COUNT; index += 1) {
-      if (index === ROULETTE_WINNER_INDEX) {
-        items.push(winningItem);
-      } else {
-        items.push(pickRandom(marketSkins) || winningItem);
-      }
-    }
-
-    return {
-      items,
-      winnerIndex: ROULETTE_WINNER_INDEX,
-    };
-  };
-
-  // =========================================
-  // АНИМАЦИЯ РУЛЕТКИ
-  // =========================================
-
-  const startRoulette = (roulette, contractValue) => {
-    const track = trackRef.current;
-    const wrapper = wrapperRef.current;
-
-    const finishSpin = () => {
-      const winningItem = roulette.items[roulette.winnerIndex];
-
-      setResult(winningItem);
-      setSpinning(false);
-
-      const earnedXP = Math.floor(contractValue / 10);
-
-      if (earnedXP > 0) addEventXP(earnedXP);
-
-      resultTimerRef.current = setTimeout(() => {
-        setShowResult(true);
-      }, 150);
-    };
-
-    if (!track || !wrapper) {
-      finishSpin();
-      return;
-    }
-
-    const winner = track.children[roulette.winnerIndex];
-
-    if (!winner) {
-      finishSpin();
-      return;
-    }
-
-    // Сначала ставим рулетку ровно в исходную позицию.
-    track.style.transition = "none";
-    track.style.transform = "translateX(-50%)";
-
-    // Принудительно применяем начальную позицию до измерения.
-    void track.offsetWidth;
-
-    window.requestAnimationFrame(() => {
-      window.requestAnimationFrame(() => {
-        if (!trackRef.current || !wrapperRef.current) return;
-
-        const currentWrapper = wrapperRef.current;
-        const currentTrack = trackRef.current;
-        const currentWinner =
-          currentTrack.children[roulette.winnerIndex];
-
-        if (!currentWinner) return;
-
-        const wrapperRect = currentWrapper.getBoundingClientRect();
-        const winnerRect = currentWinner.getBoundingClientRect();
+        const wrapperRect = wrapper.getBoundingClientRect();
+        const winnerRect = winner.getBoundingClientRect();
 
         const wrapperCenter =
           wrapperRect.left + wrapperRect.width / 2;
@@ -506,200 +361,254 @@ function Contracts({
         const winnerCenter =
           winnerRect.left + winnerRect.width / 2;
 
-        // Смещение вычисляется по реальным координатам элементов.
-        const offset = wrapperCenter - winnerCenter;
-        const operator = offset >= 0 ? "+" : "-";
-
-        currentTrack.style.transition =
-          `transform ${SPIN_DURATION}ms cubic-bezier(0.08, 0.72, 0.12, 1)`;
-
-        currentTrack.style.transform =
-          `translateX(calc(-50% ${operator} ${Math.abs(offset)}px))`;
+        setSpinOffset(wrapperCenter - winnerCenter);
       });
     });
 
-    if (animationRef.current) {
-      clearTimeout(animationRef.current);
-    }
+    timerRef.current = window.setTimeout(() => {
+      setSpinning(false);
+      setRouletteOpen(false);
+      setResult(pendingResult);
+      setPendingResult(null);
 
-    animationRef.current = setTimeout(() => {
-      finishSpin();
-    }, SPIN_DURATION + 250);
-  };
+      if (typeof addEventXp === "function") {
+        const xp = Math.max(
+          1,
+          Math.floor(pendingResult.contractPrice / 100)
+        );
 
-  // =========================================
-  // СОЗДАНИЕ КОНТРАКТА
-  // =========================================
+        addEventXp(xp);
+      }
+    }, SPIN_DURATION + 200);
 
-  const createContract = () => {
-    if (spinning || showResult) return;
+    return () => {
+      window.cancelAnimationFrame(firstFrame);
+      window.cancelAnimationFrame(secondFrame);
 
-    if (selected.length < MIN_CONTRACT_ITEMS) {
-      setMessage("Для контракта нужно выбрать минимум 3 предмета.");
-      return;
-    }
+      if (timerRef.current) {
+        window.clearTimeout(timerRef.current);
+      }
+    };
+  }, [spinning, pendingResult, rouletteItems, addEventXp]);
 
-    if (selected.length > MAX_CONTRACT_ITEMS) {
-      setMessage("В контракт можно добавить максимум 10 предметов.");
-      return;
-    }
+  useEffect(() => {
+    return () => {
+      if (timerRef.current) {
+        window.clearTimeout(timerRef.current);
+      }
+    };
+  }, []);
 
-    if (totalPrice <= 0) {
-      setMessage("Стоимость контракта должна быть больше нуля.");
-      return;
-    }
+  function toggleInventoryItem(index) {
+    if (spinning || rouletteOpen) return;
 
-    if (marketLoading) {
-      setMessage("Подожди, пока загрузится маркет.");
-      return;
-    }
+    setContractError("");
 
-    if (marketError) {
-      setMessage("Не удалось загрузить маркет. Попробуй обновить его.");
-      return;
-    }
+    setSelectedIndices((current) => {
+      if (current.includes(index)) {
+        return current.filter((value) => value !== index);
+      }
 
-    if (eligibleMarketSkins.length === 0) {
-      setMessage(
-        `На маркете нет предметов от ${formatPrice(
-          payoutBounds.min
-        )} до ${formatPrice(payoutBounds.max)}.`
+      if (current.length >= MAX_CONTRACT_ITEMS) {
+        setContractError(
+          `В контракт можно добавить максимум ${MAX_CONTRACT_ITEMS} предметов.`
+        );
+        return current;
+      }
+
+      return [...current, index];
+    });
+  }
+
+  function removeSelectedItem(index) {
+    if (spinning) return;
+
+    setSelectedIndices((current) =>
+      current.filter((value) => value !== index)
+    );
+
+    setContractError("");
+  }
+
+  function clearContract() {
+    if (spinning) return;
+
+    setSelectedIndices([]);
+    setContractError("");
+  }
+
+  function createContract() {
+    if (spinning || rouletteOpen) return;
+
+    setContractError("");
+    setResult(null);
+
+    if (selectedEntries.length < MIN_CONTRACT_ITEMS) {
+      setContractError(
+        `Добавь минимум ${MIN_CONTRACT_ITEMS} предмета.`
       );
       return;
     }
 
-    const contractValue = totalPrice;
-    const winningItem = chooseResult();
-
-    if (!winningItem) {
-      setMessage("Не удалось выбрать результат. Попробуй ещё раз.");
+    if (selectedEntries.length > MAX_CONTRACT_ITEMS) {
+      setContractError(
+        `В контракт можно добавить максимум ${MAX_CONTRACT_ITEMS} предметов.`
+      );
       return;
     }
 
-    const roulette = createRoulette(winningItem);
+    if (marketLoading) {
+      setContractError("Подожди, пока загрузится маркет.");
+      return;
+    }
 
-    setMessage("");
-    setResult(null);
-    setShowResult(false);
-    setRouletteItems(roulette.items);
-    setRouletteKey((previous) => previous + 1);
-    setSpinning(true);
+    if (market.length === 0) {
+      setContractError(
+        "Нет загруженных предметов для результата контракта."
+      );
+      return;
+    }
 
-    // Удаляем именно те предметы, которые были выбраны.
-    const indexes = new Set(
-      selected.map((item) => item.inventoryIndex)
+    if (contractPrice <= 0) {
+      setContractError("У выбранных предметов не указана цена.");
+      return;
+    }
+
+    const chosenResult = chooseContractResult(market, contractPrice);
+
+    if (!chosenResult) {
+      const bounds = getPayoutBounds(contractPrice);
+
+      setContractError(
+        `В загруженной части маркета нет предметов от ${formatPrice(
+          bounds.min
+        )} до ${formatPrice(bounds.max)}. Нажми «Загрузить ещё».`
+      );
+
+      return;
+    }
+
+    const normalizedResult = {
+      ...normalizeItem(chosenResult),
+      uid: makeId(),
+    };
+
+    const selectedIndexSet = new Set(
+      selectedEntries.map((entry) => entry.index)
     );
 
-    const newInventory = safeInventory.filter(
-      (_, index) => !indexes.has(index)
-    );
-
+    /*
+     * Предметы контракта расходуются сразу при создании.
+     */
     if (typeof setInventory === "function") {
-      setInventory(newInventory);
+      setInventory((previous) => {
+        const current = Array.isArray(previous) ? previous : [];
+
+        return current.filter(
+          (_, index) => !selectedIndexSet.has(index)
+        );
+      });
     }
 
-    setSelected([]);
+    setSelectedIndices([]);
+    setContractError("");
 
-    if (startTimerRef.current) {
-      clearTimeout(startTimerRef.current);
-    }
+    const spinItems = Array.from(
+      { length: ROULETTE_ITEMS_COUNT },
+      (_, index) => {
+        const randomItem = pickRandom(market) || normalizedResult;
 
-    startTimerRef.current = setTimeout(() => {
-      startRoulette(roulette, contractValue);
-    }, 100);
-  };
+        return {
+          ...randomItem,
+          rouletteId: `${index}-${makeId()}`,
+        };
+      }
+    );
 
-  // =========================================
-  // СБРОС РЕЗУЛЬТАТА
-  // =========================================
+    spinItems[WINNER_INDEX] = {
+      ...normalizedResult,
+      rouletteId: `winner-${makeId()}`,
+    };
 
-  const resetResult = () => {
-    if (startTimerRef.current) {
-      clearTimeout(startTimerRef.current);
-      startTimerRef.current = null;
-    }
+    setPendingResult({
+      item: normalizedResult,
+      contractPrice,
+    });
 
-    if (animationRef.current) {
-      clearTimeout(animationRef.current);
-      animationRef.current = null;
-    }
+    setRouletteItems(spinItems);
+    setSpinOffset(0);
+    setRouletteOpen(true);
+    setSpinning(true);
+  }
 
-    if (resultTimerRef.current) {
-      clearTimeout(resultTimerRef.current);
-      resultTimerRef.current = null;
-    }
-
-    setResult(null);
-    setShowResult(false);
-    setRouletteItems([]);
-    setSelected([]);
-    setSpinning(false);
-
-    if (trackRef.current) {
-      trackRef.current.style.transition = "none";
-      trackRef.current.style.transform = "translateX(-50%)";
-    }
-  };
-
-  // =========================================
-  // ПРОДАЖА РЕЗУЛЬТАТА
-  // =========================================
-
-  const sellResult = () => {
-    if (!result) return;
-
-    const price = getItemPrice(result);
+  function sellResult() {
+    if (!result?.item) return;
 
     if (typeof setBalance === "function") {
-      setBalance((current) => (Number(current) || 0) + price);
+      const amount = getItemPrice(result.item);
+
+      setBalance((previous) => (Number(previous) || 0) + amount);
     }
 
-    resetResult();
-  };
+    setResult(null);
+  }
 
-  // =========================================
-  // ПЕРЕХОД В АПГРЕЙД
-  // =========================================
-
-  const upgradeResult = () => {
-    if (!result) return;
+  function upgradeResult() {
+    if (!result?.item) return;
 
     if (typeof setInventory === "function") {
-      setInventory((current) => [
-        ...(Array.isArray(current) ? current : []),
-        result,
+      const itemToKeep = {
+        ...result.item,
+        uid: result.item.uid || makeId(),
+        price: getItemPrice(result.item),
+      };
+
+      setInventory((previous) => [
+        ...(Array.isArray(previous) ? previous : []),
+        itemToKeep,
       ]);
     }
 
-    resetResult();
+    setResult(null);
 
     if (typeof setPage === "function") {
       setPage("upgrade");
     }
-  };
+  }
 
-  // =========================================
-  // JSX
-  // =========================================
+  function retryMarket() {
+    setMarket([]);
+    setMarketError("");
+    setMarketAttempt((value) => value + 1);
+  }
 
   return (
-    <div className="contracts-page">
+    <main className="contracts-page">
       <div className="contracts-background" aria-hidden="true">
-        <div className="blue-glow glow-one" />
-        <div className="blue-glow glow-two" />
+        <div className="blue-glow" />
         <div className="blue-grid" />
       </div>
 
       <div className="contracts-content">
         <header className="contracts-header">
-          <div className="contracts-title">
-            <span>KOCH DROP · КОНТРАКТЫ</span>
+          <div>
+            <div className="contracts-eyebrow">
+              <span className="contracts-eyebrow-dot" />
+              KOCH DROP / CONTRACTS
+            </div>
 
-            <h1>Создай свой контракт</h1>
+            <h1 className="contracts-title">
+              КОНТРАКТЫ<span>.</span>
+            </h1>
 
-            <p>
-              Объедини минимум 3 предмета и получи новый скин с маркета.
+            <p className="contracts-description">
+              Объедини предметы инвентаря и получи один новый предмет.
             </p>
+          </div>
+
+          <div className="contracts-balance">
+            <span>ТВОЙ БАЛАНС</span>
+            <strong>{formatPrice(balance)}</strong>
           </div>
         </header>
 
@@ -707,54 +616,57 @@ function Contracts({
           <section className="contract-card">
             <div className="section-header">
               <div>
-                <h2>Твой контракт</h2>
-
-                <p>Выбери от 3 до 10 предметов</p>
+                <span className="section-kicker">01 / СОЗДАНИЕ</span>
+                <h2>СОБЕРИ КОНТРАКТ</h2>
+                <p>Выбери от 3 до 10 предметов из инвентаря.</p>
               </div>
 
               <div className="counter">
-                {selected.length}/10
+                <strong>{selectedEntries.length}</strong>
+                <span> / {MAX_CONTRACT_ITEMS}</span>
               </div>
             </div>
 
             <div className="contract-slots">
-              {Array.from({ length: MAX_CONTRACT_ITEMS }).map(
-                (_, index) => {
-                  const item = selected[index];
+              {Array.from(
+                { length: MAX_CONTRACT_ITEMS },
+                (_, slotIndex) => {
+                  const entry = selectedEntries[slotIndex];
+
+                  if (!entry) {
+                    return (
+                      <div
+                        className="contract-slot empty-slot"
+                        key={`empty-${slotIndex}`}
+                      >
+                        <span className="slot-plus">+</span>
+                        <span className="slot-number">
+                          {String(slotIndex + 1).padStart(2, "0")}
+                        </span>
+                      </div>
+                    );
+                  }
 
                   return (
                     <button
                       type="button"
-                      key={index}
-                      className={`contract-slot ${
-                        item ? "has-item" : ""
-                      }`}
-                      onClick={() => {
-                        if (item) removeItem(index);
-                      }}
-                      disabled={!item || spinning || showResult}
-                      title={item ? "Убрать предмет" : "Пустой слот"}
+                      className="contract-slot filled-slot"
+                      key={`selected-${entry.index}`}
+                      onClick={() => removeSelectedItem(entry.index)}
+                      disabled={spinning}
+                      title="Нажми, чтобы убрать предмет из контракта"
                     >
-                      {item ? (
-                        <>
-                          <img
-                            src={getItemImage(item)}
-                            alt={getItemName(item)}
-                            onError={(event) => {
-                              event.currentTarget.src = "/avatar.png";
-                            }}
-                          />
+                      <span className="slot-remove">×</span>
 
-                          <span>{getItemName(item)}</span>
+                      <ContractItemImage item={entry.item} />
 
-                          <b>{formatPrice(getItemPrice(item))}</b>
-                        </>
-                      ) : (
-                        <div className="empty-slot">
-                          <span>+</span>
-                          <small>ПРЕДМЕТ</small>
-                        </div>
-                      )}
+                      <span className="slot-item-name">
+                        {getItemName(entry.item)}
+                      </span>
+
+                      <strong className="slot-item-price">
+                        {formatPrice(getItemPrice(entry.item))}
+                      </strong>
                     </button>
                   );
                 }
@@ -763,240 +675,251 @@ function Contracts({
 
             <div className="contract-footer">
               <div className="contract-cost">
-                <span>Стоимость контракта</span>
-                <strong>{formatPrice(totalPrice)}</strong>
+                <span>СТОИМОСТЬ КОНТРАКТА</span>
+                <strong>{formatPrice(contractPrice)}</strong>
+                <small>
+                  {selectedEntries.length < MIN_CONTRACT_ITEMS
+                    ? `Нужно ещё ${
+                        MIN_CONTRACT_ITEMS - selectedEntries.length
+                      } предмета`
+                    : `${selectedEntries.length} предметов выбрано`}
+                </small>
               </div>
 
-              <button
-                type="button"
-                className="create-contract"
-                onClick={createContract}
-                disabled={
-                  selected.length < MIN_CONTRACT_ITEMS ||
-                  spinning ||
-                  showResult ||
-                  marketLoading ||
-                  Boolean(marketError) ||
-                  eligibleMarketSkins.length === 0
-                }
-              >
-                {spinning
-                  ? "Открытие..."
-                  : marketLoading
-                  ? "Загрузка маркета..."
-                  : selected.length < MIN_CONTRACT_ITEMS
-                  ? `Нужно ещё ${MIN_CONTRACT_ITEMS - selected.length}`
-                  : "Создать контракт"}
-              </button>
+              <div className="contract-buttons">
+                <button
+                  type="button"
+                  className="clear-contract"
+                  onClick={clearContract}
+                  disabled={selectedEntries.length === 0 || spinning}
+                >
+                  СБРОСИТЬ
+                </button>
+
+                <button
+                  type="button"
+                  className="create-contract"
+                  onClick={createContract}
+                  disabled={
+                    spinning ||
+                    rouletteOpen ||
+                    selectedEntries.length < MIN_CONTRACT_ITEMS ||
+                    selectedEntries.length > MAX_CONTRACT_ITEMS ||
+                    marketLoading
+                  }
+                >
+                  {marketLoading
+                    ? "ЗАГРУЗКА МАРКЕТА..."
+                    : "СОЗДАТЬ КОНТРАКТ"}
+                  <span>↗</span>
+                </button>
+              </div>
             </div>
 
-            <div
-              className={`market-status ${
-                marketLoading
-                  ? "is-loading"
-                  : marketError
-                  ? "is-error"
-                  : ""
-              }`}
-              role="status"
-            >
-              {marketLoading ? (
-                <span>Загружаем предметы с маркета...</span>
-              ) : marketError ? (
-                <div className="market-error-content">
-                  <span>{marketError}</span>
+            {contractError && (
+              <div className="contract-message error-message" role="alert">
+                {contractError}
+              </div>
+            )}
 
-                  <button
-                    type="button"
-                    className="market-retry"
-                    onClick={() =>
-                      setMarketReload((previous) => previous + 1)
-                    }
-                  >
-                    Повторить
-                  </button>
-                </div>
-              ) : (
+            <div className="market-status" aria-live="polite">
+              <span
+                className={`market-status-dot ${
+                  marketLoading
+                    ? "loading"
+                    : marketError
+                    ? "error"
+                    : "ready"
+                }`}
+              />
+
+              <div className="market-status-text">
+                <strong>
+                  {marketLoading
+                    ? "Загружаем предметы"
+                    : marketError
+                    ? "Маркет недоступен"
+                    : "Маркет готов"}
+                </strong>
+
                 <span>
-                  Маркет загружен:{" "}
-                  <strong>
-                    {marketSkins.length.toLocaleString("ru-RU")}
-                  </strong>{" "}
-                  предметов
-                  {totalPrice > 0 && (
-                    <>
-                      {" · "}Диапазон:{" "}
-                      <strong>{formatPrice(payoutBounds.min)}</strong>
-                      {" — "}
-                      <strong>{formatPrice(payoutBounds.max)}</strong>
-                      {" · "}Подходят:{" "}
-                      <strong>
-                        {eligibleMarketSkins.length.toLocaleString("ru-RU")}
-                      </strong>
-                    </>
-                  )}
+                  {marketLoading
+                    ? "Загружается одна порция предметов."
+                    : marketError
+                    ? marketError
+                    : `Загружено предметов: ${market.length}`}
                 </span>
+              </div>
+
+              {!marketLoading && marketError && (
+                <button
+                  type="button"
+                  className="market-retry"
+                  onClick={retryMarket}
+                >
+                  ПОВТОРИТЬ
+                </button>
               )}
             </div>
+          </section>
 
-            {message && (
-              <div className="contract-message" role="alert">
-                {message}
+          <section className="inventory-panel">
+            <div className="section-header inventory-header">
+              <div>
+                <span className="section-kicker">02 / ТВОИ ПРЕДМЕТЫ</span>
+                <h2>ИНВЕНТАРЬ</h2>
+                <p>Нажимай на предметы, чтобы добавить их в контракт.</p>
+              </div>
+
+              <div className="inventory-count">
+                {userInventory.length}
+                <span> предметов</span>
+              </div>
+            </div>
+
+            {userInventory.length === 0 ? (
+              <div className="empty-inventory">
+                <div className="empty-inventory-icon">＋</div>
+                <strong>ИНВЕНТАРЬ ПУСТ</strong>
+                <p>
+                  Сначала получи предметы из кейсов — потом сможешь
+                  использовать их в контрактах.
+                </p>
+              </div>
+            ) : (
+              <div className="inventory-grid">
+                {userInventory.map((item, index) => {
+                  const selected = selectedIndices.includes(index);
+
+                  return (
+                    <button
+                      type="button"
+                      className={`inventory-item ${
+                        selected ? "inventory-selected" : ""
+                      }`}
+                      key={`${item?.uid || item?.id || getItemName(item)}-${index}`}
+                      onClick={() => toggleInventoryItem(index)}
+                      disabled={spinning || rouletteOpen}
+                      aria-pressed={selected}
+                    >
+                      <span className="inventory-item-number">
+                        {String(index + 1).padStart(2, "0")}
+                      </span>
+
+                      {selected && (
+                        <span className="inventory-selected-mark">✓</span>
+                      )}
+
+                      <ContractItemImage item={item} />
+
+                      <span className="inventory-item-name">
+                        {getItemName(item)}
+                      </span>
+
+                      <strong className="inventory-item-price">
+                        {formatPrice(getItemPrice(item))}
+                      </strong>
+                    </button>
+                  );
+                })}
               </div>
             )}
           </section>
         </div>
+      </div>
 
-        {rouletteItems.length > 0 && (
-          <section className="roulette-section">
-            <div className="roulette-title">
-              {spinning ? "КОНТРАКТ В ПРОЦЕССЕ" : "РЕЗУЛЬТАТ"}
+      {rouletteOpen && (
+        <div className="roulette-overlay">
+          <section
+            className="roulette-section"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Рулетка контракта"
+          >
+            <div className="roulette-modal-header">
+              <div>
+                <span className="section-kicker">03 / РЕЗУЛЬТАТ</span>
+                <h2>{spinning ? "КОНТРАКТ СОЗДАЁТСЯ" : "КОНТРАКТ"}</h2>
+                <p>Предмет под жёлтым указателем станет результатом.</p>
+              </div>
+
+              <div className="roulette-live-status">
+                <span className={spinning ? "status-pulse" : ""} />
+                {spinning ? "КРУТИТСЯ" : "ГОТОВО"}
+              </div>
             </div>
 
             <div className="roulette-wrapper" ref={wrapperRef}>
-              <div className="roulette-pointer" aria-hidden="true" />
+              <div className="roulette-pointer" aria-hidden="true">
+                <span />
+              </div>
 
               <div
-                key={rouletteKey}
-                ref={trackRef}
                 className="roulette-track"
+                ref={trackRef}
+                style={{
+                  transform: `translateX(${spinOffset}px)`,
+                  transition: spinning
+                    ? `transform ${SPIN_DURATION}ms cubic-bezier(0.08, 0.72, 0.12, 1)`
+                    : "none",
+                }}
               >
                 {rouletteItems.map((item, index) => (
                   <div
                     className={`roulette-item ${
-                      index === ROULETTE_WINNER_INDEX
-                        ? "roulette-winner"
-                        : ""
+                      index === WINNER_INDEX ? "roulette-winning-item" : ""
                     }`}
-                    key={`${rouletteKey}-${index}`}
+                    key={item.rouletteId}
                   >
-                    <img
-                      src={getItemImage(item)}
-                      alt={getItemName(item)}
-                      onError={(event) => {
-                        event.currentTarget.src = "/avatar.png";
-                      }}
-                    />
+                    <ContractItemImage item={item} />
 
-                    <span>{getItemName(item)}</span>
+                    <span className="roulette-item-name">
+                      {getItemName(item)}
+                    </span>
 
-                    <b>{formatPrice(getItemPrice(item))}</b>
+                    <strong>{formatPrice(getItemPrice(item))}</strong>
                   </div>
                 ))}
               </div>
             </div>
 
-            {spinning && (
-              <div className="roulette-loading">
-                Определяем результат...
-              </div>
-            )}
+            <div className="roulette-modal-footer">
+              <span>KOCH DROP CONTRACTS</span>
+              <span>
+                {spinning ? "НЕ ЗАКРЫВАЙ ОКНО" : "ЗАВЕРШЕНО"}
+              </span>
+            </div>
           </section>
-        )}
+        </div>
+      )}
 
-        <section className="inventory-panel">
-          <div className="section-header">
-            <div>
-              <h2>Инвентарь</h2>
-
-              <p>
-                Нажми на предмет, чтобы добавить его в контракт
-              </p>
-            </div>
-
-            <div className="inventory-count">
-              {safeInventory.length}
-            </div>
-          </div>
-
-          {safeInventory.length === 0 ? (
-            <div className="empty-inventory">
-              <div className="empty-inventory-symbol">—</div>
-
-              <p>В инвентаре пока нет предметов</p>
-            </div>
-          ) : (
-            <div className="inventory-grid">
-              {safeInventory.map((item, index) => {
-                const normalized = normalizeItem(item, index);
-
-                const isSelected = selected.some(
-                  (entry) => entry.inventoryIndex === index
-                );
-
-                return (
-                  <button
-                    type="button"
-                    className={`inventory-item ${
-                      isSelected ? "inventory-item-selected" : ""
-                    }`}
-                    key={`${normalized.id}-${index}`}
-                    onClick={() => addItem(item, index)}
-                    disabled={
-                      spinning ||
-                      showResult ||
-                      isSelected ||
-                      selected.length >= MAX_CONTRACT_ITEMS
-                    }
-                    aria-pressed={isSelected}
-                  >
-                    <img
-                      src={normalized.image}
-                      alt={normalized.name}
-                      onError={(event) => {
-                        event.currentTarget.src = "/avatar.png";
-                      }}
-                    />
-
-                    <span>{normalized.name}</span>
-
-                    <b>{formatPrice(normalized.price)}</b>
-
-                    {isSelected && (
-                      <div className="inventory-selected">
-                        В контракте
-                      </div>
-                    )}
-                  </button>
-                );
-              })}
-            </div>
-          )}
-        </section>
-      </div>
-
-      {showResult && result && (
+      {result && (
         <div className="result-overlay">
-          <div
+          <section
             className="result-modal"
             role="dialog"
             aria-modal="true"
-            aria-labelledby="contracts-result-title"
+            aria-labelledby="contract-result-title"
           >
-            <div className="result-label">
-              КОНТРАКТ ЗАВЕРШЁН
-            </div>
+            <span className="result-label">КОНТРАКТ ЗАВЕРШЁН</span>
 
-            <h2 id="contracts-result-title">
-              Тебе выпал предмет
-            </h2>
+            <h2 id="contract-result-title">ТВОЙ РЕЗУЛЬТАТ</h2>
 
             <div className="result-item">
-              <div className="result-glow" />
+              <ContractItemImage item={result.item} />
 
-              <img
-                src={getItemImage(result)}
-                alt={getItemName(result)}
-                onError={(event) => {
-                  event.currentTarget.src = "/avatar.png";
-                }}
-              />
+              <strong className="result-item-name">
+                {getItemName(result.item)}
+              </strong>
+
+              <strong className="result-price">
+                {formatPrice(getItemPrice(result.item))}
+              </strong>
             </div>
 
-            <h3>{getItemName(result)}</h3>
-
-            <div className="result-price">
-              {formatPrice(getItemPrice(result))}
+            <div className="result-contract-info">
+              <span>Стоимость контракта</span>
+              <strong>{formatPrice(result.contractPrice)}</strong>
             </div>
 
             <div className="result-actions">
@@ -1005,7 +928,7 @@ function Contracts({
                 className="sell-button"
                 onClick={sellResult}
               >
-                Продать
+                ПРОДАТЬ ЗА {formatPrice(getItemPrice(result.item))}
               </button>
 
               <button
@@ -1013,14 +936,12 @@ function Contracts({
                 className="upgrade-button"
                 onClick={upgradeResult}
               >
-                В апгрейд
+                В АПГРЕЙД <span>↗</span>
               </button>
             </div>
-          </div>
+          </section>
         </div>
       )}
-    </div>
+    </main>
   );
 }
-
-export default Contracts;

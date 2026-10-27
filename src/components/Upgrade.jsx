@@ -3,12 +3,11 @@ import { getMarketSkins } from "../lib/marketSkins";
 import { supabase } from "../lib/supabase";
 import "./Upgrade.css";
 
-/* =====================================================
-   KOCH DROP — UPGRADE
-   ===================================================== */
-
 const MARKET_PAGE_SIZE = 10000;
 const MAX_MARKET_PAGES = 1000;
+
+const NORMAL_SPIN_DURATION = 10000;
+const QUICK_SPIN_DURATION = 2000;
 
 function parsePrice(value) {
   if (typeof value === "number") {
@@ -33,10 +32,7 @@ function parsePrice(value) {
   }
 
   const parsed = Number(text);
-
-  return Number.isFinite(parsed) && parsed > 0
-    ? parsed
-    : 0;
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : 0;
 }
 
 function getPrice(item) {
@@ -53,7 +49,6 @@ function getPrice(item) {
 
   for (const value of values) {
     const price = parsePrice(value);
-
     if (price > 0) return price;
   }
 
@@ -65,7 +60,6 @@ function normalizeMarketSkin(item) {
 
   return {
     ...item,
-
     name:
       item?.name ||
       item?.market_hash_name ||
@@ -73,7 +67,6 @@ function normalizeMarketSkin(item) {
       item?.marketHashName ||
       item?.title ||
       "Неизвестный предмет",
-
     image:
       item?.image ||
       item?.item_image ||
@@ -83,9 +76,7 @@ function normalizeMarketSkin(item) {
       item?.img ||
       item?.icon ||
       "/avatar.png",
-
     price,
-
     type:
       item?.type ||
       item?.weapon_type ||
@@ -99,11 +90,7 @@ function createUid() {
     return globalThis.crypto.randomUUID();
   }
 
-  return (
-    Date.now() +
-    "-" +
-    Math.random().toString(36).slice(2, 10)
-  );
+  return `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
 }
 
 function getSkinTypeLabel(type = "") {
@@ -224,7 +211,6 @@ function saveTopUpgradeDrop(item) {
   if (!item) return;
 
   const price = getPrice(item);
-
   if (!Number.isFinite(price) || price <= 0) return;
 
   try {
@@ -239,13 +225,11 @@ function saveTopUpgradeDrop(item) {
           item.item_name ||
           item.title ||
           "Предмет",
-
         image:
           item.image ||
           item.item_image ||
           item.img ||
           "/avatar.png",
-
         price,
       };
 
@@ -297,6 +281,9 @@ function Upgrade({
   const [spinning, setSpinning] = useState(false);
   const [result, setResult] = useState(null);
 
+  // Новый переключатель быстрой крутки.
+  const [quickSpin, setQuickSpin] = useState(false);
+
   const [market, setMarket] = useState([]);
   const [marketStart, setMarketStart] = useState(0);
   const [marketTotal, setMarketTotal] = useState(0);
@@ -316,6 +303,7 @@ function Upgrade({
   const [cartOpen, setCartOpen] = useState(false);
 
   const marketRequestRef = useRef(0);
+  const spinTimerRef = useRef(null);
 
   const items = Array.isArray(inventory) ? inventory : [];
   const currentBalance = Number(balance) || 0;
@@ -324,18 +312,19 @@ function Upgrade({
     loadMarketSkins(true);
 
     return () => {
-      // Не даём старому запросу менять состояние после размонтирования.
       marketRequestRef.current += 1;
+
+      if (spinTimerRef.current) {
+        clearTimeout(spinTimerRef.current);
+      }
     };
-    // Начальная загрузка запускается при открытии страницы.
+    // Загрузка запускается при открытии страницы.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  /* =====================================================
-     ПОЛНАЯ ЗАГРУЗКА МАРКЕТА
-     Загружаем весь каталог страницами и двигаем start
-     на фактически полученное количество записей.
-     ===================================================== */
+  /* =========================================
+     ЗАГРУЗКА МАРКЕТА
+     ========================================= */
 
   async function loadMarketSkins(firstLoad = false) {
     if (!firstLoad && marketLoadingMore) return;
@@ -384,9 +373,7 @@ function Upgrade({
           total = reportedTotal;
         }
 
-        if (rawItems.length === 0) {
-          break;
-        }
+        if (rawItems.length === 0) break;
 
         for (const rawItem of rawItems) {
           const item = normalizeMarketSkin(rawItem);
@@ -395,13 +382,8 @@ function Upgrade({
 
         pages += 1;
 
-        // Важно: идём по реально полученным записям,
-        // а не по запрошенному размеру страницы.
         const nextStart = start + rawItems.length;
-
-        if (nextStart <= start) {
-          break;
-        }
+        if (nextStart <= start) break;
 
         start = nextStart;
 
@@ -411,14 +393,8 @@ function Upgrade({
         setMarketStart(start);
         setMarketTotal(total || loadedItems.length);
 
-        // Если API сообщило общий размер каталога,
-        // продолжаем до конца каталога.
-        if (total > 0 && start >= total) {
-          break;
-        }
+        if (total > 0 && start >= total) break;
 
-        // Если общий размер не сообщён, короткая страница
-        // означает конец доступного каталога.
         if (
           total <= 0 &&
           rawItems.length < MARKET_PAGE_SIZE
@@ -439,10 +415,7 @@ function Upgrade({
         setMarketError(
           "Маркет не вернул предметы. Проверь подключение и попробуй ещё раз."
         );
-      } else if (
-        total > loadedItems.length &&
-        start < total
-      ) {
+      } else if (total > loadedItems.length && start < total) {
         setMarketError(
           `Загружено ${loadedItems.length.toLocaleString("ru-RU")} из ${total.toLocaleString("ru-RU")} предметов. Нажми «Повторить загрузку».`
         );
@@ -480,9 +453,7 @@ function Upgrade({
           ""
       ).toLowerCase();
 
-      const matchesSearch =
-        !search || name.includes(search);
-
+      const matchesSearch = !search || name.includes(search);
       const matchesType =
         marketType === "all" ||
         getSkinTypeLabel(item?.type) === marketType;
@@ -502,9 +473,7 @@ function Upgrade({
           ""
       ).toLowerCase();
 
-      const matchesSearch =
-        !search || name.includes(search);
-
+      const matchesSearch = !search || name.includes(search);
       const matchesType =
         targetType === "all" ||
         getSkinTypeLabel(item?.type) === targetType;
@@ -534,19 +503,12 @@ function Upgrade({
       uid: item?.uid || createUid(),
     };
 
-    if (
-      !item?.uid &&
-      typeof setInventory === "function"
-    ) {
+    if (!item?.uid && typeof setInventory === "function") {
       setInventory((previous) => {
-        const current = Array.isArray(previous)
-          ? previous
-          : [];
+        const current = Array.isArray(previous) ? previous : [];
 
         return current.map((currentItem, currentIndex) =>
-          currentIndex === index
-            ? preparedItem
-            : currentItem
+          currentIndex === index ? preparedItem : currentItem
         );
       });
     }
@@ -567,20 +529,14 @@ function Upgrade({
     const sourcePrice = getPrice(selectedItem);
     const targetPrice = getPrice(preparedTarget);
 
-    if (
-      sourcePrice <= 0 ||
-      targetPrice <= sourcePrice
-    ) {
-      return;
-    }
+    if (sourcePrice <= 0 || targetPrice <= sourcePrice) return;
 
     const nextDisplayChance = getDisplayChance(
       sourcePrice,
       targetPrice
     );
 
-    const nextRealChance =
-      getRealChance(nextDisplayChance);
+    const nextRealChance = getRealChance(nextDisplayChance);
 
     setSelectedTarget({
       ...preparedTarget,
@@ -598,7 +554,6 @@ function Upgrade({
     if (spinning || !selectedItem) return;
 
     const sourcePrice = getPrice(selectedItem);
-
     if (sourcePrice <= 0) return;
 
     const wantedPrice = sourcePrice * multiplier;
@@ -615,9 +570,7 @@ function Upgrade({
         Math.abs(getPrice(b) - wantedPrice)
     )[0];
 
-    if (closestTarget) {
-      chooseTarget(closestTarget, multiplier);
-    }
+    if (closestTarget) chooseTarget(closestTarget, multiplier);
   }
 
   function addToCart(item) {
@@ -711,7 +664,6 @@ function Upgrade({
           "Ошибка добавления дропа в Supabase:",
           error
         );
-
         return false;
       }
 
@@ -722,6 +674,11 @@ function Upgrade({
       return false;
     }
   }
+
+  /* =========================================
+     ЗАПУСК АПГРЕЙДА
+     Скорость не меняет шанс победы.
+     ========================================= */
 
   function startUpgrade() {
     if (
@@ -737,18 +694,14 @@ function Upgrade({
     const sourcePrice = getPrice(selectedItem);
     const targetPrice = getPrice(selectedTarget);
 
-    if (
-      sourcePrice <= 0 ||
-      targetPrice <= sourcePrice
-    ) {
-      return;
-    }
+    if (sourcePrice <= 0 || targetPrice <= sourcePrice) return;
 
-    const yellowAngle =
-      (displayChance / 100) * 360;
+    const spinDuration = quickSpin
+      ? QUICK_SPIN_DURATION
+      : NORMAL_SPIN_DURATION;
 
-    const won =
-      Math.random() * 100 < realChance;
+    const yellowAngle = (displayChance / 100) * 360;
+    const won = Math.random() * 100 < realChance;
 
     let landingAngle;
 
@@ -756,17 +709,12 @@ function Upgrade({
       landingAngle = Math.random() * yellowAngle;
     } else {
       const blackAngle = 360 - yellowAngle;
-
       landingAngle =
         yellowAngle + Math.random() * blackAngle;
     }
 
-    const currentAngle =
-      ((rotation % 360) + 360) % 360;
-
-    const desiredRotation =
-      (360 - landingAngle) % 360;
-
+    const currentAngle = ((rotation % 360) + 360) % 360;
+    const desiredRotation = (360 - landingAngle) % 360;
     const extraRotation =
       (desiredRotation - currentAngle + 360) % 360;
 
@@ -781,9 +729,7 @@ function Upgrade({
 
     if (typeof setInventory === "function") {
       setInventory((previous) => {
-        const current = Array.isArray(previous)
-          ? previous
-          : [];
+        const current = Array.isArray(previous) ? previous : [];
 
         if (selectedItem?.uid) {
           const uidIndex = current.findIndex(
@@ -791,9 +737,7 @@ function Upgrade({
           );
 
           if (uidIndex !== -1) {
-            return current.filter(
-              (_, index) => index !== uidIndex
-            );
+            return current.filter((_, index) => index !== uidIndex);
           }
         }
 
@@ -803,8 +747,7 @@ function Upgrade({
           selectedInventoryIndex < current.length
         ) {
           return current.filter(
-            (_, index) =>
-              index !== selectedInventoryIndex
+            (_, index) => index !== selectedInventoryIndex
           );
         }
 
@@ -812,7 +755,12 @@ function Upgrade({
       });
     }
 
-    window.setTimeout(async () => {
+    if (spinTimerRef.current) {
+      clearTimeout(spinTimerRef.current);
+    }
+
+    spinTimerRef.current = window.setTimeout(async () => {
+      spinTimerRef.current = null;
       setSpinning(false);
 
       if (won) {
@@ -835,7 +783,7 @@ function Upgrade({
           item: selectedItem,
         });
       }
-    }, 10000);
+    }, spinDuration);
   }
 
   function sellResult() {
@@ -919,94 +867,6 @@ function Upgrade({
 
   return (
     <div className="upgrade-page">
-      {/* Локальная цветовая защита страницы апгрейда */}
-      <style>{`
-        .upgrade-page button,
-        .upgrade-page button:hover,
-        .upgrade-page button:focus,
-        .upgrade-page button:focus-visible,
-        .upgrade-page button:active {
-          box-shadow: none !important;
-          text-shadow: none !important;
-          filter: none !important;
-          -webkit-tap-highlight-color: transparent !important;
-        }
-
-        .upgrade-page .upgrade-pointer {
-          color: #f5c400 !important;
-          filter: none !important;
-        }
-
-        .upgrade-page .upgrade-pointer svg path {
-          stroke: #f5c400 !important;
-        }
-
-        .upgrade-page .upgrade-chance-button,
-        .upgrade-page .upgrade-tab,
-        .upgrade-page .market-action-button,
-        .upgrade-page .inventory-buy-button,
-        .upgrade-page .result-inventory-button {
-          background-color: #111111 !important;
-          color: #dddddd !important;
-          border-color: #303030 !important;
-          box-shadow: none !important;
-          filter: none !important;
-        }
-
-        .upgrade-page .upgrade-chance-button.active,
-        .upgrade-page .upgrade-tab.active {
-          background: rgba(245,196,0,0.12) !important;
-          color: #ffdf50 !important;
-          border-color: rgba(245,196,0,0.75) !important;
-        }
-
-        .upgrade-page .upgrade-chance-button:hover:not(:disabled),
-        .upgrade-page .upgrade-tab:hover:not(.active),
-        .upgrade-page .market-action-button:hover:not(:disabled),
-        .upgrade-page .inventory-buy-button:hover:not(:disabled),
-        .upgrade-page .result-inventory-button:hover {
-          background: #19170d !important;
-          color: #ffdf50 !important;
-          border-color: rgba(245,196,0,0.65) !important;
-        }
-
-        .upgrade-page .upgrade-button,
-        .upgrade-page .result-sell-button {
-          background: linear-gradient(180deg,#ffdf45,#f5c400 55%,#dfaa00) !important;
-          color: #111111 !important;
-          border-color: #ffe77b !important;
-          box-shadow: none !important;
-          filter: none !important;
-        }
-
-        .upgrade-page .upgrade-button:disabled {
-          background: #39300f !important;
-          color: #c5b46b !important;
-          border-color: #6e5b16 !important;
-        }
-
-        .upgrade-page .selection-item.chosen {
-          background: linear-gradient(145deg,rgba(245,196,0,0.12),#10100c) !important;
-          color: #f4f4f4 !important;
-          border-color: rgba(245,196,0,0.75) !important;
-        }
-
-        .upgrade-page .market-error {
-          display: flex;
-          flex-wrap: wrap;
-          align-items: center;
-          gap: 10px;
-          margin: 12px 0;
-          padding: 12px;
-          border: 1px solid rgba(245,196,0,0.3);
-          border-radius: 8px;
-          background: #141208;
-          color: #e6dcae;
-          font-size: 11px;
-          line-height: 1.6;
-        }
-      `}</style>
-
       <div className="upgrade-heading">
         <img
           src="/logo.png"
@@ -1018,16 +878,12 @@ function Upgrade({
       <div className="upgrade-stage">
         {/* ИСХОДНЫЙ ПРЕДМЕТ */}
         <div className="selected-side source-side">
-          <div className="selected-title">
-            ТВОЙ ПРЕДМЕТ
-          </div>
+          <div className="selected-title">ТВОЙ ПРЕДМЕТ</div>
 
           {selectedItem ? (
             <div
               className="selected-card selected"
-              onClick={
-                spinning ? undefined : resetSelection
-              }
+              onClick={spinning ? undefined : resetSelection}
             >
               <img
                 src={selectedItem.image || "/avatar.png"}
@@ -1049,16 +905,12 @@ function Upgrade({
           )}
         </div>
 
-        {/* РУЛЕТКА */}
+        {/* ЦЕНТРАЛЬНОЕ КОЛЕСО */}
         <div className="upgrade-wheel-area">
           <div className="upgrade-wheel">
             <div
               className="upgrade-pointer"
               aria-hidden="true"
-              style={{
-                color: "#f5c400",
-                filter: "none",
-              }}
             >
               <svg
                 viewBox="0 0 52 46"
@@ -1089,7 +941,11 @@ function Upgrade({
               style={{
                 transform: `rotate(${rotation}deg)`,
                 transition: spinning
-                  ? "transform 10s cubic-bezier(0.08, 0.85, 0.12, 1)"
+                  ? `transform ${
+                      quickSpin
+                        ? QUICK_SPIN_DURATION
+                        : NORMAL_SPIN_DURATION
+                    }ms cubic-bezier(0.08, 0.85, 0.12, 1)`
                   : "none",
                 background: `conic-gradient(
                   from 0deg,
@@ -1111,14 +967,10 @@ function Upgrade({
               />
 
               <div className="upgrade-wheel-chance">
-                {displayChance > 0
-                  ? `${displayChance}%`
-                  : "—"}
+                {displayChance > 0 ? `${displayChance}%` : "—"}
               </div>
 
-              <div className="upgrade-wheel-label">
-                ШАНС
-              </div>
+              <div className="upgrade-wheel-label">ШАНС</div>
             </div>
           </div>
 
@@ -1140,25 +992,61 @@ function Upgrade({
             ))}
           </div>
 
-          <button
-            type="button"
-            className="upgrade-button"
-            disabled={
-              !selectedItem ||
-              !selectedTarget ||
-              spinning
-            }
-            onClick={startUpgrade}
-          >
-            {spinning ? "АПГРЕЙД..." : "АПГРЕЙД"}
-          </button>
+          {/* КНОПКА АПГРЕЙДА + МОЛНИЯ */}
+          <div className="upgrade-actions">
+            <button
+              type="button"
+              className="upgrade-button"
+              disabled={
+                !selectedItem ||
+                !selectedTarget ||
+                spinning
+              }
+              onClick={startUpgrade}
+            >
+              {spinning ? "АПГРЕЙД..." : "АПГРЕЙД"}
+            </button>
+
+            <button
+              type="button"
+              className={`quick-spin-toggle ${
+                quickSpin ? "active" : ""
+              }`}
+              onClick={() =>
+                setQuickSpin((current) => !current)
+              }
+              disabled={spinning}
+              aria-label={
+                quickSpin
+                  ? "Выключить быструю крутку"
+                  : "Включить быструю крутку"
+              }
+              aria-pressed={quickSpin}
+              title={
+                quickSpin
+                  ? "Быстрая крутка включена"
+                  : "Быстрая крутка"
+              }
+            >
+              <svg
+                viewBox="0 0 24 24"
+                width="25"
+                height="25"
+                aria-hidden="true"
+                focusable="false"
+              >
+                <path
+                  d="M13.5 2.5 5.5 13h5l-.8 8.5L18.5 10h-5.2z"
+                  fill="currentColor"
+                />
+              </svg>
+            </button>
+          </div>
         </div>
 
         {/* ЦЕЛЕВОЙ ПРЕДМЕТ */}
         <div className="selected-side target-side">
-          <div className="selected-title">
-            ЦЕЛЬ
-          </div>
+          <div className="selected-title">ЦЕЛЬ</div>
 
           {selectedTarget ? (
             <div className="selected-card target selected">
@@ -1183,24 +1071,23 @@ function Upgrade({
         </div>
       </div>
 
-      {/* НИЖНЯЯ ЗОНА: ИНВЕНТАРЬ И МАРКЕТ */}
+      {/* ИНВЕНТАРЬ И МАРКЕТ */}
       <div className="upgrade-selection">
-        {/* МОЙ ИНВЕНТАРЬ / МАРКЕТ */}
         <div className="selection-panel">
           <div className="selection-header">
             <div>
-              <h2>
-                {tab === "inventory"
-                  ? "Инвентарь"
-                  : "Маркет"}
-              </h2>
+              <h2>{tab === "inventory" ? "Инвентарь" : "Маркет"}</h2>
 
               <span>
                 {tab === "inventory"
                   ? "Твои предметы"
                   : marketLoading
-                    ? `Загружено ${market.length.toLocaleString("ru-RU")}${marketTotal > 0 ? ` из ${marketTotal.toLocaleString("ru-RU")}` : ""}`
-                    : `${market.length.toLocaleString("ru-RU")} загружено`}
+                  ? `Загружено ${market.length.toLocaleString("ru-RU")}${
+                      marketTotal > 0
+                        ? ` из ${marketTotal.toLocaleString("ru-RU")}`
+                        : ""
+                    }`
+                  : `${market.length.toLocaleString("ru-RU")} загружено`}
               </span>
             </div>
 
@@ -1264,9 +1151,7 @@ function Upgrade({
 
                       <span>{item.name}</span>
 
-                      <strong>
-                        {formatMoney(getPrice(item))}
-                      </strong>
+                      <strong>{formatMoney(getPrice(item))}</strong>
                     </button>
                   );
                 })}
@@ -1278,16 +1163,7 @@ function Upgrade({
             )
           ) : (
             <>
-              <div
-                className="upgrade-filters"
-                style={{
-                  display: "flex",
-                  gap: "10px",
-                  marginBottom: "14px",
-                  flexWrap: "wrap",
-                  alignItems: "center",
-                }}
-              >
+              <div className="upgrade-filters">
                 <input
                   type="text"
                   value={marketSearch}
@@ -1324,23 +1200,15 @@ function Upgrade({
                   }
                   style={filterSelectStyle}
                 >
-                  <option value="price-asc">
-                    Цена: по возрастанию
-                  </option>
-                  <option value="price-desc">
-                    Цена: по убыванию
-                  </option>
-                  <option value="name-asc">
-                    Название: А → Я
-                  </option>
-                  <option value="name-desc">
-                    Название: Я → А
-                  </option>
+                  <option value="price-asc">Цена: по возрастанию</option>
+                  <option value="price-desc">Цена: по убыванию</option>
+                  <option value="name-asc">Название: А → Я</option>
+                  <option value="name-desc">Название: Я → А</option>
                 </select>
 
                 <button
                   type="button"
-                  style={actionButtonStyle}
+                  className="market-action-button"
                   onClick={() =>
                     setCartOpen((value) => !value)
                   }
@@ -1360,17 +1228,10 @@ function Upgrade({
               </div>
 
               {cartOpen && (
-                <div
-                  className="selection-panel"
-                  style={{
-                    marginBottom: "14px",
-                    padding: "14px",
-                  }}
-                >
+                <div className="cart-panel">
                   <div className="selection-header">
                     <div>
                       <h2>Корзина</h2>
-
                       <span>
                         {cart.length > 0
                           ? `${cart.length} предметов`
@@ -1381,7 +1242,7 @@ function Upgrade({
                     {cart.length > 0 && (
                       <button
                         type="button"
-                        style={actionButtonStyle}
+                        className="market-action-button"
                         onClick={() => setCart([])}
                       >
                         Очистить
@@ -1407,13 +1268,7 @@ function Upgrade({
                             {formatMoney(getPrice(item))}
                           </strong>
 
-                          <div
-                            style={{
-                              display: "flex",
-                              gap: "6px",
-                              width: "100%",
-                            }}
-                          >
+                          <div className="cart-item-actions">
                             <button
                               type="button"
                               className="inventory-buy-button"
@@ -1451,7 +1306,8 @@ function Upgrade({
                 <div className="selection-grid">
                   {filteredMarket.map((item, index) => {
                     const price = getPrice(item);
-                    const canBuy = currentBalance >= price;
+                    const canBuy =
+                      price > 0 && currentBalance >= price;
                     const cartKey = marketItemKey(item);
 
                     const inCart = cart.some(
@@ -1471,14 +1327,12 @@ function Upgrade({
 
                         <span>{item.name}</span>
 
-                        <strong>
-                          {formatMoney(price)}
-                        </strong>
+                        <strong>{formatMoney(price)}</strong>
 
                         <button
                           type="button"
                           className="inventory-buy-button"
-                          disabled={spinning}
+                          disabled={spinning || inCart}
                           onClick={() => addToCart(item)}
                         >
                           {inCart ? "В корзине" : "В корзину"}
@@ -1487,16 +1341,10 @@ function Upgrade({
                         <button
                           type="button"
                           className="inventory-buy-button"
-                          disabled={
-                            spinning ||
-                            !canBuy ||
-                            price <= 0
-                          }
+                          disabled={spinning || !canBuy}
                           onClick={() => buySkin(item)}
                         >
-                          {canBuy && price > 0
-                            ? "Купить"
-                            : "Недостаточно"}
+                          {canBuy ? "Купить" : "Недостаточно"}
                         </button>
                       </div>
                     );
@@ -1536,13 +1384,11 @@ function Upgrade({
               <h2>Выбор цели</h2>
 
               <span>
-                Все скины рынка · цель должна быть дороже своего предмета
+                Цель должна быть дороже исходного предмета
               </span>
             </div>
 
-            <div className="market-label">
-              ЦЕЛЬ
-            </div>
+            <div className="market-label">ЦЕЛЬ</div>
           </div>
 
           {marketLoading && market.length === 0 ? (
@@ -1551,16 +1397,7 @@ function Upgrade({
             </div>
           ) : (
             <>
-              <div
-                className="upgrade-filters"
-                style={{
-                  display: "flex",
-                  gap: "10px",
-                  marginBottom: "14px",
-                  flexWrap: "wrap",
-                  alignItems: "center",
-                }}
-              >
+              <div className="upgrade-filters">
                 <input
                   type="text"
                   value={targetSearch}
@@ -1597,18 +1434,10 @@ function Upgrade({
                   }
                   style={filterSelectStyle}
                 >
-                  <option value="price-asc">
-                    Цена: по возрастанию
-                  </option>
-                  <option value="price-desc">
-                    Цена: по убыванию
-                  </option>
-                  <option value="name-asc">
-                    Название: А → Я
-                  </option>
-                  <option value="name-desc">
-                    Название: Я → А
-                  </option>
+                  <option value="price-asc">Цена: по возрастанию</option>
+                  <option value="price-desc">Цена: по убыванию</option>
+                  <option value="name-asc">Название: А → Я</option>
+                  <option value="name-desc">Название: Я → А</option>
                 </select>
               </div>
 
@@ -1627,11 +1456,10 @@ function Upgrade({
                     (
                       selectedTarget.market_hash_name ||
                       selectedTarget.name
-                    ) ===
-                      (
-                        item.market_hash_name ||
-                        item.name
-                      ) &&
+                    ) === (
+                      item.market_hash_name ||
+                      item.name
+                    ) &&
                     getPrice(selectedTarget) === price;
 
                   return (
@@ -1653,9 +1481,7 @@ function Upgrade({
 
                       <span>{item.name}</span>
 
-                      <strong>
-                        {formatMoney(price)}
-                      </strong>
+                      <strong>{formatMoney(price)}</strong>
                     </button>
                   );
                 })}
@@ -1673,7 +1499,7 @@ function Upgrade({
         </div>
       </div>
 
-      {/* РЕЗУЛЬТАТ */}
+      {/* ОКНО РЕЗУЛЬТАТА */}
       {result && (
         <div className="upgrade-result-overlay">
           <div className="upgrade-result-modal">

@@ -40,7 +40,7 @@ const promocodes = [
   { code: "CASE250", amount: 250, activations: 10 },
   { code: "gugugaga", amount: 250, activations: 10 },
   { code: "huinaff", amount: 250, activations: 10 },
-  { code: "LUCK250", amount: 250, activations: 10 },
+  { code: "balbaeb", amount: 250, activations: 10 },
   { code: "SKIN250", amount: 250, activations: 10 },
   { code: "WIN250", amount: 250, activations: 10 },
   { code: "PRO250", amount: 250, activations: 10 },

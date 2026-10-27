@@ -1268,4 +1268,39 @@
   .upgrade-page .balance-stake-heading strong {
     font-size: 12px;
   }
+} 
+/* Убираем синее свечение и подсветку кнопок */
+.upgrade-page button,
+.upgrade-page button:hover,
+.upgrade-page button:active,
+.upgrade-page button:focus,
+.upgrade-page button:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+  filter: none !important;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Убираем синюю подсветку при наведении */
+.upgrade-page button:hover {
+  border-color: inherit;
+}
+
+/* Убираем синюю подсветку выбранных элементов */
+.upgrade-page button:focus,
+.upgrade-page button:active {
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+/* Убираем синее выделение текста */
+.upgrade-page {
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+.upgrade-page input,
+.upgrade-page textarea {
+  user-select: text;
 }

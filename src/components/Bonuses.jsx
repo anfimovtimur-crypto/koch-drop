@@ -1,126 +1,131 @@
-import { useState } from "react"
-import "./Bonuses.css"
-import promocodes from "../data/promocodes"
+import { useState } from "react";
+import "./Bonuses.css";
+import promocodes from "../data/promocodes";
+
+const USED_PROMOS_KEY = "koch_used_promocodes";
+
+function readUsedPromos() {
+  try {
+    const saved = localStorage.getItem(USED_PROMOS_KEY);
+    const parsed = saved ? JSON.parse(saved) : [];
+
+    return Array.isArray(parsed)
+      ? parsed.map((code) => String(code).toUpperCase())
+      : [];
+  } catch {
+    return [];
+  }
+}
 
 function Bonuses({ balance, setBalance }) {
-  const [code, setCode] = useState("")
-  const [message, setMessage] = useState("")
+  const [code, setCode] = useState("");
+  const [message, setMessage] = useState("");
+  const [usedPromos, setUsedPromos] = useState(readUsedPromos);
 
-  const today = new Date()
-    .toISOString()
-    .slice(0, 10)
+  const today = new Date().toISOString().slice(0, 10);
 
   const dailyClaimed =
-    localStorage.getItem("koch_daily_bonus") === today
+    localStorage.getItem("koch_daily_bonus") === today;
 
   function claimDaily() {
-    if (dailyClaimed) {
-      setMessage("Ежедневный бонус уже получен")
-      return
+    if (localStorage.getItem("koch_daily_bonus") === today) {
+      setMessage("Ежедневный бонус уже получен");
+      return;
     }
 
-    setBalance(
-      (prev) => Number(prev || 0) + 20
-    )
+    setBalance((prev) => Number(prev || 0) + 20);
 
-    localStorage.setItem(
-      "koch_daily_bonus",
-      today
-    )
+    localStorage.setItem("koch_daily_bonus", today);
 
-    setMessage("Бонус +20 ₽ зачислен")
+    setMessage("Бонус +20 ₽ зачислен");
   }
 
   function activatePromo() {
-    const enteredCode =
-      code.trim().toUpperCase()
+    const enteredCode = code.trim().toUpperCase();
 
     if (!enteredCode) {
-      setMessage("Введите промокод")
-      return
+      setMessage("Введите промокод");
+      return;
     }
 
     const promo = promocodes.find(
       (item) =>
-        String(item.code).toUpperCase() ===
-        enteredCode
-    )
+        String(item.code).trim().toUpperCase() === enteredCode
+    );
 
     if (!promo) {
-      setMessage("Промокод не найден")
-      return
+      setMessage("Промокод не найден");
+      return;
+    }
+
+    const canonicalCode = String(promo.code).trim().toUpperCase();
+
+    // Читаем сохранённые коды повторно перед каждой активацией.
+    const savedPromos = readUsedPromos();
+
+    if (
+      savedPromos.includes(canonicalCode) ||
+      usedPromos.includes(canonicalCode)
+    ) {
+      setMessage("Этот промокод уже был использован");
+      return;
     }
 
     const reward = Number(
-      promo.amount ??
-      promo.reward ??
-      promo.balance ??
-      0
-    )
+      promo.amount ?? promo.reward ?? promo.balance ?? 0
+    );
 
-    if (reward <= 0) {
-      setMessage("У промокода нет награды")
-      return
+    if (!Number.isFinite(reward) || reward <= 0) {
+      setMessage("У промокода нет награды");
+      return;
     }
 
-    setBalance(
-      (prev) =>
-        Number(prev || 0) + reward
-    )
+    // Сначала сохраняем использованный промокод,
+    // затем начисляем награду.
+    try {
+      const updatedPromos = [...savedPromos, canonicalCode];
 
-    setCode("")
+      localStorage.setItem(
+        USED_PROMOS_KEY,
+        JSON.stringify(updatedPromos)
+      );
 
-    setMessage(
-      `Промокод активирован: +${reward} ₽`
-    )
+      setUsedPromos(updatedPromos);
+    } catch (error) {
+      console.error("Не удалось сохранить промокод:", error);
+      setMessage("Не удалось сохранить активацию. Попробуй ещё раз");
+      return;
+    }
+
+    setBalance((prev) => Number(prev || 0) + reward);
+    setCode("");
+    setMessage(`Промокод активирован: +${reward} ₽`);
   }
 
   return (
     <div className="bonuses-page">
-
       <div className="bonuses-container">
-
         <div className="bonuses-header">
-
           <img
             src="/logo.png"
             alt="Koch Drop"
             className="bonuses-logo"
           />
 
-          <h1>
-            Бонусы
-          </h1>
+          <h1>Бонусы</h1>
 
-          <p>
-            Получай дополнительные награды
-            каждый день
-          </p>
-
+          <p>Получай дополнительные награды каждый день</p>
         </div>
 
-
         <div className="bonuses-main">
-
-          {/* ЕЖЕДНЕВНЫЙ БОНУС */}
-
           <div className="bonus-card">
-
-            
-
             <div className="bonus-card-body">
+              <div className="bonus-status">DAILY</div>
 
-              <div className="bonus-status">
-                DAILY
-              </div>
-
-              <h2>
-                Ежедневный бонус
-              </h2>
+              <h2>Ежедневный бонус</h2>
 
               <p>
-                Заходи каждый день и получай
-                20 ₽ прямо на свой баланс.
+                Заходи каждый день и получай 20 ₽ прямо на свой баланс.
               </p>
 
               <button
@@ -134,42 +139,22 @@ function Bonuses({ balance, setBalance }) {
                 onClick={claimDaily}
               >
                 <span>
-                  {dailyClaimed
-                    ? "Получено"
-                    : "Забрать 20 ₽"}
+                  {dailyClaimed ? "Получено" : "Забрать 20 ₽"}
                 </span>
 
-                <strong>
-                  {dailyClaimed
-                    ? "✓"
-                    : "→"}
-                </strong>
+                <strong>{dailyClaimed ? "✓" : "→"}</strong>
               </button>
-
             </div>
-
           </div>
 
-
-          {/* TELEGRAM */}
-
           <div className="bonus-card">
-
-            
-
             <div className="bonus-card-body">
+              <div className="bonus-status">TELEGRAM</div>
 
-              <div className="bonus-status">
-                TELEGRAM
-              </div>
-
-              <h2>
-                Подписка на Telegram
-              </h2>
+              <h2>Подписка на Telegram</h2>
 
               <p>
-                Подпишись на наш канал и получи
-                дополнительный бонус 10 ₽.
+                Подпишись на наш канал и получи дополнительный бонус 10 ₽.
               </p>
 
               <a
@@ -178,83 +163,58 @@ function Bonuses({ balance, setBalance }) {
                 rel="noopener noreferrer"
                 className="bonus-button"
               >
-                <span>
-                  Перейти в Telegram
-                </span>
-
-                <strong>
-                  →
-                </strong>
+                <span>Перейти в Telegram</span>
+                <strong>→</strong>
               </a>
-
             </div>
-
           </div>
-
         </div>
 
-
-        {/* ПРОМОКОД */}
-
         <div className="promo-section">
-
           <div className="promo-title">
+            <span>PROMO</span>
 
-            <span>
-              PROMO
-            </span>
-
-            <h2>
-              Промокод
-            </h2>
+            <h2>Промокод</h2>
 
             <p>
-              Введи промокод и получи бонус
-              на баланс.
+              Введи промокод и получи бонус на баланс.
+              Каждый промокод можно использовать только один раз в этом браузере.
             </p>
-
           </div>
 
           <div className="promo-form">
-
             <input
               type="text"
               value={code}
               placeholder="Введите промокод"
               maxLength={32}
-              onChange={(e) => {
-                setCode(e.target.value)
-                setMessage("")
+              autoComplete="off"
+              onChange={(event) => {
+                setCode(event.target.value);
+                setMessage("");
               }}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  activatePromo()
+              onKeyDown={(event) => {
+                if (event.key === "Enter") {
+                  activatePromo();
                 }
               }}
             />
 
-            <button
-              type="button"
-              onClick={activatePromo}
-            >
+            <button type="button" onClick={activatePromo}>
               Активировать
               <span>→</span>
             </button>
-
           </div>
 
           {message && (
-            <div className="promo-message">
+            <div className="promo-message" role="status">
               {message}
             </div>
           )}
-
         </div>
-
       </div>
-
     </div>
-  )
+  );
 }
 
-export default Bonuses
+export default Bonuses;
